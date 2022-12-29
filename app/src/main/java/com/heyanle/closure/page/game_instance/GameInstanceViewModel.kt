@@ -38,7 +38,7 @@ class GameInstanceViewModel: ViewModel() {
     suspend fun refresh(){
         isLoading.value = true
         isError.value = false
-        Net.game.get(MainController.token.value?:"").awaitResponseOK()
+        Net.game.get((MainController.token.value)?:"").awaitResponseOK()
             .onSuccessful {
                 withContext(Dispatchers.Main){
                     if(it == null){

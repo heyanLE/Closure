@@ -17,6 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
+import com.heyanle.closure.LocalNavController
 import com.heyanle.closure.MainController
 import com.heyanle.closure.R
 import com.heyanle.closure.net.model.GameResp
@@ -34,6 +37,7 @@ import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
 import com.heyanle.closure.ui.LoadingPage
 import com.heyanle.closure.utils.stringRes
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -44,19 +48,29 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Instance(
-    pagerState: PagerState,
-    viewModel: MainViewModel,
 ){
+
+    val nav = LocalNavController.current
     val scope = rememberCoroutineScope()
     val vm = viewModel<GameInstanceViewModel>()
 
+    var isFirst by remember {
+        mutableStateOf(false)
+    }
     val isError by vm.isError.observeAsState(initial = false)
     val isLoading by vm.isLoading.observeAsState(initial = false)
     val dat by MainController.gameInstance.observeAsState(initial = null)
 
 
-    Box(modifier = Modifier.fillMaxSize().background((ColorScheme.primary))){
-        if(isLoading) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background((ColorScheme.primary))){
+        if(isFirst || isLoading) {
+            LaunchedEffect(Unit){
+                // 避免页面切换动画卡顿
+                delay(200)
+                isFirst = false
+            }
             LoadingPage(modifier = Modifier.fillMaxSize(),)
         }else if(isError || dat == null){
             ErrorPage(
@@ -80,13 +94,8 @@ fun Instance(
             ){
                 items(count = data.size){
                     GameInstanceCard(resp = data[it]) { resp ->
-                        val old = viewModel.currentGameInstance.value
-                        if(old == resp) {
-                            viewModel.isGameInstancePageShow.value = false
-                        }else{
-                            viewModel.currentGameInstance.value = resp
-                        }
-
+                        MainController.currentGameInstance.value = resp
+                        nav.popBackStack()
                     }
                 }
             }
@@ -100,11 +109,10 @@ fun GameInstanceCard(
     resp: GameResp,
     onClick: (GameResp)->Unit,
 ){
-    Card(
-        modifier = Modifier.clickable {
+    Box(
+        modifier = Modifier.background(ColorScheme.surface).clickable {
             onClick(resp)
         },
-        colors = CardDefaults.cardColors(containerColor = ColorScheme.surface)
     ) {
         Column(
             modifier = Modifier

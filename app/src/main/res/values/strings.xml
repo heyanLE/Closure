@@ -54,8 +54,14 @@
     <string name="click_to_retry">点击重试</string>
 
     <string name="no_instance">还没有实例</string>
+    <string name="no_chosen_instance">未选择实例</string>
 
+    <string name="click_to_choose_instance">点击选择实例</string>
     <string name="click_to_add_instance">点击添加实例</string>
 
     <string name="load_error">加载错误</string>
+
+    <string name="more">更多</string>
+
+    <string name="change_account">切换账号</string>
 </resources>

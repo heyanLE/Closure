@@ -21,13 +21,10 @@ import com.heyanle.closure.utils.stringRes
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Home(
-    pagerState: PagerState,
-    mainViewModel: MainViewModel,
+  gameResp: GameResp
 ){
 
-    LaunchedEffect(Unit){
-        mainViewModel.topBarTitle.value = stringRes(R.string.home)
-    }
+
     Box(modifier = Modifier.fillMaxSize()){
         Text(text = "home")
     }

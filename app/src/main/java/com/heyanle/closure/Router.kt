@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.heyanle.closure.page.game_instance.Instance
 import com.heyanle.closure.page.login.Login
 import com.heyanle.closure.page.main.Main
 import com.heyanle.closure.ui.ErrorPage
@@ -55,6 +56,7 @@ val LocalNavController = staticCompositionLocalOf<NavHostController> {
 
 const val LOGIN = "login"
 const val MAIN = "main"
+const val INSTANCE = "instance"
 
 // 缺省路由
 const val DEFAULT = MAIN
@@ -74,6 +76,10 @@ fun Nav() {
             // 登录状态阻断
             composableWithTokenCheck(MAIN){
                 Main()
+            }
+
+            composableWithTokenCheck(INSTANCE) {
+                Instance()
             }
 
             composable(
@@ -113,9 +119,7 @@ public fun NavGraphBuilder.composableWithTokenCheck(
         }
 
         if(token.isNotEmpty()){
-            AnimatedVisibility(true) {
-                content.invoke(this, it)
-            }
+            content.invoke(this, it)
 //            val user by MainController.user.observeAsState()
 //            if(user == null && !isError){
 //                LoadingPage()

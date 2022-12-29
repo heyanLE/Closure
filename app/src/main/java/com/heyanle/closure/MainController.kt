@@ -25,6 +25,9 @@ object MainController {
     // 游戏实例
     val gameInstance = MutableLiveData<List<GameResp>?>(null)
 
+    // 选择的游戏实例
+    val currentGameInstance = MutableLiveData<GameResp?>(null)
+
     init {
         token.observeForever {
             okkvToken = it

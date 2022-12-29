@@ -56,7 +56,9 @@ fun MyApplicationTheme(
     }
 
     MaterialTheme(
-        colorScheme = ColorScheme,
+        colorScheme = ColorScheme.copy(
+            background = Color.Transparent
+        ),
         typography = Typography,
         content = content
     )

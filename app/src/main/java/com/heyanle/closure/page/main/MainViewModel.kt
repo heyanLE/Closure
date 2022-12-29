@@ -14,11 +14,8 @@ import com.heyanle.closure.utils.stringRes
  */
 class MainViewModel: ViewModel() {
 
-    val currentGameInstance = MutableLiveData<GameResp?>()
-    val isGameInstancePageShow = MutableLiveData<Boolean>(false)
-
     val avatarImage = MutableLiveData<Any>(R.drawable.logo)
-    val topBarTitle = MutableLiveData<String>(stringRes(R.string.please_choose_instance))
+    val topBarTitle = MutableLiveData<String>(stringRes(R.string.app_name))
 
 
     fun init(){
