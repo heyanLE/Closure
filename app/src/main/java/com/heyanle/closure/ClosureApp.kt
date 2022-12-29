@@ -1,6 +1,8 @@
 package com.heyanle.closure
 
 import android.app.Application
+import com.heyanle.closure.model.ItemModel
+import com.heyanle.closure.model.StageModel
 import com.heyanle.okkv2.MMKVStore
 import com.heyanle.okkv2.core.Okkv
 
@@ -25,5 +27,8 @@ class ClosureApp: Application() {
         Okkv.Builder().store(MMKVStore(this)).cache().build().init().default()
         // 如果不使用缓存，请手动指定 key
         Okkv.Builder().store(MMKVStore(this)).build().init().default("no_cache")
+
+        StageModel.refresh()
+        ItemModel.refresh()
     }
 }

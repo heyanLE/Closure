@@ -64,4 +64,9 @@
     <string name="more">更多</string>
 
     <string name="change_account">切换账号</string>
+
+    <string name="much_stage">多地图</string>
+
+    <string name="login_game">登录游戏</string>
+    <string name="pause_game">关闭游戏</string>
 </resources>

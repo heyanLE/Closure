@@ -2,11 +2,13 @@ package com.heyanle.closure.utils
 
 import com.heyanle.closure.R
 import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /**
  * Created by HeYanLe on 2022/12/28 18:06.

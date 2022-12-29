@@ -7,6 +7,7 @@ import com.heyanle.closure.net.model.GameConfig
 import com.heyanle.closure.net.model.GameLogItem
 import com.heyanle.closure.net.model.GameLoginReq
 import com.heyanle.closure.net.model.GameResp
+import com.heyanle.closure.net.model.GetGameResp
 import com.heyanle.closure.net.model.Response
 import com.heyanle.closure.net.model.ScreenshotRsp
 import retrofit2.Call
@@ -95,8 +96,8 @@ interface GameAPI {
     @GET("/Game/{account}/{platform}")
     fun game(
         @Header("Authorization") token: String,
-        @Path("platform") platform: Int,
+        @Path("platform") platform: Long,
         @Path("account") account: String,
-    ): Call<Response<String>> // String 摆烂了，后面用 JSONObject 读
+    ): Call<Response<GetGameResp>> // String 摆烂了，后面用 JSONObject 读
 
 }

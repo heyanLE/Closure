@@ -1,8 +1,6 @@
 package com.heyanle.closure
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -11,16 +9,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NamedNavArgument
@@ -28,22 +22,15 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.heyanle.closure.page.MainController
 import com.heyanle.closure.page.game_instance.Instance
 import com.heyanle.closure.page.login.Login
-import com.heyanle.closure.page.main.Main
+import com.heyanle.closure.page.home.Home
 import com.heyanle.closure.ui.ErrorPage
-import com.heyanle.closure.ui.LoadingPage
-import com.heyanle.closure.utils.stringRes
-import com.heyanle.closure.utils.toast
 
 /**
  * Created by HeYanLe on 2022/12/23 16:46.
@@ -55,11 +42,11 @@ val LocalNavController = staticCompositionLocalOf<NavHostController> {
 
 
 const val LOGIN = "login"
-const val MAIN = "main"
+const val HOME = "home"
 const val INSTANCE = "instance"
 
 // 缺省路由
-const val DEFAULT = MAIN
+const val DEFAULT = HOME
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -74,8 +61,8 @@ fun Nav() {
             popExitTransition = { slideOutHorizontally(tween()) { it } })
         {
             // 登录状态阻断
-            composableWithTokenCheck(MAIN){
-                Main()
+            composableWithTokenCheck(HOME){
+                Home()
             }
 
             composableWithTokenCheck(INSTANCE) {
@@ -87,7 +74,6 @@ fun Nav() {
             ) { entry ->
                 Login {
                     MainController.token.value = it.token
-                    MainController.user.value = it
                     nav.popBackStack()
                 }
             }
