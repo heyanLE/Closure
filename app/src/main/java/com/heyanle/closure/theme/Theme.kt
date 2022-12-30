@@ -56,6 +56,7 @@ fun MyApplicationTheme(
     }
 
     MaterialTheme(
+        // 这里背景色去掉，防止过渡绘制，各页面自己处理背景色
         colorScheme = ColorScheme.copy(
             background = Color.Transparent
         ),

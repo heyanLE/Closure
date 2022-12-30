@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -23,6 +24,7 @@ import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -30,6 +32,7 @@ import com.heyanle.closure.page.MainController
 import com.heyanle.closure.page.game_instance.Instance
 import com.heyanle.closure.page.login.Login
 import com.heyanle.closure.page.home.Home
+import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
 
 /**
@@ -139,6 +142,7 @@ public fun NavGraphBuilder.composableWithTokenCheck(
         } else {
             // 没有储存 Token
             ErrorPage(
+                modifier = Modifier.background(ColorScheme.background),
                 errorMsg = stringResource(id = R.string.click_to_login),
                 clickEnable = true,
                 onClick = {

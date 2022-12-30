@@ -49,4 +49,12 @@ class GameInstanceViewModel: ViewModel() {
             }
     }
 
+    suspend fun gameLogin(){}
+
+    suspend fun gameCaptcha(){}
+
+    suspend fun gamePause(){}
+
+    suspend fun instanceDelete(){}
+
 }

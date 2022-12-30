@@ -94,6 +94,7 @@ fun Home(){
                         modifier = Modifier.fillMaxSize()
                     ) {
                         AccountCard(account, platform)
+                        Text(text = "实例未启动或发错误")
                     }
 
                 }.onLoading {

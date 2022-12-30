@@ -1,6 +1,5 @@
 package com.heyanle.closure.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.heyanle.closure.R
-import com.heyanle.closure.utils.stringRes
 
 /**
  * Created by HeYanLe on 2022/12/28 18:26.
@@ -70,13 +68,13 @@ fun LoadingPage(
 @Composable
 fun ErrorPage(
     modifier: Modifier = Modifier,
-    image: Any = R.drawable.error,
+    image: Any = R.drawable.kaltsit,
     errorMsg: String = "",
     clickEnable: Boolean = false,
     other: @Composable ()->Unit = {},
     onClick: ()->Unit,
 
-){
+    ){
     WhitePage(
         modifier.let {
             if(clickEnable){

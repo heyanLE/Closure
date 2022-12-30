@@ -56,8 +56,11 @@
     <string name="no_instance">还没有实例</string>
     <string name="no_chosen_instance">未选择实例</string>
 
-    <string name="click_to_choose_instance">点击选择实例</string>
+
+    <string name="click_to_choose_instance">点击卡片选择实例</string>
     <string name="click_to_add_instance">点击添加实例</string>
+
+    <string name="instance_manager">实例管理</string>
 
     <string name="load_error">加载错误</string>
 
@@ -67,6 +70,15 @@
 
     <string name="much_stage">多地图</string>
 
-    <string name="login_game">登录游戏</string>
+    <string name="game_logging">游戏启动中</string>
+
+    <string name="login_game">启动游戏</string>
     <string name="pause_game">关闭游戏</string>
+
+    <string name="delete_instance">删除实例</string>
+
+    <string name="captcha">滑动验证</string>
+
+    <string name="please_captcha_first">请先进行滑动验证</string>
+    <string name="please_login_game_first">请先启动游戏</string>
 </resources>
