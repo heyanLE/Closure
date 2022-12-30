@@ -63,6 +63,7 @@ import com.heyanle.closure.ui.ErrorIcon
 import com.heyanle.closure.ui.LoadingIcon
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.closure.utils.toast
+import com.heyanle.closure.utils.todo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -212,10 +213,11 @@ fun Login(
                     contentColor = ColorScheme.onBackground
                 ),
                 onClick = {
-                if (vm.email.value.isBlank() || vm.password.value.isBlank()) {
-                    stringRes(R.string.email_password_empty).toast()
-                    return@OutlinedButton
-                }
+                    if (vm.email.value.isBlank() || vm.password.value.isBlank()) {
+                        stringRes(R.string.email_password_empty).toast()
+                        return@OutlinedButton
+                    }
+                    todo("注册")
             }) {
                 Text(text = stringResource(id = R.string.register))
             }

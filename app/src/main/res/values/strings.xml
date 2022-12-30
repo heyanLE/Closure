@@ -49,6 +49,8 @@
 
     <string name="add_instance">添加游戏实例</string>
 
+    <string name="refresh">刷新</string>
+
     <string name="instance">实例</string>
     <string name="home">主页</string>
     <string name="click_to_retry">点击重试</string>
@@ -71,6 +73,7 @@
     <string name="much_stage">多地图</string>
 
     <string name="game_logging">游戏启动中</string>
+    <string name="please_refresh">请手动刷新</string>
 
     <string name="login_game">启动游戏</string>
     <string name="pause_game">关闭游戏</string>
@@ -81,4 +84,25 @@
 
     <string name="please_captcha_first">请先进行滑动验证</string>
     <string name="please_login_game_first">请先启动游戏</string>
+    
+    <string name="it_take_five_minute">预计耗时五分钟</string>
+
+    <string name="game_login_completely">游戏启动请求成功，启动过程预计五分钟，请手动刷新</string>
+    <string name="game_pause_completely">游戏关闭请求成功</string>
+
+    <string name="instance_no_login">实例未启动或启动中</string>
+    <string name="click_to_manager_instance">点击管理实例</string>
+
+    <string name="ap">理智</string>
+    <string name="ap_max_time">理智溢出时间</string>
+
+    <string name="warehouse">仓库</string>
+    <string name="screenshot">截图</string>
+    <string name="instance_config">托管配置</string>
+
+    <string name="click_to_see_all_log">点击查看所有日志</string>
+
+    <string name="click_to_up_top">点击回到顶部</string>
+    <string name="log">日志</string>
+
 </resources>

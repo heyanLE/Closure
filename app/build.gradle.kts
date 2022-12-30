@@ -97,4 +97,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:$accompanistVersion")
 
     implementation("io.coil-kt:coil-compose:2.2.2")
+
+    implementation("com.geetest.sensebot:sensebot:4.3.8.1")
 }

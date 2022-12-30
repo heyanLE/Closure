@@ -41,6 +41,10 @@ object MainController {
             return this is Error
         }
 
+        fun isData(): Boolean {
+            return this is Data
+        }
+
         @Composable
         fun onLoading(content: @Composable (Loading<T>)->Unit): StatusData<T> {
             (this as? Loading)?.let {

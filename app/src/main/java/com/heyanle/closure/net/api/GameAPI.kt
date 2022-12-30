@@ -44,7 +44,7 @@ interface GameAPI {
     @POST("/Game/Captcha/{account}/{platform}")
     fun postCaptcha(
         @Header("Authorization") token: String,
-        @Path("platform") platform: Int,
+        @Path("platform") platform: Long,
         @Path("account") account: String,
         @Body captchaReq: CaptchaReq,
     ): Call<Response<CaptchaInfo>>
@@ -52,22 +52,22 @@ interface GameAPI {
     @GET("/Game/Config/{account}/{platform}")
     fun getConfig(
         @Header("Authorization") token: String,
-        @Path("platform") platform: Int,
+        @Path("platform") platform: Long,
         @Path("account") account: String,
     ): Call<Response<GameConfig>>
 
     @POST("/Game/Config/{account}/{platform}")
     fun postConfig(
         @Header("Authorization") token: String,
-        @Path("platform") platform: Int,
+        @Path("platform") platform: Long,
         @Path("account") account: String,
         @Body config: GameConfig,
     ): Call<Response<GameConfig>>
 
-    @GET("/Game/Config/{account}/{platform}/{timestamp}")
+    @GET("/Game/Log/{account}/{platform}/{timestamp}")
     fun getLog(
         @Header("Authorization") token: String,
-        @Path("platform") platform: Int,
+        @Path("platform") platform: Long,
         @Path("account") account: String,
         @Path("timestamp") timestamp: Long,
     ): Call<Response<List<GameLogItem>>>
@@ -81,14 +81,14 @@ interface GameAPI {
     @POST("/Game/Ocr/{account}/{platform}")
     fun ocr(
         @Header("Authorization") token: String,
-        @Path("platform") platform: Int,
+        @Path("platform") platform: Long,
         @Path("account") account: String,
     ): Call<Response<String>>
 
     @GET("/Game/Screenshots/{account}/{platform}")
     fun screenshots(
         @Header("Authorization") token: String,
-        @Path("platform") platform: Int,
+        @Path("platform") platform: Long,
         @Path("account") account: String,
     ): Call<Response<ScreenshotRsp>>
 

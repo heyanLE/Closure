@@ -15,10 +15,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,18 +38,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.heyanle.closure.LocalAct
 import com.heyanle.closure.LocalNavController
 import com.heyanle.closure.page.MainController
 import com.heyanle.closure.R
 import com.heyanle.closure.model.StageModel
 import com.heyanle.closure.net.model.GameResp
+import com.heyanle.closure.page.home.AccountCard
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
 import com.heyanle.closure.ui.LoadingIcon
@@ -71,9 +81,16 @@ fun Instance() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            InstanceTopAppBar {
-
-            }
+            InstanceTopAppBar(
+                onAddClick = {
+                    vm.onAddClick()
+                },
+                onRefresh = {
+                    scope.launch {
+                        vm.loadGameInstances()
+                    }
+                }
+            )
         }
     ) { padding ->
         Box(
@@ -99,63 +116,80 @@ fun Instance() {
             }.onLoading {
                 LoadingPage(modifier = Modifier.fillMaxSize(),)
             }.onData {
-                LazyColumn(
-                    modifier = Modifier.padding(8.dp, 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ){
-                    item {
-                        Text(
-                            fontSize = 12.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .alpha(0.6f),
-                            textAlign = TextAlign.Start,
-                            text = stringResource(id = R.string.click_to_choose_instance)
-                        )
-                    }
+                if(it.data.isEmpty()){
+                    ErrorPage(
+                        modifier = Modifier.fillMaxSize(),
+                        image = R.drawable.kaltsit,
+                        errorMsg = stringResource(id = R.string.no_instance),
+                        clickEnable = true,
+                        onClick = {
+                            vm.onAddClick()
+                        },
+                        other = {
+                            Text(text = stringResource(id = R.string.click_to_add_instance))
+                        }
+                    ) 
+                }else{
+                    val act = LocalAct.current
+                    LazyColumn(
+                        modifier = Modifier.padding(8.dp, 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ){
+                        item {
+                            Text(
+                                fontSize = 12.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .alpha(0.6f),
+                                textAlign = TextAlign.Start,
+                                text = stringResource(id = R.string.click_to_choose_instance)
+                            )
+                        }
 
-                    val data = it.data
-                    items(count = data.size){
-                        GameInstanceCard(
-                            resp = data[it],
-                            onCaptcha = {
-                                scope.launch {
-                                    vm.gameCaptcha()
+                        val data = it.data
+
+                        items(count = data.size){
+                            GameInstanceCard(
+                                resp = data[it],
+                                onCaptcha = {
+                                    scope.launch {
+                                        vm.gameCaptcha(it, act)
+                                    }
+                                },
+                                onLogin = {
+                                    scope.launch {
+                                        vm.gameLogin(it)
+                                    }
+                                },
+                                onPause = {
+                                    scope.launch {
+                                        vm.gamePause(it)
+                                    }
+                                },
+                                onDelete = {
+                                    scope.launch {
+                                        vm.instanceDelete(it)
+                                    }
                                 }
-                            },
-                            onLogin = {
-                                scope.launch {
-                                    vm.gameLogin()
+                            ) { resp ->
+                                when(resp.status.code){
+                                    999 -> {
+                                        stringRes(R.string.please_captcha_first).toast()
+                                    }
+                                    2 -> {
+                                        MainController.current.value = MainController.InstanceSelect(resp.config.account, resp.config.platform)
+                                        nav.popBackStack()
+                                    }
+                                    1 -> {
+                                        stringRes(R.string.game_logging).toast()
+                                    }
+                                    else -> {
+                                        stringRes(R.string.please_login_game_first).toast()
+
+                                    }
                                 }
-                            },
-                            onPause = {
-                                scope.launch {
-                                    vm.gamePause()
-                                }
-                            },
-                            onDelete = {
-                                scope.launch {
-                                    vm.instanceDelete()
-                                }
+
                             }
-                        ) { resp ->
-                            when(resp.status.code){
-                                999 -> {
-                                    stringRes(R.string.please_captcha_first).toast()
-                                }
-                                2 -> {
-                                    MainController.current.value = MainController.InstanceSelect(resp.config.account, resp.config.platform)
-                                    nav.popBackStack()
-                                }
-                                1 -> {
-                                    stringRes(R.string.game_logging).toast()
-                                }
-                                else -> {
-                                    stringRes(R.string.please_login_game_first).toast()
-
-                                }
-                            }
-
                         }
                     }
                 }
@@ -170,6 +204,7 @@ fun Instance() {
 @Composable
 fun InstanceTopAppBar(
     onAddClick: ()->Unit,
+    onRefresh: ()->Unit,
 ){
     TopAppBar(
         title = {
@@ -187,6 +222,9 @@ fun InstanceTopAppBar(
 
         },
         actions = {
+            IconButton(onClick = { onRefresh() }) {
+                Icon(Icons.Filled.Refresh, contentDescription = stringResource(id = R.string.refresh))
+            }
             IconButton(onClick = { onAddClick() }) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(id = R.string.add_instance))
             }
@@ -200,10 +238,10 @@ fun InstanceTopAppBar(
 @Composable
 fun GameInstanceCard(
     resp: GameResp,
-    onCaptcha: ()-> Unit,
-    onLogin: ()-> Unit,
-    onPause: ()-> Unit,
-    onDelete: ()-> Unit,
+    onCaptcha: (GameResp)-> Unit,
+    onLogin: (GameResp)-> Unit,
+    onPause: (GameResp)-> Unit,
+    onDelete: (GameResp)-> Unit,
     onClick: (GameResp)->Unit,
 ){
     val scope = rememberCoroutineScope()
@@ -223,14 +261,13 @@ fun GameInstanceCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ){
-            DoubleText(
-                startText = "${stringResource(id = R.string.account)}: ${resp.config.account.replaceRange(3, 7, "****")}",
-                endText =
-                if(resp.config.platform < 2)
-                    stringResource(id = R.string.official_server)
-                else
-                    stringResource(id = R.string.bilibili_server)
+
+            AccountCard(
+                account = resp.config.account,
+                platform = resp.config.platform,
+                accountColor = ColorScheme.secondary,
             )
+
             DoubleText(
                 startText = stringResource(id = R.string.status),
                 endText = resp.status.text
@@ -262,10 +299,18 @@ fun GameInstanceCard(
             Spacer(modifier = Modifier.height(4.dp))
             InstanceAction(
                 gameResp = resp,
-                onCaptcha = onCaptcha,
-                onLogin = onLogin,
-                onPause = onPause,
-                onDelete = onDelete
+                onCaptcha = {
+                    onCaptcha(resp)
+                },
+                onLogin = {
+                    onLogin(resp)
+                },
+                onPause = {
+                    onPause(resp)
+                },
+                onDelete = {
+                    onDelete(resp)
+                }
             )
 
 
@@ -279,7 +324,7 @@ fun GameInstanceCard(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xA6000000)),
+                    .background(Color(0xB3000000)),
                 contentAlignment = Alignment.Center
             ){
                 Row(
@@ -289,7 +334,12 @@ fun GameInstanceCard(
 
                     LoadingIcon()
                     Spacer(modifier = Modifier.size(16.dp))
-                    Text(text = stringResource(id = R.string.game_logging))
+                    Column() {
+                        Text(text = stringResource(id = R.string.game_logging))
+                        Text(text = stringResource(id = R.string.it_take_five_minute))
+                        Text(text = stringResource(id = R.string.please_refresh))
+                    }
+
 
                 }
             }
@@ -309,6 +359,19 @@ fun InstanceAction(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+
+        Button(
+            onClick = {
+                onDelete()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ColorScheme.error,
+                contentColor = ColorScheme.onError
+            ),
+        ) {
+            Text(text = stringResource(id = R.string.delete_instance))
+        }
+
         Button(
             onClick = {
                 when(gameResp.status.code){
@@ -325,17 +388,7 @@ fun InstanceAction(
             }
             Text(text = text)
         }
-        Button(
-            onClick = {
-                onDelete()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ColorScheme.error,
-                contentColor = ColorScheme.onError
-            ),
-        ) {
-            Text(text = stringResource(id = R.string.delete_instance))
-        }
+
 
     }
 }
