@@ -23,6 +23,8 @@ object ItemModel {
     private val map: HashMap<String, ItemBean> = hashMapOf()
     val mapLiveData = MutableLiveData<Map<String, ItemBean>>(emptyMap())
 
+    val isLoading = MutableLiveData<Boolean>(false)
+
     // 一个关卡
     data class ItemBean (
         val id: String,
@@ -48,6 +50,10 @@ object ItemModel {
                 return res
             }
         }
+
+        fun getIconUrl(): String{
+            return "https://ak.dzp.me/dst/items/${icon}.webp"
+        }
     }
 
     @Volatile
@@ -65,6 +71,7 @@ object ItemModel {
     @OptIn(DelicateCoroutinesApi::class)
     private fun tryRefresh(){
         if(retryCount > 0){
+            isLoading.value = true
             GlobalScope.launch {
                 Net.okHttpClient.get(URL).onSuccessful {
                     retryCount = 3
@@ -76,6 +83,7 @@ object ItemModel {
                         map.clear()
                     }
                     isRefresh.set(false)
+                    isLoading.postValue(false)
                     mapLiveData.postValue(map)
                 }.onFailed { _, _ ->
                     retryCount --
@@ -83,6 +91,7 @@ object ItemModel {
                 }
             }
         }else{
+            isLoading.postValue(false)
             map.clear()
             isRefresh.set(false)
         }

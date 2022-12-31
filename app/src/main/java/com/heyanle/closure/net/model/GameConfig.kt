@@ -5,12 +5,12 @@ package com.heyanle.closure.net.model
  * https://github.com/heyanLE
  */
 data class GameConfig(
-    val isAutoBattle: Boolean,
-    val mapId: String,
-    val battleMaps: List<String>,
-    val keepingAP: Long,
-    val recruitReserve: Long,
-    val recruitIgnoreRobot: Boolean,
-    val isStopped: Boolean,
-    val enableBuildingArrange: Boolean,
+    var isAutoBattle: Boolean,
+    var mapId: String,
+    var battleMaps: List<String> = emptyList(),
+    var keepingAP: Long,
+    var recruitReserve: Long,
+    var recruitIgnoreRobot: Boolean,
+    var isStopped: Boolean,
+    var enableBuildingArrange: Boolean,
 )

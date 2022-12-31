@@ -99,4 +99,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.2.2")
 
     implementation("com.geetest.sensebot:sensebot:4.3.8.1")
+
+    val appCenterSdkVersion = "4.4.5"
+    implementation ("com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}")
+    implementation ("com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}")
+    implementation("com.microsoft.appcenter:appcenter-distribute:$appCenterSdkVersion")
 }

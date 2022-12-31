@@ -26,6 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.heyanle.closure.crash.CrashActivity"
+            android:process="com.heyanle.easybangumi.crash"/>
     </application>
 
 </manifest>

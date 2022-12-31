@@ -33,6 +33,7 @@ import com.heyanle.closure.page.MainController
 import com.heyanle.closure.page.game_instance.Instance
 import com.heyanle.closure.page.login.Login
 import com.heyanle.closure.page.home.Home
+import com.heyanle.closure.page.warehouse.Warehouse
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
 
@@ -48,6 +49,7 @@ val LocalNavController = staticCompositionLocalOf<NavHostController> {
 const val LOGIN = "login"
 const val HOME = "home"
 const val INSTANCE = "instance"
+const val WAREHOUSE = "warehouse"
 
 // 缺省路由
 const val DEFAULT = HOME
@@ -71,6 +73,10 @@ fun Nav() {
 
             composableWithTokenCheck(INSTANCE) {
                 Instance()
+            }
+
+            composableWithTokenCheck(WAREHOUSE){
+                Warehouse()
             }
 
             composable(
@@ -104,42 +110,8 @@ public fun NavGraphBuilder.composableWithTokenCheck(
     composable(route, arguments, deepLinks, enterTransition, exitTransition, popEnterTransition, popExitTransition){
         val token by MainController.token.observeAsState("")
         val navController = LocalNavController.current
-        var isError by remember {
-            mutableStateOf(false)
-        }
-
         if(token.isNotEmpty()){
             content.invoke(this, it)
-//            val user by MainController.user.observeAsState()
-//            if(user == null && !isError){
-//                LoadingPage()
-//                LaunchedEffect(Unit){
-//                    // 尝试用 token 登录
-//                    MainController.loginWithToken {
-//                        isError = true
-//                    }
-//                }
-//            }else if(user == null){
-//                // Token 自动登录失败
-//                ErrorPage(
-//                    errorMsg = stringResource(id = R.string.click_to_login_again),
-//                    clickEnable = true,
-//                    onClick = {
-//                        isError = false
-//                    },
-//                    other = {
-//                        Button(onClick = {
-//                            navController.navigate(LOGIN)
-//                        }) {
-//                            Text(text = stringResource(id = R.string.click_to_reset_email_pass))
-//                        }
-//                    }
-//                )
-//            } else{
-//                AnimatedVisibility(true) {
-//                    content.invoke(this, it)
-//                }
-//            }
         } else {
             // 没有储存 Token
             ErrorPage(

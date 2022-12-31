@@ -19,7 +19,7 @@ import com.heyanle.closure.utils.onFailed
 import com.heyanle.closure.utils.onSuccessful
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.closure.utils.toast
-import com.heyanle.closure.utils.todo
+import com.heyanle.closure.utils.TODO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,7 +45,7 @@ class GameInstanceViewModel: ViewModel() {
     }
 
     fun onAddClick(){
-        todo("添加实例按钮")
+        TODO("添加实例按钮")
     }
 
     suspend fun loadGameInstances(){
@@ -86,7 +86,7 @@ class GameInstanceViewModel: ViewModel() {
     }
 
     suspend fun gameCaptcha(gameResp: GameResp, mainActivity: MainActivity){
-        todo("滑动验证，这里能滑但是还没接入可小姐")
+        TODO("滑动验证，这里能滑但是还没接入可小姐")
         mainActivity.onCaptcha(gameResp.captchaInfo, object: GT3Listener() {
             override fun onReceiveCaptchaCode(p0: Int) {
                 Log.d("GameInstanceViewModel", "onReceiveCaptchaCode $p0")
@@ -135,7 +135,7 @@ class GameInstanceViewModel: ViewModel() {
     }
 
     suspend fun instanceDelete(gameResp: GameResp){
-        todo("删除实例")
+        TODO("删除实例")
     }
 
 }

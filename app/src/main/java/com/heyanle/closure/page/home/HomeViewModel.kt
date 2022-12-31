@@ -4,7 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.heyanle.closure.R
+import com.heyanle.closure.WAREHOUSE
 import com.heyanle.closure.net.Net
 import com.heyanle.closure.net.model.GameLogItem
 import com.heyanle.closure.page.MainController
@@ -15,8 +17,7 @@ import com.heyanle.closure.utils.awaitResponseOK
 import com.heyanle.closure.utils.onFailed
 import com.heyanle.closure.utils.onSuccessful
 import com.heyanle.closure.utils.stringRes
-import com.heyanle.closure.utils.toast
-import com.heyanle.closure.utils.todo
+import com.heyanle.closure.utils.TODO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -107,16 +108,17 @@ class HomeViewModel: ViewModel() {
             }
     }
 
-    fun onWarehouse(){
-        todo("详情页仓库")
+    fun onWarehouse(navController: NavController){
+        // TODO("详情页仓库")
+        navController.navigate(WAREHOUSE)
     }
 
     fun onInstanceConfig(){
-        todo("详情页托管配置")
+        TODO("详情页托管配置")
     }
 
     fun onScreenshot(){
-        todo("详情页截图")
+        TODO("详情页截图")
     }
 
 

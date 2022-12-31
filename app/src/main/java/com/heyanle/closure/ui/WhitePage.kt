@@ -68,11 +68,11 @@ fun LoadingPage(
 @Composable
 fun ErrorPage(
     modifier: Modifier = Modifier,
-    image: Any = R.drawable.kaltsit,
+    image: Any = R.drawable.error,
     errorMsg: String = "",
     clickEnable: Boolean = false,
     other: @Composable ()->Unit = {},
-    onClick: ()->Unit,
+    onClick: ()->Unit = {},
 
     ){
     WhitePage(

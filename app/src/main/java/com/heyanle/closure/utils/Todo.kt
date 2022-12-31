@@ -5,7 +5,7 @@ package com.heyanle.closure.utils
  * https://github.com/heyanLE
  */
 
-fun todo(other: String? = null){
+fun TODO(other: String? = null){
     runCatching {
         // 弹窗
         "在写了在写了 ${other}".toast()

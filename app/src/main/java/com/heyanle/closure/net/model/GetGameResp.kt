@@ -6,8 +6,13 @@ package com.heyanle.closure.net.model
  */
 data class GetGameResp(
     val status: GameGetStatus,
-    val consumable: Any?,
-    val inventory: Any?,
+    var consumable: Map<String, List<ConsumableItem>> = emptyMap(),
+    var inventory: Map<String, Long> = emptyMap(),
     val troop: Any?,
     val lastFreshTs: Long,
+)
+
+data class ConsumableItem(
+    val ts: Long,
+    val count: Long,
 )

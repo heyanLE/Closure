@@ -70,6 +70,7 @@ import com.heyanle.closure.ui.OKImage
 import com.heyanle.closure.utils.APUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
@@ -244,18 +245,21 @@ fun APLVPanel(getGameResp: GetGameResp){
     var nowAp by remember {
         mutableStateOf(APUtils.getNowAp(getGameResp.status.ap, getGameResp.status.maxAp, getGameResp.status.lastApAddTime))
     }
+
     DisposableEffect(Unit){
         scope.launch {
-            // 每隔增加 1 理智时间 *2 时间刷新一下理智数
-            delay((APUtils.AP_UP_TIME*2).toLong())
-            nowAp = APUtils.getNowAp(getGameResp.status.ap, getGameResp.status.maxAp, getGameResp.status.lastApAddTime)
+            while(scope.isActive){
+                // 每隔增加 1 理智时间 *2 时间刷新一下理智数
+                delay((APUtils.AP_UP_TIME*2).toLong())
+                nowAp = APUtils.getNowAp(getGameResp.status.ap, getGameResp.status.maxAp, getGameResp.status.lastApAddTime)
+            }
         }
         onDispose {
             scope.cancel()
         }
-
-
     }
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -354,6 +358,7 @@ fun APLVPanel(getGameResp: GetGameResp){
 fun GameInstanceActions(
     vm: HomeViewModel
 ){
+    val nav = LocalNavController.current
     Column() {
         Button(
             modifier = Modifier
@@ -379,7 +384,7 @@ fun GameInstanceActions(
                     .padding(8.dp, 0.dp)
                     .weight(1f),
                 onClick = {
-                    vm.onWarehouse()
+                    vm.onWarehouse(nav)
                 }
             ) {
                 Text(text = stringResource(id = R.string.warehouse))

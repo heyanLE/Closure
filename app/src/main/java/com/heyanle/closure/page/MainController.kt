@@ -86,8 +86,10 @@ object MainController {
     // 当前选择
     val current = MutableLiveData<InstanceSelect>(InstanceSelect(okkvCurrentAccount, okkvCurrentPlatform))
 
-    val instance = MutableLiveData<StatusData<List<GameResp>>>(StatusData.None())
+
     val currentInstance = MutableLiveData<StatusData<GameResp>>(StatusData.None())
+
+    val instance = MutableLiveData<StatusData<List<GameResp>>>(StatusData.None())
     val currentGetGame = MutableLiveData<StatusData<GetGameResp>>(StatusData.None())
 
 

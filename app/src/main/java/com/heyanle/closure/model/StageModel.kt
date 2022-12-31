@@ -33,6 +33,7 @@ object StageModel {
         val items: List<String>,
     ){
         companion object {
+            // 解析 Json 数据
             fun parsonFromResp(resp: String): Map<String, Stage>{
                 val jsonObject = JSONObject(resp)
                 val res = HashMap<String, Stage>()
@@ -98,10 +99,5 @@ object StageModel {
             isRefresh.set(false)
         }
     }
-
-
-
-
-
 
 }

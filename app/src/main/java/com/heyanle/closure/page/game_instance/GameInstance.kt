@@ -185,10 +185,8 @@ fun Instance() {
                                     }
                                     else -> {
                                         stringRes(R.string.please_login_game_first).toast()
-
                                     }
                                 }
-
                             }
                         }
                     }
@@ -196,8 +194,6 @@ fun Instance() {
             }
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -273,16 +269,15 @@ fun GameInstanceCard(
                 endText = resp.status.text
             )
             var text = stringResource(id = R.string.much_stage)
-            val list = resp.gameConfig.battleMaps
+            val list = resp.gameConfig.battleMaps?: emptyList()
             if(list.isNotEmpty()){
                 val map by StageModel.mapLiveData.observeAsState(emptyMap())
-                val stage = map.getOrDefault(resp.gameConfig.battleMaps[0], null)
+                val stage = map.getOrDefault(resp.gameConfig.battleMaps?.get(0)?:"", null)
                 text = if(stage == null){
-                    resp.gameConfig.battleMaps[0]
+                    resp.gameConfig.battleMaps?.get(0)?:""
                 }else{
                     "${stage.code} ${stage.name}"
                 }
-
             }
             DoubleText(
                 startText = stringResource(id = R.string.map),
@@ -339,8 +334,6 @@ fun GameInstanceCard(
                         Text(text = stringResource(id = R.string.it_take_five_minute))
                         Text(text = stringResource(id = R.string.please_refresh))
                     }
-
-
                 }
             }
         }

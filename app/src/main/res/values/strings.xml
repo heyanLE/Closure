@@ -105,4 +105,14 @@
     <string name="click_to_up_top">点击回到顶部</string>
     <string name="log">日志</string>
 
+    <string name="item_load_err">物品清单数据加载失败</string>
+
+    <string name="click_to_ocr">点击请求平台刷新仓库（勿滥用）</string>
+
+    <string name="ocr_completely">请求刷新仓库成功，预计五分钟，请手动刷新</string>
+
+    <string name="last_update_time">最后一次更新时间</string>
+
+    <string name="please_refresh_warehouse">没有数据，请先请求平台刷新</string>
+
 </resources>
