@@ -7,7 +7,7 @@ package com.heyanle.closure.net.model
 data class GameConfig(
     var isAutoBattle: Boolean,
     var mapId: String,
-    var battleMaps: List<String> = emptyList(),
+    var battleMaps: List<String>? = emptyList(),
     var keepingAP: Long,
     var recruitReserve: Long,
     var recruitIgnoreRobot: Boolean,

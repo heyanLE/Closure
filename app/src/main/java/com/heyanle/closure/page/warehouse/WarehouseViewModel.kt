@@ -74,7 +74,7 @@ class WarehouseViewModel: ViewModel() {
 
     fun getItems(getGameResp: GetGameResp, item: Map<String, ItemModel.ItemBean>): List<ItemIcon>{
         val items = arrayListOf<ItemIcon>()
-        getGameResp.consumable.forEach { (t, u) ->
+        getGameResp.consumable?.forEach { (t, u) ->
             if(item.containsKey(t)){
                 var count = 0L
                 u.forEach {
