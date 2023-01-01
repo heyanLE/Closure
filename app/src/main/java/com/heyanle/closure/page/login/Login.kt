@@ -58,7 +58,9 @@ import com.heyanle.closure.ui.LoadingIcon
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.closure.utils.toast
 import com.heyanle.closure.utils.TODO
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Created by HeYanLe on 2022/12/23 16:47.
@@ -77,6 +79,16 @@ fun Login(
 
     ProgressDialog(show = vm.progressDialog)
     ErrorDialog(show = vm.errorDialog, msg = vm.errorMsg)
+    RegisterDialog(show = vm.registerDialog, email = vm.email.value, password = vm.password.value,
+        onCancel = { vm.registerDialog.value = false }) {
+        scope.launch {
+            vm.register {
+                stringRes(R.string.register_completely).toast()
+                vm.registerDialog.value = false
+            }
+        }
+
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -209,7 +221,7 @@ fun Login(
                         stringRes(R.string.email_password_empty).toast()
                         return@OutlinedButton
                     }
-                    TODO("注册")
+                    vm.registerDialog.value = true
             }) {
                 Text(text = stringResource(id = R.string.register))
             }
@@ -228,6 +240,60 @@ fun ProgressDialog(
             icon = { LoadingIcon() },
             onDismissRequest = {},
             confirmButton = {})
+    }
+}
+
+@Composable
+fun RegisterDialog(
+    show: MutableState<Boolean>,
+    email: String,
+    password: String,
+    onCancel: ()->Unit,
+    onConfirm: ()->Unit,
+){
+    if(show.value){
+        AlertDialog(
+            title = {
+                Row (
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+
+                    Image(
+                        modifier = Modifier.size(40.dp),
+                        painter = painterResource(id = R.drawable.skadi),
+                        contentDescription = stringResource(id = R.string.register))
+                    Spacer(modifier = Modifier.size(4.dp))
+
+                    Text(stringResource(id = R.string.register))
+                }
+            },
+            text = {
+                val text = "${stringResource(id = R.string.email)} ${email}\n${stringResource(id = R.string.password)} ${password}\n${stringResource(
+                    id = R.string.ask_register
+                )}"
+                Text(text) },
+            onDismissRequest = {show.value = false},
+            confirmButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ColorScheme.secondary,
+                        contentColor = ColorScheme.onSecondary
+                    ),
+                    onClick = {
+                        onConfirm()
+                    }) {
+                    Text(text = stringResource(id = R.string.confirm))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        onCancel()
+                    }) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
+            }
+        )
     }
 }
 

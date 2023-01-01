@@ -11,6 +11,6 @@ data class ScreenshotRsp(
     val utcTime: Long,
     val type: Long,
     val host: String,
-    val fileName: List<String>,
+    var fileName: List<String>? = arrayListOf(),
     val url: String,
 )

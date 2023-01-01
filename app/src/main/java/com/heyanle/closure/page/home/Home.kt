@@ -62,6 +62,7 @@ import com.heyanle.closure.page.MainController
 import com.heyanle.closure.R
 import com.heyanle.closure.net.model.GameLogItem
 import com.heyanle.closure.net.model.GetGameResp
+import com.heyanle.closure.page.screenshot.ScreenshotDialog
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
 import com.heyanle.closure.ui.FastScrollToTopFab
@@ -88,6 +89,9 @@ fun Home(){
 
     val lazyListState = rememberLazyListState()
 
+    current?.let {
+        ScreenshotDialog(enable = vm.enableScreenShot.value, onDismissRequest = { vm.enableScreenShot.value = false }, select = it)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -150,7 +154,6 @@ fun Home(){
                 }.onLoading {
                     LoadingPage(modifier = Modifier.fillMaxSize(),)
                 }.onData {
-
                     LazyColumn(
                         state = lazyListState,
                         modifier = Modifier

@@ -23,6 +23,8 @@ class LoginViewModel: ViewModel() {
     val errorMsg = mutableStateOf("")
     val errorDialog = mutableStateOf(false)
 
+    val registerDialog = mutableStateOf(false)
+
     suspend fun login(callback: (WebsiteUser)->Unit){
         progressDialog.value = true
         val res = Net.auth.login(email.value, password.value).awaitResponseOK()

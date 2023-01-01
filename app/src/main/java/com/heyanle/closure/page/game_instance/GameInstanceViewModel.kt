@@ -9,6 +9,10 @@ import com.geetest.sdk.GT3Listener
 import com.heyanle.closure.MainActivity
 import com.heyanle.closure.R
 import com.heyanle.closure.net.Net
+import com.heyanle.closure.net.model.CaptchaReq
+import com.heyanle.closure.net.model.CreateGameReq
+import com.heyanle.closure.net.model.GameLoginReq
+import com.heyanle.closure.net.model.GameReq
 import com.heyanle.closure.net.model.GameResp
 import com.heyanle.closure.page.MainController
 import com.heyanle.closure.page.data
@@ -23,6 +27,7 @@ import com.heyanle.closure.utils.TODO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 /**
  * Created by HeYanLe on 2022/12/23 22:01.
@@ -30,8 +35,12 @@ import kotlinx.coroutines.withContext
  */
 class GameInstanceViewModel: ViewModel() {
 
+
     val loadingDialogEnable = mutableStateOf(false)
+
+    var deleteResp: GameResp? = null
     val deleteDialogEnable = mutableStateOf(false)
+
     val addDialogEnable = mutableStateOf(false)
 
     init {
@@ -45,7 +54,12 @@ class GameInstanceViewModel: ViewModel() {
     }
 
     fun onAddClick(){
-        TODO("添加实例按钮")
+        addDialogEnable.value = true
+    }
+
+    fun onDeleteClick(gameResp: GameResp){
+        deleteResp = gameResp
+        deleteDialogEnable.value = true
     }
 
     suspend fun loadGameInstances(){
@@ -66,13 +80,13 @@ class GameInstanceViewModel: ViewModel() {
     }
 
     suspend fun gameLogin(gameResp: GameResp){
-        val config = gameResp.gameConfig.copy(
-            isStopped = false
-        )
         val token = MainController.token.value?:""
         val account = gameResp.config.account
         val platform = gameResp.config.platform
-        Net.game.postConfig(token, platform, account, config).awaitResponseOK()
+        Net.game.login(token, GameLoginReq(
+            account = account,
+            platform = platform.toInt()
+        )).awaitResponseOK()
             .onSuccessful {
                 loadGameInstances()
                 withContext(Dispatchers.Main){
@@ -85,36 +99,41 @@ class GameInstanceViewModel: ViewModel() {
             }
     }
 
+
     suspend fun gameCaptcha(gameResp: GameResp, mainActivity: MainActivity){
-        TODO("滑动验证，这里能滑但是还没接入可小姐")
-        mainActivity.onCaptcha(gameResp.captchaInfo, object: GT3Listener() {
-            override fun onReceiveCaptchaCode(p0: Int) {
-                Log.d("GameInstanceViewModel", "onReceiveCaptchaCode $p0")
-            }
+        mainActivity.onCaptcha(gameResp.captchaInfo) {
+            onCaptchaPost(gameResp, it)
+        }
+    }
 
-            override fun onStatistics(p0: String?) {
-                Log.d("GameInstanceViewModel", "onStatistics $p0")
-            }
-
-            override fun onClosed(p0: Int) {
-                Log.d("GameInstanceViewModel", "onClosed $p0")
-            }
-
-            override fun onSuccess(p0: String?) {
-                Log.d("GameInstanceViewModel", "onSuccess $p0")
-            }
-
-            override fun onFailed(p0: GT3ErrorBean?) {
-                Log.d("GameInstanceViewModel", "onFailed $p0")
-            }
-
-            override fun onButtonClick() {
-                Log.d("GameInstanceViewModel", "onButtonClick")
-            }
-        })
+    private fun onCaptchaPost(gameResp: GameResp, string: String){
+        viewModelScope.launch {
+            val token = MainController.token.value?:""
+            val account = gameResp.config.account
+            val platform = gameResp.config.platform
+            val jsonObject = JSONObject(string)
+            Net.game.postCaptcha(token, platform, account, CaptchaReq(
+                challenge = gameResp.captchaInfo.challenge,
+                geetestChallenge = jsonObject.getString("geetest_challenge"),
+                geetestSeccode = jsonObject.getString("geetest_seccode"),
+                geetestValidate = jsonObject.getString("geetest_validate"),
+                success = true,
+            )).awaitResponseOK()
+                .onSuccessful {
+                    withContext(Dispatchers.Main){
+                        stringRes(R.string.captcha_sus).toast()
+                    }
+                    loadGameInstances()
+                }.onFailed { b, s ->
+                    withContext(Dispatchers.Main){
+                        s.toast()
+                    }
+                }
+        }
     }
 
     suspend fun gamePause(gameResp: GameResp){
+        loadingDialogEnable.value = true
         val config = gameResp.gameConfig.copy(
             isStopped = true
         )
@@ -125,17 +144,35 @@ class GameInstanceViewModel: ViewModel() {
             .onSuccessful {
                 loadGameInstances()
                 withContext(Dispatchers.Main){
+                    loadingDialogEnable.value = false
                     stringRes(R.string.game_pause_completely).toast()
                 }
             }.onFailed { b, s ->
                 withContext(Dispatchers.Main){
+                    loadingDialogEnable.value = false
                     s.toast()
                 }
             }
     }
 
     suspend fun instanceDelete(gameResp: GameResp){
-        TODO("删除实例")
+        loadingDialogEnable.value = true
+        val token = MainController.token.value?:""
+        val account = gameResp.config.account
+        val platform = gameResp.config.platform
+        Net.game.delete(token, GameReq(account, platform.toInt())).awaitResponseOK()
+            .onSuccessful {
+                loadGameInstances()
+                withContext(Dispatchers.Main){
+                    loadingDialogEnable.value = false
+                    stringRes(R.string.instance_delete_completely).toast()
+                }
+            }.onFailed { b, s ->
+                withContext(Dispatchers.Main){
+                    loadingDialogEnable.value = false
+                    s.toast()
+                }
+            }
     }
 
 }

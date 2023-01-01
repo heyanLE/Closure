@@ -16,6 +16,8 @@
 
     <string name="register">注册</string>
 
+    <string name="ask_register">确认要注册吗？</string>
+
     <string name="closure">可露希尔工作室</string>
 
     <string name="error">哎呀，出错啦！</string>
@@ -114,5 +116,16 @@
     <string name="last_update_time">最后一次更新时间</string>
 
     <string name="please_refresh_warehouse">没有数据，请先请求平台刷新</string>
+
+    <string name="captcha_sus">滑动验证成功，请手动刷新状态！</string>
+
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+
+    <string name="register_completely">注册成功，请先登录！</string>
+
+    <string name="ask_delete_instance">确定要删除实例吗！</string>
+
+    <string name="instance_delete_completely">实例删除成功</string>
 
 </resources>

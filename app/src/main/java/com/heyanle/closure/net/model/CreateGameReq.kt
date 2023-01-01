@@ -9,3 +9,8 @@ data class CreateGameReq(
     val password: String,
     val platform: Int,
 )
+
+data class GameReq(
+    val account: String,
+    val platform: Int,
+)

@@ -1,5 +1,6 @@
 package com.heyanle.closure.page.game_instance
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -32,6 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.getValue
@@ -41,6 +45,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,6 +60,7 @@ import com.heyanle.closure.R
 import com.heyanle.closure.model.StageModel
 import com.heyanle.closure.net.model.GameResp
 import com.heyanle.closure.page.home.AccountCard
+import com.heyanle.closure.page.login.ProgressDialog
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
 import com.heyanle.closure.ui.LoadingIcon
@@ -77,6 +83,16 @@ fun Instance() {
     val vm = viewModel<GameInstanceViewModel>()
     val status by MainController.instance.observeAsState(MainController.StatusData.None())
     val curStatus = status
+
+    ProgressDialog(show = vm.loadingDialogEnable)
+    DeleteDialog(show = vm.deleteDialogEnable) {
+        scope.launch {
+            vm.deleteResp?.let {
+                vm.instanceDelete(it)
+            }
+        }
+
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -168,7 +184,7 @@ fun Instance() {
                                 },
                                 onDelete = {
                                     scope.launch {
-                                        vm.instanceDelete(it)
+                                        vm.onDeleteClick(it)
                                     }
                                 }
                             ) { resp ->
@@ -405,6 +421,53 @@ fun DoubleText(
             text = endText,
         )
 
+    }
+}
+
+@Composable
+fun DeleteDialog(
+    show: MutableState<Boolean>,
+    onConfirm : ()->Unit ,
+){
+    if(show.value){
+        AlertDialog(
+            title = {
+                Row (
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+
+                    Image(
+                        modifier = Modifier.size(40.dp),
+                        painter = painterResource(id = R.drawable.error),
+                        contentDescription = stringResource(id = R.string.register))
+                    Spacer(modifier = Modifier.size(4.dp))
+
+                    Text(stringResource(id = R.string.ask_delete_instance))
+                }
+            },
+            text = { },
+            onDismissRequest = {show.value = false},
+            confirmButton = {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ColorScheme.error,
+                        contentColor = ColorScheme.onError
+                    ),
+                    onClick = {
+                        onConfirm()
+                    }) {
+                    Text(text = stringResource(id = R.string.confirm))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        show.value = false
+                    }) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
+            }
+        )
     }
 }
 

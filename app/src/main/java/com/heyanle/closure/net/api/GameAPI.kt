@@ -6,6 +6,7 @@ import com.heyanle.closure.net.model.CreateGameReq
 import com.heyanle.closure.net.model.GameConfig
 import com.heyanle.closure.net.model.GameLogItem
 import com.heyanle.closure.net.model.GameLoginReq
+import com.heyanle.closure.net.model.GameReq
 import com.heyanle.closure.net.model.GameResp
 import com.heyanle.closure.net.model.GetGameResp
 import com.heyanle.closure.net.model.Response
@@ -38,7 +39,7 @@ interface GameAPI {
     @DELETE("/Game")
     fun delete(
         @Header("Authorization") token: String,
-        @Body req: CreateGameReq,
+        @Body req: GameReq,
     ): Call<Response<String>>
 
     @POST("/Game/Captcha/{account}/{platform}")
@@ -90,7 +91,7 @@ interface GameAPI {
         @Header("Authorization") token: String,
         @Path("platform") platform: Long,
         @Path("account") account: String,
-    ): Call<Response<ScreenshotRsp>>
+    ): Call<Response<List<ScreenshotRsp>>>
 
 
     @GET("/Game/{account}/{platform}")

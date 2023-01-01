@@ -53,8 +53,14 @@ class MainActivity: ComponentActivity() {
         }
     }
 
-    fun onCaptcha(captchaInfo: CaptchaInfo, listener: GT3Listener){
-        val jsonObject = JSONObject(GsonUtil.gson.toJson(captchaInfo))
+
+
+    fun onCaptcha(captchaInfo: CaptchaInfo, listener: (String)->Unit){
+        val jsonObject = JSONObject()
+        jsonObject.put("gt", captchaInfo.gt)
+        jsonObject.put("challenge", captchaInfo.challenge)
+        jsonObject.put("success", 1)
+        jsonObject.put("new_captcha", true)
         // 配置bean文件，也可在oncreate初始化
         val gt3ConfigBean = GT3ConfigBean()
         // 设置验证模式，1：bind，2：unbind
@@ -74,31 +80,45 @@ class MainActivity: ComponentActivity() {
             }
 
             override fun onStatistics(p0: String?) {
-                Log.d("GameInstanceViewModel", "onStatistics $p0")
+                Log.d("MainActivity", "onStatistics $p0")
             }
 
             override fun onClosed(p0: Int) {
-                Log.d("GameInstanceViewModel", "onClosed $p0")
+                Log.d("MainActivity", "onClosed $p0")
             }
 
             override fun onSuccess(p0: String?) {
-                Log.d("GameInstanceViewModel", "onSuccess $p0")
+                Log.d("MainActivity", "onSuccess $p0")
             }
 
             override fun onFailed(p0: GT3ErrorBean?) {
-                Log.d("GameInstanceViewModel", "onFailed $p0")
+                Log.d("MainActivity", "onFailed $p0")
             }
 
             override fun onButtonClick() {
-                Log.d("GameInstanceViewModel", "onButtonClick")
+                Log.d("MainActivity", "onButtonClick")
                 gt3ConfigBean.api1Json = jsonObject
                 gt3.getGeetest()
+            }
+
+            override fun onDialogResult(result: String?) {
+                super.onDialogResult(result)
+                Log.d("MainActivity", "onDialogResult $result")
+                listener(result?:"")
+                gt3.dismissGeetestDialog()
             }
         }
         gt3ConfigBean.api1Json = JSONObject(GsonUtil.gson.toJson(captchaInfo))
         gt3.init(gt3ConfigBean)
         // 开启验证
         gt3.startCustomFlow()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(::gt3.isInitialized){
+            gt3.destory()
+        }
     }
 
 }

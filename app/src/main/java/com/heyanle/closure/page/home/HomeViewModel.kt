@@ -1,5 +1,6 @@
 package com.heyanle.closure.page.home
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -34,6 +35,8 @@ class HomeViewModel: ViewModel() {
 
     val avatarImage = MutableLiveData<Any>(R.drawable.logo)
     val topBarTitle = MutableLiveData<String>(stringRes(R.string.app_name))
+
+    val enableScreenShot = mutableStateOf(false)
 
 
 
@@ -109,7 +112,6 @@ class HomeViewModel: ViewModel() {
     }
 
     fun onWarehouse(navController: NavController){
-        // TODO("详情页仓库")
         navController.navigate(WAREHOUSE)
     }
 
@@ -118,7 +120,7 @@ class HomeViewModel: ViewModel() {
     }
 
     fun onScreenshot(){
-        TODO("详情页截图")
+        enableScreenShot.value = true
     }
 
 
