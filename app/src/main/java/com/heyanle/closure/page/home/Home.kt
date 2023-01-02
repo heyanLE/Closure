@@ -1,6 +1,7 @@
 package com.heyanle.closure.page.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,8 +61,10 @@ import com.heyanle.closure.LOGIN
 import com.heyanle.closure.LocalNavController
 import com.heyanle.closure.page.MainController
 import com.heyanle.closure.R
+import com.heyanle.closure.model.ItemModel
 import com.heyanle.closure.net.model.GameLogItem
 import com.heyanle.closure.net.model.GetGameResp
+import com.heyanle.closure.page.login.ProgressDialog
 import com.heyanle.closure.page.screenshot.ScreenshotDialog
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
@@ -82,6 +85,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Home(){
 
+    val scope = rememberCoroutineScope()
+
     val vm = viewModel<HomeViewModel>()
     val nav = LocalNavController.current
 
@@ -92,6 +97,20 @@ fun Home(){
     current?.let {
         ScreenshotDialog(enable = vm.enableScreenShot.value, onDismissRequest = { vm.enableScreenShot.value = false }, select = it)
     }
+
+    AutoSettingDialog(
+        vm.enableAutoSettingDialog.value,
+        onDismissRequest = {
+            vm.enableAutoSettingDialog.value = false
+        },
+        onSave = {
+            scope.launch {
+                vm.updateConfig(it)
+            }
+        }
+    )
+
+    ProgressDialog(show = vm.enableLoadingDialog)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -169,6 +188,10 @@ fun Home(){
 
                             Spacer(modifier = Modifier.size(16.dp))
 
+                            MoneyPanel(getGameResp = it.data)
+
+                            Spacer(modifier = Modifier.size(16.dp))
+
                             APLVPanel(getGameResp = it.data)
 
                             Spacer(modifier = Modifier.size(16.dp))
@@ -181,15 +204,11 @@ fun Home(){
                         }
 
                         logCard(logData, vm)
-
                     }
                 }
             }
-
         }
     }
-
-
 }
 
 @Composable
@@ -235,6 +254,75 @@ fun AccountCard(
             )
         }
 
+
+    }
+}
+
+/**
+ * 源石 合成玉 龙门币
+ */
+@Composable
+fun MoneyPanel(getGameResp: GetGameResp){
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(ColorScheme.surface)
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        // 源石
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            OKImage(modifier = Modifier
+                .size(48.dp)
+                .padding(1.dp, 0.dp), image = ItemModel.DIAMOND_ICON_URL, contentDescription = stringResource(
+                id = R.string.diamond
+            ))
+            Text(
+                fontSize = 14.sp,
+                text = "${getGameResp.status.androidDiamond}"
+            )
+
+        }
+
+        // 合成玉
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            OKImage(modifier = Modifier
+                .size(48.dp)
+                .padding(1.dp, 0.dp), image = ItemModel.DIAMOND_SHD_ICON_URL, contentDescription = stringResource(
+                id = R.string.diamond_shd
+            ))
+            Text(
+                fontSize = 14.sp,
+                text = "${getGameResp.status.diamondShard}"
+            )
+
+        }
+
+        // 龙门币
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            OKImage(modifier = Modifier
+                .size(48.dp)
+                .padding(1.dp, 0.dp), image = ItemModel.GOLD_ICON_URL, contentDescription = stringResource(
+                id = R.string.gold
+            ))
+            Text(
+                fontSize = 14.sp,
+                text = "${getGameResp.status.gold}"
+            )
+
+        }
 
     }
 }

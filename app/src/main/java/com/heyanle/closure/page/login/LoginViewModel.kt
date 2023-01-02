@@ -3,6 +3,7 @@ package com.heyanle.closure.page.login
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.heyanle.closure.net.Net
+import com.heyanle.closure.net.model.LoginReq
 import com.heyanle.closure.net.model.WebsiteUser
 import com.heyanle.closure.utils.awaitResponseOK
 import com.heyanle.closure.utils.onFailed
@@ -40,7 +41,7 @@ class LoginViewModel: ViewModel() {
 
     suspend fun register(callback: (WebsiteUser)->Unit) {
         progressDialog.value = true
-        val res = Net.auth.register(email.value, password.value).awaitResponseOK()
+        val res = Net.auth.register(LoginReq(email.value, password.value)).awaitResponseOK()
         res.onSuccessful {
             it?.let { data ->
                 progressDialog.value = false

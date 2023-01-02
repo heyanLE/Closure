@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.heyanle.closure.LocalAct
 import com.heyanle.closure.R
 import com.heyanle.closure.net.model.WebsiteUser
 import com.heyanle.closure.theme.ColorScheme
@@ -58,6 +59,7 @@ import com.heyanle.closure.ui.LoadingIcon
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.closure.utils.toast
 import com.heyanle.closure.utils.TODO
+import com.heyanle.closure.utils.openUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -130,13 +132,19 @@ fun Login(
                     fontSize = 20.sp,
                     color = ColorScheme.onBackground
                 )
+                val act = LocalAct.current
                 Text(text = stringResource(id = R.string.closure),
                     fontSize = 20.sp,
                     color = ColorScheme.secondary,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .clickable {
-//                        openUrl(Uri.parse("$BASE_URL/account/login"))
+                            kotlin.runCatching {
+                                openUrl(act,"https://arknights.host/")
+                            }.onFailure {
+                                it.printStackTrace()
+                            }
+
                         })
             }
             // 邮箱
@@ -153,6 +161,7 @@ fun Login(
                 },
                 singleLine = true,
                 colors = TextFieldDefaults.textFieldColors(
+                    containerColor = ColorScheme.surface,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     errorIndicatorColor = Color.Transparent,
@@ -188,7 +197,7 @@ fun Login(
                     }
                 },
                 colors = TextFieldDefaults.textFieldColors(
-
+                    containerColor = ColorScheme.surface,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
                     errorIndicatorColor = Color.Transparent,
@@ -199,7 +208,7 @@ fun Login(
                 )
             )
 
-            Button(colors = ButtonDefaults.buttonColors(containerColor = ColorScheme.secondary),
+            Button(colors = ButtonDefaults.buttonColors(containerColor = ColorScheme.secondary, contentColor = ColorScheme.onSecondary),
                 modifier = Modifier.fillMaxWidth(), onClick = {
                     if (vm.email.value.isBlank() || vm.password.value.isBlank()) {
                         stringRes(R.string.email_password_empty).toast()

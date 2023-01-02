@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import com.heyanle.closure.R
 import com.heyanle.closure.WAREHOUSE
 import com.heyanle.closure.net.Net
+import com.heyanle.closure.net.model.GameConfig
 import com.heyanle.closure.net.model.GameLogItem
 import com.heyanle.closure.page.MainController
 import com.heyanle.closure.page.data
@@ -18,7 +19,7 @@ import com.heyanle.closure.utils.awaitResponseOK
 import com.heyanle.closure.utils.onFailed
 import com.heyanle.closure.utils.onSuccessful
 import com.heyanle.closure.utils.stringRes
-import com.heyanle.closure.utils.TODO
+import com.heyanle.closure.utils.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,6 +38,10 @@ class HomeViewModel: ViewModel() {
     val topBarTitle = MutableLiveData<String>(stringRes(R.string.app_name))
 
     val enableScreenShot = mutableStateOf(false)
+
+    val enableAutoSettingDialog = mutableStateOf(false)
+    
+    val enableLoadingDialog = mutableStateOf(false)
 
 
 
@@ -116,13 +121,34 @@ class HomeViewModel: ViewModel() {
     }
 
     fun onInstanceConfig(){
-        TODO("详情页托管配置")
+        enableAutoSettingDialog.value = true
     }
 
     fun onScreenshot(){
         enableScreenShot.value = true
     }
 
+    suspend fun updateConfig(gameConfig: GameConfig){
+        val current = MainController.current.value
+        val account = current?.account?:""
+        val platform = current?.platform?:-1L
+        val token = MainController.token.value?:""
+        enableLoadingDialog.value = true
+        Net.game.postConfig(token, platform, account, gameConfig).awaitResponseOK()
+            .onSuccessful { 
+                //loadGetGameResp()
+                withContext(Dispatchers.Main){
+                    enableLoadingDialog.value = false
+                    enableAutoSettingDialog.value = false
+                    stringRes(R.string.post_config_completely).toast()
+                }
+            }.onFailed { b, s ->
+                withContext(Dispatchers.Main){
+                    enableLoadingDialog.value = false
+                    s.toast()
+                }
+            }
+    }
 
     override fun onCleared() {
         super.onCleared()

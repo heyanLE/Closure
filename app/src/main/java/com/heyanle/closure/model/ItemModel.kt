@@ -18,6 +18,19 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 object ItemModel {
 
+    // 理智图标
+    const val AP_ICON_URL = "https://ak.dzp.me/dst/items/AP_GAMEPLAY.webp"
+
+    // 源石图标
+    const val DIAMOND_ICON_URL = "https://ak.dzp.me/dst/items/DIAMOND.webp"
+
+    // 合成玉图标
+    const val DIAMOND_SHD_ICON_URL = "https://ak.dzp.me/dst/items/DIAMOND_SHD.webp"
+
+    // 龙门币图标
+    const val GOLD_ICON_URL = "https://ak.dzp.me/dst/items/GOLD.webp"
+
+
     private const val URL = "https://arknights.host/data/Items.json"
 
     private val map: HashMap<String, ItemBean> = hashMapOf()

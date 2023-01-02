@@ -164,12 +164,35 @@ class GameInstanceViewModel: ViewModel() {
             .onSuccessful {
                 loadGameInstances()
                 withContext(Dispatchers.Main){
+                    deleteDialogEnable.value = false
                     loadingDialogEnable.value = false
                     stringRes(R.string.instance_delete_completely).toast()
                 }
             }.onFailed { b, s ->
                 withContext(Dispatchers.Main){
                     loadingDialogEnable.value = false
+                    deleteDialogEnable.value = false
+                    s.toast()
+                }
+            }
+    }
+
+    suspend fun instanceAdd(createGameReq: CreateGameReq){
+        loadingDialogEnable.value = true
+        val token = MainController.token.value?:""
+        Net.game.post(token, createGameReq).awaitResponseOK()
+            .onSuccessful {
+                loadGameInstances()
+                withContext(Dispatchers.Main){
+                    loadingDialogEnable.value = false
+                    addDialogEnable.value = false
+                    stringRes(R.string.instance_add_completely).toast()
+                }
+            }
+            .onFailed { b, s ->
+                withContext(Dispatchers.Main){
+                    loadingDialogEnable.value = false
+                    addDialogEnable.value = true
                     s.toast()
                 }
             }

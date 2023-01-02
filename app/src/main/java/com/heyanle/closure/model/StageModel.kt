@@ -24,6 +24,10 @@ object StageModel {
     private val map: HashMap<String, Stage> = hashMapOf()
     val mapLiveData = MutableLiveData<Map<String, Stage>>(emptyMap())
 
+    val isLoading = MutableLiveData<Boolean>(false)
+    val isError = MutableLiveData<Boolean>(false)
+    val errorMsg = MutableLiveData<String>("")
+
     // 一个关卡
     data class Stage (
         val id: String,
@@ -59,6 +63,12 @@ object StageModel {
                 return res
             }
         }
+
+        override fun toString(): String {
+            return "Stage(id='$id', name='$name', code='$code', ap=$ap, items=$items)"
+        }
+
+
     }
 
 
@@ -69,6 +79,8 @@ object StageModel {
 
     fun refresh(){
         if(isRefresh.compareAndSet(false, true)){
+            isLoading.postValue(true)
+            isError.postValue(false)
             retryCount = 3
             tryRefresh()
         }
@@ -78,7 +90,9 @@ object StageModel {
     private fun tryRefresh(){
         if(retryCount > 0){
             GlobalScope.launch {
+                isLoading.postValue(false)
                 Net.okHttpClient.get(URL).onSuccessful {
+                    isError.postValue(false)
                     retryCount = 3
                     map.clear()
                     kotlin.runCatching {
@@ -89,7 +103,8 @@ object StageModel {
                     }
                     mapLiveData.postValue(map)
                     isRefresh.set(false)
-                }.onFailed { _, _ ->
+                }.onFailed { _, s ->
+                    errorMsg.postValue(s)
                     retryCount --
                     refresh()
                 }
@@ -97,6 +112,7 @@ object StageModel {
         }else{
             map.clear()
             isRefresh.set(false)
+            isError.postValue(true)
         }
     }
 

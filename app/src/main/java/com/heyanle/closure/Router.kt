@@ -83,6 +83,7 @@ fun Nav() {
                 LOGIN,
             ) { entry ->
                 Login {
+                    MainController.current.postValue(MainController.InstanceSelect("", -1L))
                     MainController.token.value = it.token
                     nav.popBackStack()
                 }

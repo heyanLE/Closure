@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -93,6 +95,18 @@ fun Instance() {
         }
 
     }
+
+    AddInstanceDialog(
+        vm.addDialogEnable.value,
+        onDismissRequest = {
+            vm.addDialogEnable.value = false
+        },
+        onAdd = {
+            scope.launch {
+                vm.instanceAdd(it)
+            }
+        }
+    )
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -259,6 +273,9 @@ fun GameInstanceCard(
     val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
+            .clip(
+                RoundedCornerShape(8.dp)
+            )
             .background(ColorScheme.surface)
             .height(IntrinsicSize.Min)
             .clickable {
@@ -431,27 +448,22 @@ fun DeleteDialog(
 ){
     if(show.value){
         AlertDialog(
-            title = {
-                Row (
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-
-                    Image(
-                        modifier = Modifier.size(40.dp),
-                        painter = painterResource(id = R.drawable.error),
-                        contentDescription = stringResource(id = R.string.register))
-                    Spacer(modifier = Modifier.size(4.dp))
-
-                    Text(stringResource(id = R.string.ask_delete_instance))
-                }
+            modifier = Modifier.width(IntrinsicSize.Min),
+            icon = {
+                Image(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(id = R.drawable.error),
+                    contentDescription = stringResource(id = R.string.register))
             },
-            text = { },
+
+            text = {Text(modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, text = stringResource(id = R.string.ask_delete_instance)) },
             onDismissRequest = {show.value = false},
             confirmButton = {
-                Button(
+                TextButton(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = ColorScheme.error,
                         contentColor = ColorScheme.onError
+
                     ),
                     onClick = {
                         onConfirm()
@@ -460,7 +472,11 @@ fun DeleteDialog(
                 }
             },
             dismissButton = {
-                Button(
+                TextButton(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ColorScheme.surface,
+                        contentColor = ColorScheme.onSurface
+                    ),
                     onClick = {
                         show.value = false
                     }) {

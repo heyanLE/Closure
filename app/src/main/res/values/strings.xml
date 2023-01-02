@@ -31,6 +31,8 @@
     <string name="map">托管地图</string>
     <string name="keep_ap">理智保留</string>
     <string name="building_arrange">基建排班</string>
+    <string name="recruit_reserve">公招券保留</string>
+    <string name="recruit_ignore_robot">招募机械</string>
 
     <string name="official_server">官服</string>
     <string name="bilibili_server">B服</string>
@@ -121,11 +123,36 @@
 
     <string name="cancel">取消</string>
     <string name="confirm">确定</string>
+    <string name="save">保存</string>
 
     <string name="register_completely">注册成功，请先登录！</string>
 
     <string name="ask_delete_instance">确定要删除实例吗！</string>
 
     <string name="instance_delete_completely">实例删除成功</string>
+
+    <string name="instance_add_completely">实例添加成功</string>
+
+    <string name="input_account">请输入账号</string>
+
+    <string name="server">所属服务器</string>
+
+    <string name="ap_has_max">理智已溢出</string>
+
+    <string name="auto_setting">托管配置</string>
+
+    <string name="battle_list">战斗队列</string>
+
+    <string name="click_to_config">点击配置</string>
+
+    <string name="search">搜索</string>
+
+    <string name="please_input_keyword">请输入关键字</string>
+
+    <string name="post_config_completely">更新托管配置成功</string>
+
+    <string name="diamond">源石</string>
+    <string name="diamond_shd">合成玉</string>
+    <string name="gold">龙门币</string>
 
 </resources>

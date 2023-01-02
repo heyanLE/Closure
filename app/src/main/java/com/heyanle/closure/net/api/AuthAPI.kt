@@ -15,9 +15,7 @@ import retrofit2.http.Path
  */
 interface AuthAPI {
 
-    fun register(email: String, password: String): Call<Response<WebsiteUser>>{
-        return register(LoginReq(email, password))
-    }
+
 
     @POST("Auth")
     fun register(@Body login: LoginReq): Call<Response<WebsiteUser>>

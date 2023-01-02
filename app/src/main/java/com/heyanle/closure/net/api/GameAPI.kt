@@ -15,9 +15,11 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * Created by HeYanLe on 2022/12/23 14:59.
@@ -36,7 +38,7 @@ interface GameAPI {
         @Body req: CreateGameReq,
     ): Call<Response<String>>
 
-    @DELETE("/Game")
+    @HTTP(method = "DELETE", path = "/Game", hasBody = true)
     fun delete(
         @Header("Authorization") token: String,
         @Body req: GameReq,
