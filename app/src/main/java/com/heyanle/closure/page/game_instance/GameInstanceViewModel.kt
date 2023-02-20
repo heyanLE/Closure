@@ -97,6 +97,8 @@ class GameInstanceViewModel: ViewModel() {
                     s.toast()
                 }
             }
+
+
     }
 
 

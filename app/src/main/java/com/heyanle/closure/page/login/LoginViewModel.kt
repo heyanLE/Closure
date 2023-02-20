@@ -9,6 +9,7 @@ import com.heyanle.closure.utils.awaitResponseOK
 import com.heyanle.closure.utils.onFailed
 import com.heyanle.closure.utils.onSuccessful
 import retrofit2.awaitResponse
+import java.net.URLEncoder
 
 /**
  * Created by HeYanLe on 2022/12/23 18:05.
@@ -28,7 +29,10 @@ class LoginViewModel: ViewModel() {
 
     suspend fun login(callback: (WebsiteUser)->Unit){
         progressDialog.value = true
-        val res = Net.auth.login(email.value, password.value).awaitResponseOK()
+
+        val passStr =  URLEncoder.encode(password.value, "utf-8")
+
+        val res = Net.auth.login(email.value, passStr) .awaitResponseOK()
         res.onSuccessful {
             it?.let { data ->
                 progressDialog.value = false

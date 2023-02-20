@@ -11,8 +11,8 @@ android {
         applicationId = "com.heyanle.closure"
         minSdk = 24
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -82,7 +82,7 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.google.code.gson:gson:2.10")
     implementation ("com.squareup.retrofit2:converter-gson:2.3.0")
-    implementation ("com.github.heyanLE.okkv2:okkv2-mmkv:1.1.0")
+    implementation ("com.github.heyanLE.okkv2:okkv2-mmkv:1.2.4")
     implementation ("com.github.bumptech.glide:glide:4.14.2")
     implementation ("com.github.bumptech.glide:compose:1.0.0-alpha.1")
 
@@ -97,6 +97,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:$accompanistVersion")
 
     implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil-gif:2.2.2")
 
     implementation("com.geetest.sensebot:sensebot:4.3.8.1")
 

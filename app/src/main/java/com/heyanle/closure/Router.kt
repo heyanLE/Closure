@@ -1,5 +1,6 @@
 package com.heyanle.closure
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.EnterTransition
@@ -10,9 +11,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +32,7 @@ import androidx.compose.ui.Modifier
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.heyanle.closure.net.Net
 import com.heyanle.closure.page.MainController
 import com.heyanle.closure.page.game_instance.Instance
 import com.heyanle.closure.page.login.Login
@@ -36,6 +40,7 @@ import com.heyanle.closure.page.home.Home
 import com.heyanle.closure.page.warehouse.Warehouse
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
+import com.heyanle.closure.ui.LoadingPage
 
 /**
  * Created by HeYanLe on 2022/12/23 16:46.
@@ -58,38 +63,76 @@ const val DEFAULT = HOME
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Nav() {
-    val nav = rememberAnimatedNavController()
-    CompositionLocalProvider(LocalNavController provides nav) {
-        AnimatedNavHost(nav, DEFAULT,
-            enterTransition = { slideInHorizontally(tween()) { it } },
-            exitTransition = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
-            popEnterTransition = { slideInHorizontally(tween()) { -it } },
-            popExitTransition = { slideOutHorizontally(tween()) { it } })
-        {
-            // 登录状态阻断
-            composableWithTokenCheck(HOME){
-                Home()
-            }
 
-            composableWithTokenCheck(INSTANCE) {
-                Instance()
-            }
 
-            composableWithTokenCheck(WAREHOUSE){
-                Warehouse()
-            }
 
-            composable(
-                LOGIN,
-            ) { entry ->
-                Login {
-                    MainController.current.postValue(MainController.InstanceSelect("", -1L))
-                    MainController.token.value = it.token
-                    nav.popBackStack()
+    AnimatedContent(targetState = Net.baseUrl.value) {
+
+
+        when(it){
+            Net.BaseUrlState.None -> {
+                LaunchedEffect(key1 = it){
+                    Net.getBaseUrl()
+                }
+            }
+            Net.BaseUrlState.Loading -> {
+                LoadingPage(modifier = Modifier
+                    .fillMaxSize()
+                    .background(ColorScheme.background)) {
+                    Text(text = "正在获取域名！")
+                }
+            }
+            Net.BaseUrlState.Error -> {
+                // 没有储存 Token
+                ErrorPage(
+                    modifier = Modifier.background(ColorScheme.background),
+                    errorMsg = "获取域名失败",
+                    clickEnable = true,
+                    onClick = {
+                        Net.getBaseUrl()
+                    },
+                    other = {
+                        Text(text = stringResource(id = R.string.click_to_retry))
+                    }
+                )
+            }
+            is Net.BaseUrlState.Url -> {
+                val nav = rememberAnimatedNavController()
+                CompositionLocalProvider(LocalNavController provides nav) {
+                    AnimatedNavHost(nav, DEFAULT,
+                        enterTransition = { slideInHorizontally(tween()) { it } },
+                        exitTransition = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
+                        popEnterTransition = { slideInHorizontally(tween()) { -it } },
+                        popExitTransition = { slideOutHorizontally(tween()) { it } })
+                    {
+                        // 登录状态阻断
+                        composableWithTokenCheck(HOME){
+                            Home()
+                        }
+
+                        composableWithTokenCheck(INSTANCE) {
+                            Instance()
+                        }
+
+                        composableWithTokenCheck(WAREHOUSE){
+                            Warehouse()
+                        }
+
+                        composable(
+                            LOGIN,
+                        ) { entry ->
+                            Login {
+                                MainController.current.postValue(MainController.InstanceSelect("", -1L))
+                                MainController.token.value = it.token
+                                nav.popBackStack()
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+
 }
 
 @ExperimentalAnimationApi
