@@ -47,9 +47,10 @@ fun ScreenshotDialog(
 
     val scope = rememberCoroutineScope()
     val token = MainController.token.value?:""
-    LaunchedEffect(select){
-
-        vm.refresh(token, select.account, select.platform)
+    LaunchedEffect(select, enable){
+        if(enable){
+            vm.refresh(token, select.account, select.platform)
+        }
     }
 
     if(enable){

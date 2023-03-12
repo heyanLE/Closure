@@ -41,6 +41,23 @@ class AutoSettingViewModel: ViewModel() {
     // 基建排班
     val enableBuildingArrange = mutableStateOf(true)
 
+    // 无人机
+    val accelerateSlotCN = mutableStateOf("中层左")
+
+    companion object{
+        val accelerateSlotSelected = listOf<String>(
+            "顶层左",
+            "顶层中",
+            "顶层右",
+            "中层左",
+            "中层中",
+            "中层右",
+            "底层左",
+            "底层中",
+            "底层右",
+        )
+    }
+
     val gameConfig = MutableLiveData<GameConfig>()
     val isLoading = mutableStateOf(false)
     val isError = mutableStateOf(false)
@@ -55,13 +72,11 @@ class AutoSettingViewModel: ViewModel() {
 
         recruitIgnoreRobot.value = it.recruitIgnoreRobot
         enableBuildingArrange.value = it.enableBuildingArrange
+        accelerateSlotCN.value = it.accelerateSlotCN
     }
 
     init {
         gameConfig.observeForever(observer)
-        viewModelScope.launch {
-            refresh()
-        }
     }
 
     suspend fun refresh(){
@@ -86,6 +101,7 @@ class AutoSettingViewModel: ViewModel() {
 
             }.onFailed { b, s ->
                 withContext(Dispatchers.Main){
+                    isLoading.value = false
                     s.toast()
                     isError.value = true
                     errorMsg.value = s
@@ -104,6 +120,7 @@ class AutoSettingViewModel: ViewModel() {
         oldConfig.recruitReserve = recruitReserve.value.toLong()
         oldConfig.enableBuildingArrange = enableBuildingArrange.value
         oldConfig.recruitIgnoreRobot = recruitIgnoreRobot.value
+        oldConfig.accelerateSlotCN = accelerateSlotCN.value
         return oldConfig
     }
 

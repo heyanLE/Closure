@@ -11,6 +11,7 @@ import com.heyanle.closure.R
 import com.heyanle.closure.net.Net
 import com.heyanle.closure.net.model.CaptchaReq
 import com.heyanle.closure.net.model.CreateGameReq
+import com.heyanle.closure.net.model.GameConfig
 import com.heyanle.closure.net.model.GameLoginReq
 import com.heyanle.closure.net.model.GameReq
 import com.heyanle.closure.net.model.GameResp
@@ -35,6 +36,7 @@ import org.json.JSONObject
  */
 class GameInstanceViewModel: ViewModel() {
 
+    val enableAutoSettingDialog = mutableStateOf(false)
 
     val loadingDialogEnable = mutableStateOf(false)
 
@@ -62,13 +64,30 @@ class GameInstanceViewModel: ViewModel() {
         deleteDialogEnable.value = true
     }
 
+    suspend fun updateConfig(gameConfig: GameConfig, gameResp: GameResp){
+        val token = MainController.token.value?:""
+        Net.game.postConfig(token, gameResp.config.platform, gameResp.config.account, gameConfig).awaitResponseOK()
+            .onSuccessful {
+                //loadGetGameResp()
+                viewModelScope.launch {
+                    enableAutoSettingDialog.value = false
+                    stringRes(R.string.post_config_completely).toast()
+                    loadGameInstances()
+                }
+            }.onFailed { b, s ->
+                withContext(Dispatchers.Main){
+                    s.toast()
+                }
+            }
+    }
+
     suspend fun loadGameInstances(){
         MainController.instance.loading()
         Net.game.get((MainController.token.value)?:"").awaitResponseOK()
             .onSuccessful {
                 withContext(Dispatchers.Main){
                     if(it == null){
-                        MainController.instance.error(stringRes(R.string.load_error))
+                        MainController.instance.data(emptyList())
                     }else{
                         MainController.instance.data(it)
                     }
@@ -169,6 +188,15 @@ class GameInstanceViewModel: ViewModel() {
                     deleteDialogEnable.value = false
                     loadingDialogEnable.value = false
                     stringRes(R.string.instance_delete_completely).toast()
+                    MainController.current.value?.let {
+                        if(it.account == gameResp.config.account && it.platform == gameResp.config.platform){
+                            MainController.current.value =
+                                MainController.InstanceSelect(
+                                    "",
+                                    -1
+                                )
+                        }
+                    }
                 }
             }.onFailed { b, s ->
                 withContext(Dispatchers.Main){

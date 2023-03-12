@@ -31,8 +31,9 @@
     <string name="map">托管地图</string>
     <string name="keep_ap">理智保留</string>
     <string name="building_arrange">基建排班</string>
+    <string name="accelerateSlot">无人机加速房间</string>
     <string name="recruit_reserve">公招券保留</string>
-    <string name="recruit_ignore_robot">招募机械</string>
+    <string name="recruit_ignore_robot">忽略机械</string>
 
     <string name="official_server">官服</string>
     <string name="bilibili_server">B服</string>
@@ -72,7 +73,7 @@
 
     <string name="more">更多</string>
 
-    <string name="change_account">切换账号</string>
+    <string name="change_account">退出登录</string>
 
     <string name="much_stage">多地图</string>
 
@@ -104,10 +105,15 @@
     <string name="screenshot">截图</string>
     <string name="instance_config">托管配置</string>
 
+    <string name="bind_qq">绑定 QQ</string>
+
     <string name="click_to_see_all_log">点击查看所有日志</string>
 
     <string name="click_to_up_top">点击回到顶部</string>
     <string name="log">日志</string>
+
+    <string name="anno">公告</string>
+    <string name="click_to_open">点击展开/收缩</string>
 
     <string name="item_load_err">物品清单数据加载失败</string>
 

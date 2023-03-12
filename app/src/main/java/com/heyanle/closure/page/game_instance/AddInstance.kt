@@ -96,7 +96,7 @@ fun AddInstanceDialog(
                 ) {
                     Image(
                         modifier = Modifier.size(40.dp),
-                        painter = painterResource(id = R.drawable.skadi),
+                        painter = painterResource(id = R.drawable.specter),
                         contentDescription = stringResource(id = R.string.add_instance))
                     Spacer(modifier = Modifier.size(4.dp))
                     Text(text = stringResource(id = R.string.add_instance))

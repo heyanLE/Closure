@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -69,16 +70,21 @@ fun Warehouse() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            WarehouseTopAppbar {
-                scope.launch {
-                    vm.loadGetGameResp()
+            WarehouseTopAppbar(
+                onRefresh = {
+                    scope.launch {
+                        vm.loadGetGameResp()
+                    }
+                },
+                onBack = {
+                    nav.popBackStack()
                 }
-            }
+            )
         },
         floatingActionButton = {
             FastScrollToTopFab(listState = lazyGridState)
         }
-    ) {padding ->
+    ) { padding ->
         Box(
             modifier = Modifier
                 .padding(padding)
@@ -89,11 +95,11 @@ fun Warehouse() {
             val getGameRep by MainController.currentGetGame.observeAsState(MainController.StatusData.None())
             val item by ItemModel.mapLiveData.observeAsState(emptyMap())
             getGameRep.onLoading {
-                LoadingPage(modifier = Modifier.fillMaxSize(),)
+                LoadingPage(modifier = Modifier.fillMaxSize())
             }.onError {
                 ErrorPage(
                     modifier = Modifier.fillMaxSize(),
-                    image = R.drawable.empty,
+                    image = R.drawable.texas,
                     errorMsg = stringResource(id = R.string.instance_no_login),
                     other = {
                         Text(text = stringResource(id = R.string.click_to_manager_instance))
@@ -106,14 +112,14 @@ fun Warehouse() {
                 )
             }.onData {
                 val isItemLoading by ItemModel.isLoading.observeAsState(initial = false)
-                if(isItemLoading){
+                if (isItemLoading) {
                     LoadingPage()
-                }else{
+                } else {
                     // 物品信息加载失败
-                    if(item.isEmpty()){
+                    if (item.isEmpty()) {
                         ErrorPage(
                             modifier = Modifier.fillMaxSize(),
-                            image = R.drawable.empty,
+                            image = R.drawable.texas,
                             errorMsg = stringResource(id = R.string.item_load_err),
                             other = {
                                 Text(text = stringResource(id = R.string.click_to_retry))
@@ -125,7 +131,7 @@ fun Warehouse() {
                             }
                         )
 
-                    }else{
+                    } else {
                         val updateButton = @Composable {
                             Button(
                                 modifier = Modifier
@@ -143,18 +149,21 @@ fun Warehouse() {
                         }
                         Column() {
                             val items = vm.getItems(it.data, item)
-                            if(items.isEmpty()){
+                            if (items.isEmpty()) {
                                 updateButton()
                                 ErrorPage(
                                     modifier = Modifier.fillMaxSize(),
                                     errorMsg = stringResource(id = R.string.please_refresh_warehouse),
                                     clickEnable = false,
                                 )
-                            }else {
-                                Box(modifier = Modifier.padding(8.dp, 0.dp)){
+                            } else {
+                                Box(modifier = Modifier.padding(8.dp, 0.dp)) {
                                     Column() {
 
-                                        LazyVerticalGrid(columns = GridCells.Adaptive(50.dp), state = lazyGridState){
+                                        LazyVerticalGrid(
+                                            columns = GridCells.Adaptive(50.dp),
+                                            state = lazyGridState
+                                        ) {
                                             item(span = {
                                                 // LazyGridItemSpanScope:
                                                 // maxLineSpan
@@ -168,17 +177,24 @@ fun Warehouse() {
                                                 GridItemSpan(maxLineSpan)
                                             }) {
                                                 Text(
-                                                    modifier = Modifier.fillMaxWidth().padding(0.dp, 4.dp, 0.dp, 12.dp),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(0.dp, 4.dp, 0.dp, 12.dp),
                                                     textAlign = TextAlign.Center,
-                                                    text = "${stringResource(id = R.string.last_update_time)} ${(it.data.lastFreshTs*1000L).timeToString()}")
+                                                    text = "${stringResource(id = R.string.last_update_time)} ${(it.data.lastFreshTs * 1000L).timeToString()}"
+                                                )
                                             }
-                                            items(items){
-                                                Column (
+                                            items(items) {
+                                                Column(
                                                     horizontalAlignment = Alignment.CenterHorizontally
-                                                ){
-                                                    OKImage(modifier = Modifier
-                                                        .size(48.dp)
-                                                        .padding(1.dp, 0.dp), image = it.iconUrl, contentDescription = it.iconUrl)
+                                                ) {
+                                                    OKImage(
+                                                        modifier = Modifier
+                                                            .size(48.dp)
+                                                            .padding(1.dp, 0.dp),
+                                                        image = it.iconUrl,
+                                                        contentDescription = it.iconUrl
+                                                    )
                                                     Text(
                                                         fontSize = 14.sp,
                                                         text = "${it.count}"
@@ -201,27 +217,41 @@ fun Warehouse() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WarehouseTopAppbar(
-    onRefresh: ()->Unit,
-){
+    onRefresh: () -> Unit,
+    onBack: () -> Unit,
+) {
     TopAppBar(
         title = {
-            Text(text = stringResource(
-                id = R.string.warehouse
-            )
+            Text(
+                text = stringResource(
+                    id = R.string.warehouse
+                )
             )
         },
         navigationIcon = {
             Row() {
-                Spacer(modifier = Modifier.size(8.dp))
-                OKImage(modifier = Modifier.size(48.dp),image = R.drawable.warehouse, contentDescription = stringResource(
-                    id = R.string.warehouse
-                ))
+                IconButton(onClick = { onBack() }) {
+                    Icon(
+                        Icons.Filled.ArrowBackIos,
+                        contentDescription = stringResource(id = R.string.cancel)
+                    )
+                }
+                OKImage(
+                    modifier = Modifier.size(48.dp),
+                    image = R.drawable.fiammetta,
+                    contentDescription = stringResource(
+                        id = R.string.warehouse
+                    )
+                )
             }
 
         },
         actions = {
             IconButton(onClick = { onRefresh() }) {
-                Icon(Icons.Filled.Refresh, contentDescription = stringResource(id = R.string.refresh))
+                Icon(
+                    Icons.Filled.Refresh,
+                    contentDescription = stringResource(id = R.string.refresh)
+                )
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(

@@ -269,7 +269,7 @@ fun RegisterDialog(
 
                     Image(
                         modifier = Modifier.size(40.dp),
-                        painter = painterResource(id = R.drawable.skadi),
+                        painter = painterResource(id = R.drawable.fiammetta),
                         contentDescription = stringResource(id = R.string.register))
                     Spacer(modifier = Modifier.size(4.dp))
 

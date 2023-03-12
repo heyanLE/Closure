@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NamedNavArgument
@@ -34,6 +35,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.heyanle.closure.net.Net
 import com.heyanle.closure.page.MainController
+import com.heyanle.closure.page.bind.BindQQ
 import com.heyanle.closure.page.game_instance.Instance
 import com.heyanle.closure.page.login.Login
 import com.heyanle.closure.page.home.Home
@@ -41,6 +43,7 @@ import com.heyanle.closure.page.warehouse.Warehouse
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.ui.ErrorPage
 import com.heyanle.closure.ui.LoadingPage
+import kotlinx.coroutines.launch
 
 /**
  * Created by HeYanLe on 2022/12/23 16:46.
@@ -55,6 +58,7 @@ const val LOGIN = "login"
 const val HOME = "home"
 const val INSTANCE = "instance"
 const val WAREHOUSE = "warehouse"
+const val BIND = "bind"
 
 // 缺省路由
 const val DEFAULT = HOME
@@ -65,7 +69,7 @@ const val DEFAULT = HOME
 fun Nav() {
 
 
-
+    val scope = rememberCoroutineScope()
     AnimatedContent(targetState = Net.baseUrl.value) {
 
 
@@ -97,38 +101,80 @@ fun Nav() {
                 )
             }
             is Net.BaseUrlState.Url -> {
-                val nav = rememberAnimatedNavController()
-                CompositionLocalProvider(LocalNavController provides nav) {
-                    AnimatedNavHost(nav, DEFAULT,
-                        enterTransition = { slideInHorizontally(tween()) { it } },
-                        exitTransition = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
-                        popEnterTransition = { slideInHorizontally(tween()) { -it } },
-                        popExitTransition = { slideOutHorizontally(tween()) { it } })
-                    {
-                        // 登录状态阻断
-                        composableWithTokenCheck(HOME){
-                            Home()
-                        }
 
-                        composableWithTokenCheck(INSTANCE) {
-                            Instance()
-                        }
 
-                        composableWithTokenCheck(WAREHOUSE){
-                            Warehouse()
+                AnimatedContent(targetState = Net.announcement.value) {
+                    when(it){
+                        is Net.AnnouncementState.None -> {
+                            LaunchedEffect(key1 = Unit){
+                                Net.getAnon()
+                            }
                         }
+                        is Net.AnnouncementState.Loading -> {
+                            LoadingPage(modifier = Modifier
+                                .fillMaxSize()
+                                .background(ColorScheme.background)) {
+                                Text(text = "正在获取公告！")
+                            }
+                        }
+                        is Net.AnnouncementState.Announcement -> {
+                            if(it.announcement.allowGameLogin && it.announcement.allowLogin){
+                                val nav = rememberAnimatedNavController()
+                                CompositionLocalProvider(LocalNavController provides nav) {
+                                    AnimatedNavHost(nav, DEFAULT,
+                                        enterTransition = { slideInHorizontally(tween()) { it } },
+                                        exitTransition = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
+                                        popEnterTransition = { slideInHorizontally(tween()) { -it } },
+                                        popExitTransition = { slideOutHorizontally(tween()) { it } })
+                                    {
+                                        // 登录状态阻断
+                                        composableWithTokenCheck(HOME){
+                                            Home()
+                                        }
 
-                        composable(
-                            LOGIN,
-                        ) { entry ->
-                            Login {
-                                MainController.current.postValue(MainController.InstanceSelect("", -1L))
-                                MainController.token.value = it.token
-                                nav.popBackStack()
+                                        composableWithTokenCheck(INSTANCE) {
+                                            Instance()
+                                        }
+
+                                        composableWithTokenCheck(WAREHOUSE){
+                                            Warehouse()
+                                        }
+
+                                        composable(
+                                            LOGIN,
+                                        ) { entry ->
+                                            Login {
+                                                MainController.current.postValue(MainController.InstanceSelect("", -1L))
+                                                MainController.token.value = it.token
+                                                nav.popBackStack()
+                                            }
+                                        }
+
+                                        composableWithTokenCheck(BIND){
+                                            BindQQ()
+                                        }
+                                    }
+                                }
+                            }else{
+                                ErrorPage(
+                                    modifier = Modifier.background(ColorScheme.background),
+                                    errorMsg = "可露希尔正在维护中",
+                                    clickEnable = true,
+                                    onClick = {
+                                        Net.getAnon()
+
+                                    },
+                                    other = {
+                                        Text(text = it.announcement.announcement)
+                                    }
+                                )
                             }
                         }
                     }
                 }
+
+
+
             }
         }
     }

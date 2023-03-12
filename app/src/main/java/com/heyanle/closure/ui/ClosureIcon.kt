@@ -55,6 +55,6 @@ fun ErrorIcon(
 ){
     Image(
         modifier = Modifier.size(40.dp).then(modifier),
-        painter = painterResource(id = R.drawable.kaltsit),
+        painter = painterResource(id = R.drawable.error),
         contentDescription = stringResource(id = R.string.error))
 }

@@ -51,17 +51,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.heyanle.closure.BIND
 import com.heyanle.closure.INSTANCE
 import com.heyanle.closure.LOGIN
 import com.heyanle.closure.LocalNavController
 import com.heyanle.closure.page.MainController
 import com.heyanle.closure.R
 import com.heyanle.closure.model.ItemModel
+import com.heyanle.closure.net.Net
 import com.heyanle.closure.net.model.GameLogItem
 import com.heyanle.closure.net.model.GetGameResp
 import com.heyanle.closure.page.login.ProgressDialog
@@ -83,7 +86,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun Home(){
+fun Home() {
 
     val scope = rememberCoroutineScope()
 
@@ -95,7 +98,11 @@ fun Home(){
     val lazyListState = rememberLazyListState()
 
     current?.let {
-        ScreenshotDialog(enable = vm.enableScreenShot.value, onDismissRequest = { vm.enableScreenShot.value = false }, select = it)
+        ScreenshotDialog(
+            enable = vm.enableScreenShot.value,
+            onDismissRequest = { vm.enableScreenShot.value = false },
+            select = it
+        )
     }
 
     AutoSettingDialog(
@@ -120,19 +127,19 @@ fun Home(){
         floatingActionButton = {
             FastScrollToTopFab(listState = lazyListState)
         }
-    ){ padding ->
+    ) { padding ->
         Box(
             modifier = Modifier
                 .padding(padding)
                 .background(ColorScheme.background)
-        ){
-            val account = current?.account?:""
-            val platform = current?.platform?:-1L
+        ) {
+            val account = current?.account ?: ""
+            val platform = current?.platform ?: -1L
             // 如果当前没选择实例，引导选择
-            if(account.isEmpty() || platform == -1L){
+            if (account.isEmpty() || platform == -1L) {
                 ErrorPage(
                     modifier = Modifier.fillMaxSize(),
-                    image = R.drawable.empty,
+                    image = R.drawable.texas,
                     errorMsg = stringResource(id = R.string.no_chosen_instance),
                     other = {
                         Text(text = stringResource(id = R.string.click_to_manager_instance))
@@ -143,14 +150,14 @@ fun Home(){
                         nav.navigate(INSTANCE)
                     }
                 )
-            }else{
+            } else {
                 val getGameRep by MainController.currentGetGame.observeAsState(MainController.StatusData.None())
                 val logData by vm.log.observeAsState(MainController.StatusData.None())
                 getGameRep.onError {
-                    Box(modifier = Modifier.fillMaxSize()){
+                    Box(modifier = Modifier.fillMaxSize()) {
                         ErrorPage(
                             modifier = Modifier.fillMaxSize(),
-                            image = R.drawable.empty,
+                            image = R.drawable.texas,
                             errorMsg = stringResource(id = R.string.instance_no_login),
                             other = {
                                 Text(text = stringResource(id = R.string.click_to_manager_instance))
@@ -166,12 +173,13 @@ fun Home(){
                                 .background(ColorScheme.surface)
                                 .padding(16.dp),
                             account = account,
-                            platform = platform)
+                            platform = platform
+                        )
                     }
 
 
                 }.onLoading {
-                    LoadingPage(modifier = Modifier.fillMaxSize(),)
+                    LoadingPage(modifier = Modifier.fillMaxSize())
                 }.onData {
                     LazyColumn(
                         state = lazyListState,
@@ -179,27 +187,39 @@ fun Home(){
                             .fillMaxSize()
                     ) {
                         item {
+                            // 用户信息卡片
                             AccountCard(
                                 modifier = Modifier
                                     .background(ColorScheme.surface)
                                     .padding(16.dp),
                                 account = account,
-                                platform = platform)
+                                platform = platform
+                            )
 
                             Spacer(modifier = Modifier.size(16.dp))
 
+                            // 公告卡片
+                            AnnoCard()
+
+                            Spacer(modifier = Modifier.size(16.dp))
+
+
+                            // 龙门币 合成玉卡片
                             MoneyPanel(getGameResp = it.data)
 
                             Spacer(modifier = Modifier.size(16.dp))
 
+                            // 理智卡片
                             APLVPanel(getGameResp = it.data)
 
                             Spacer(modifier = Modifier.size(16.dp))
 
+                            // 操作 卡片
                             GameInstanceActions(vm)
 
                             Spacer(modifier = Modifier.size(8.dp))
 
+                            // 日志卡片
                             LogHeader()
                         }
 
@@ -217,36 +237,44 @@ fun AccountCard(
     account: String,
     platform: Long,
     accountColor: Color = Color.Unspecified
-){
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .then(modifier),
         horizontalArrangement = Arrangement.SpaceBetween,
-    ){
+    ) {
         val start = 0.coerceAtLeast(3.coerceAtMost(account.length - 1))
         val end = 7.coerceAtMost(account.length)
         val sb = StringBuilder()
-        for(i in 1..end-start){
+        for (i in 1..end - start) {
             sb.append("*")
         }
 
         Text(
             fontWeight = FontWeight.W900,
             color = accountColor,
-            text = "${stringResource(id = R.string.account)}: ${account.replaceRange(start, end, sb.toString())}",
+            text = "${stringResource(id = R.string.account)}: ${
+                account.replaceRange(
+                    start,
+                    end,
+                    sb.toString()
+                )
+            }",
         )
-        Box(modifier = Modifier
-            .clip(
-                CircleShape
-            )
-            .background(ColorScheme.secondary)
-            .padding(8.dp, 4.dp)){
+        Box(
+            modifier = Modifier
+                .clip(
+                    CircleShape
+                )
+                .background(ColorScheme.secondary)
+                .padding(8.dp, 4.dp)
+        ) {
             Text(
                 color = ColorScheme.onSecondary,
                 fontWeight = FontWeight.W900,
                 text =
-                if(platform < 2)
+                if (platform < 2)
                     stringResource(id = R.string.official_server)
                 else
                     stringResource(id = R.string.bilibili_server),
@@ -258,29 +286,77 @@ fun AccountCard(
     }
 }
 
+@Composable
+fun AnnoCard() {
+    var showAll by remember {
+        mutableStateOf(false)
+    }
+    val sta = Net.announcement.value as? Net.AnnouncementState.Announcement
+    sta?.let {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorScheme.surface)
+                .clickable {
+                    showAll = !showAll
+                }
+                .padding(12.dp, 16.dp),
+
+            ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    fontWeight = FontWeight.W900,
+                    color = ColorScheme.secondary,
+                    text = stringResource(id = R.string.anno),
+                )
+
+                Text(
+                    text = stringResource(id = R.string.click_to_open),
+                )
+            }
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                text = sta.announcement.announcement,
+                maxLines = if (showAll) Int.MAX_VALUE else 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+
+        }
+    }
+}
+
 /**
  * 源石 合成玉 龙门币
  */
 @Composable
-fun MoneyPanel(getGameResp: GetGameResp){
-    Row (
+fun MoneyPanel(getGameResp: GetGameResp) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(ColorScheme.surface)
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         // 源石
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            OKImage(modifier = Modifier
-                .size(48.dp)
-                .padding(1.dp, 0.dp), image = ItemModel.DIAMOND_ICON_URL, contentDescription = stringResource(
-                id = R.string.diamond
-            ))
+            OKImage(
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(1.dp, 0.dp),
+                image = ItemModel.DIAMOND_ICON_URL,
+                contentDescription = stringResource(
+                    id = R.string.diamond
+                )
+            )
             Text(
                 fontSize = 14.sp,
                 text = "${getGameResp.status.androidDiamond}"
@@ -294,11 +370,15 @@ fun MoneyPanel(getGameResp: GetGameResp){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            OKImage(modifier = Modifier
-                .size(48.dp)
-                .padding(1.dp, 0.dp), image = ItemModel.DIAMOND_SHD_ICON_URL, contentDescription = stringResource(
-                id = R.string.diamond_shd
-            ))
+            OKImage(
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(1.dp, 0.dp),
+                image = ItemModel.DIAMOND_SHD_ICON_URL,
+                contentDescription = stringResource(
+                    id = R.string.diamond_shd
+                )
+            )
             Text(
                 fontSize = 14.sp,
                 text = "${getGameResp.status.diamondShard}"
@@ -312,11 +392,15 @@ fun MoneyPanel(getGameResp: GetGameResp){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            OKImage(modifier = Modifier
-                .size(48.dp)
-                .padding(1.dp, 0.dp), image = ItemModel.GOLD_ICON_URL, contentDescription = stringResource(
-                id = R.string.gold
-            ))
+            OKImage(
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(1.dp, 0.dp),
+                image = ItemModel.GOLD_ICON_URL,
+                contentDescription = stringResource(
+                    id = R.string.gold
+                )
+            )
             Text(
                 fontSize = 14.sp,
                 text = "${getGameResp.status.gold}"
@@ -331,18 +415,28 @@ fun MoneyPanel(getGameResp: GetGameResp){
  * 理智等级面板
  */
 @Composable
-fun APLVPanel(getGameResp: GetGameResp){
+fun APLVPanel(getGameResp: GetGameResp) {
     val scope = rememberCoroutineScope()
     var nowAp by remember {
-        mutableStateOf(APUtils.getNowAp(getGameResp.status.ap, getGameResp.status.maxAp, getGameResp.status.lastApAddTime))
+        mutableStateOf(
+            APUtils.getNowAp(
+                getGameResp.status.ap,
+                getGameResp.status.maxAp,
+                getGameResp.status.lastApAddTime
+            )
+        )
     }
 
-    DisposableEffect(Unit){
+    DisposableEffect(Unit) {
         scope.launch {
-            while(scope.isActive){
+            while (scope.isActive) {
                 // 每隔增加 1 理智时间 *2 时间刷新一下理智数
-                delay((APUtils.AP_UP_TIME*2).toLong())
-                nowAp = APUtils.getNowAp(getGameResp.status.ap, getGameResp.status.maxAp, getGameResp.status.lastApAddTime)
+                delay((APUtils.AP_UP_TIME * 2).toLong())
+                nowAp = APUtils.getNowAp(
+                    getGameResp.status.ap,
+                    getGameResp.status.maxAp,
+                    getGameResp.status.lastApAddTime
+                )
             }
         }
         onDispose {
@@ -363,18 +457,20 @@ fun APLVPanel(getGameResp: GetGameResp){
                 .fillMaxWidth()
                 .padding(4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-        ){
+        ) {
             Text(
                 fontWeight = FontWeight.W900,
                 color = ColorScheme.secondary,
                 text = stringResource(id = R.string.ap),
             )
-            Box(modifier = Modifier
-                .clip(
-                    CircleShape
-                )
-                .background(ColorScheme.secondary)
-                .padding(8.dp, 4.dp)){
+            Box(
+                modifier = Modifier
+                    .clip(
+                        CircleShape
+                    )
+                    .background(ColorScheme.secondary)
+                    .padding(8.dp, 4.dp)
+            ) {
                 Text(
                     color = ColorScheme.onSecondary,
                     fontWeight = FontWeight.W900,
@@ -390,7 +486,7 @@ fun APLVPanel(getGameResp: GetGameResp){
                 .fillMaxWidth()
                 .padding(4.dp),
             horizontalArrangement = Arrangement.Center,
-        ){
+        ) {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 fontWeight = FontWeight.W900,
@@ -406,16 +502,18 @@ fun APLVPanel(getGameResp: GetGameResp){
             )
         }
         Spacer(modifier = Modifier.size(16.dp))
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
-        ){
-            Box(modifier = Modifier
-                .height(1.dp)
-                .weight(1f)
-                .alpha(0.6f)
-                .padding(4.dp, 0.dp)
-                .background(ColorScheme.onSurface))
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(1.dp)
+                    .weight(1f)
+                    .alpha(0.6f)
+                    .padding(4.dp, 0.dp)
+                    .background(ColorScheme.onSurface)
+            )
             // 预计溢出时间
             Text(
                 modifier = Modifier.padding(12.dp, 0.dp),
@@ -423,24 +521,27 @@ fun APLVPanel(getGameResp: GetGameResp){
                 color = ColorScheme.secondary,
                 text = stringResource(id = R.string.ap_max_time)
             )
-            Box(modifier = Modifier
-                .height(1.dp)
-                .weight(1f)
-                .alpha(0.6f)
-                .padding(4.dp, 0.dp)
-                .background(ColorScheme.onSurface))
+            Box(
+                modifier = Modifier
+                    .height(1.dp)
+                    .weight(1f)
+                    .alpha(0.6f)
+                    .padding(4.dp, 0.dp)
+                    .background(ColorScheme.onSurface)
+            )
         }
 
         Spacer(modifier = Modifier.size(4.dp))
         Text(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
-            text = APUtils.getAPMaxTime(getGameResp.status.ap, getGameResp.status.maxAp, getGameResp.status.lastApAddTime*1000)
+            text = APUtils.getAPMaxTime(
+                getGameResp.status.ap,
+                getGameResp.status.maxAp,
+                getGameResp.status.lastApAddTime * 1000
+            )
         )
 
-        
-
-        
 
     }
 }
@@ -448,7 +549,7 @@ fun APLVPanel(getGameResp: GetGameResp){
 @Composable
 fun GameInstanceActions(
     vm: HomeViewModel
-){
+) {
     val nav = LocalNavController.current
     Column() {
         Button(
@@ -467,8 +568,20 @@ fun GameInstanceActions(
 
         Spacer(modifier = Modifier.size(4.dp))
 
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, 0.dp),
+            onClick = {
+                nav.navigate(BIND)
+            }) {
+            Text(text = stringResource(id = R.string.bind_qq))
+        }
+
+        Spacer(modifier = Modifier.size(4.dp))
+
         Row(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp, 4.dp)
         ) {
             Button(
                 modifier = Modifier
@@ -493,15 +606,17 @@ fun GameInstanceActions(
 
 
     }
-    
+
 }
 
 @Composable
-fun LogHeader(){
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .background(ColorScheme.surface)
-        .padding(12.dp, 16.dp)){
+fun LogHeader() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(ColorScheme.surface)
+            .padding(12.dp, 16.dp)
+    ) {
         Text(
             fontWeight = FontWeight.W900,
             color = ColorScheme.secondary,
@@ -514,9 +629,9 @@ fun LogHeader(){
 fun LazyListScope.logCard(
     data: MainController.StatusData<List<GameLogItem>>,
     vm: HomeViewModel,
-){
+) {
 
-    if(data.isLoading()){
+    if (data.isLoading()) {
         item {
             LoadingPage(
                 modifier = Modifier
@@ -524,14 +639,14 @@ fun LazyListScope.logCard(
                     .background(ColorScheme.surface),
             )
         }
-    }else if(data.isError()){
+    } else if (data.isError()) {
         item {
             val errorData = data as? MainController.StatusData.Error
             ErrorPage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(ColorScheme.surface),
-                errorMsg = errorData?.errorMsg?:"",
+                errorMsg = errorData?.errorMsg ?: "",
                 clickEnable = true,
             ) {
                 vm.viewModelScope.launch {
@@ -540,16 +655,20 @@ fun LazyListScope.logCard(
             }
         }
 
-    }else if(data.isData()){
+    } else if (data.isData()) {
         val errorData = data as? MainController.StatusData.Data
-        val list = errorData?.data?: emptyList()
+        val list = errorData?.data ?: emptyList()
         items(list) {
-            Column(modifier = Modifier
-                .background(ColorScheme.surface)
-                .padding(12.dp, 0.dp)){
+            Column(
+                modifier = Modifier
+                    .background(ColorScheme.surface)
+                    .padding(12.dp, 0.dp)
+            ) {
                 LogItem(item = it)
-                Spacer(modifier = Modifier
-                    .size(16.dp))
+                Spacer(
+                    modifier = Modifier
+                        .size(16.dp)
+                )
             }
 
         }
@@ -560,8 +679,8 @@ fun LazyListScope.logCard(
 @Composable
 fun LogItem(
     item: GameLogItem
-){
-    Row (
+) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
 
@@ -569,11 +688,15 @@ fun LogItem(
 
         Text(
             fontSize = 12.sp,
-            text = "${item.getData()}\n${item.getTime()}")
+            text = "${item.getData()}\n${item.getTime()}",
+            color = item.getColor(),
+        )
         Spacer(modifier = Modifier.size(16.dp))
         Text(
             modifier = Modifier.weight(1f),
-            text = item.info)
+            text = item.info,
+            color = item.getColor(),
+        )
     }
 }
 
@@ -581,7 +704,7 @@ fun LogItem(
 @Composable
 fun MainTopAppBar(
     vm: HomeViewModel,
-){
+) {
     val title by vm.topBarTitle.observeAsState(stringResource(id = R.string.app_name))
     val image by vm.avatarImage.observeAsState(R.drawable.logo)
     val scope = rememberCoroutineScope()
@@ -597,9 +720,11 @@ fun MainTopAppBar(
         navigationIcon = {
             Row() {
                 Spacer(modifier = Modifier.size(8.dp))
-                OKImage(modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape),image = image, contentDescription = title)
+                OKImage(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape), image = image, contentDescription = title
+                )
             }
 
         },
@@ -611,7 +736,10 @@ fun MainTopAppBar(
                 }
 
             }) {
-                Icon(Icons.Filled.Refresh, contentDescription = stringResource(id = R.string.refresh))
+                Icon(
+                    Icons.Filled.Refresh,
+                    contentDescription = stringResource(id = R.string.refresh)
+                )
             }
             IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(Icons.Filled.MoreVert, contentDescription = stringResource(id = R.string.more))
