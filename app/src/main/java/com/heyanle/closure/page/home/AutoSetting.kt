@@ -69,6 +69,7 @@ import com.heyanle.closure.R
 import com.heyanle.closure.model.StageModel
 import com.heyanle.closure.net.model.CreateGameReq
 import com.heyanle.closure.net.model.GameConfig
+import com.heyanle.closure.page.MainController
 import com.heyanle.closure.theme.ColorScheme
 import com.heyanle.closure.theme.Typography
 import com.heyanle.closure.ui.ErrorPage
@@ -86,6 +87,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AutoSettingDialog(
     enable: Boolean,
+    account: String = MainController.current.value?.account?:"",
+    platform: Long = MainController.current.value?.platform?:-1L,
     onDismissRequest: () -> Unit,
     onSave: (GameConfig) -> Unit,
 ) {
@@ -105,7 +108,7 @@ fun AutoSettingDialog(
 
     LaunchedEffect(key1 = enable) {
         if (enable) {
-            vm.refresh()
+            vm.refresh(account, platform)
         }
     }
 

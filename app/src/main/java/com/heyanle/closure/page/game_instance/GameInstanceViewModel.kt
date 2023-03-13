@@ -45,15 +45,15 @@ class GameInstanceViewModel: ViewModel() {
 
     val addDialogEnable = mutableStateOf(false)
 
-    init {
-        viewModelScope.launch {
-            val instance = MainController.instance.value
-            if(instance == null || instance.isNone()){
-                loadGameInstances()
-            }
-
-        }
-    }
+//    init {
+//        viewModelScope.launch {
+//            val instance = MainController.instance.value
+//            if(instance == null || instance.isNone()){
+//                loadGameInstances()
+//            }
+//
+//        }
+//    }
 
     fun onAddClick(){
         addDialogEnable.value = true

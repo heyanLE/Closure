@@ -58,7 +58,7 @@ inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onFaile
     response?.apply {
         val res = body()
         if(!isSuccessful || res == null){
-            block(true, stringRes(R.string.net_error))
+            block(true, stringRes(R.string.net_error) + "1")
         }else{
             if(res.code == 0){
                 block(false, res.message)
@@ -66,7 +66,8 @@ inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onFaile
         }
     }
     if(response == null){
-        block(true, stringRes(R.string.net_error))
+        block(true, stringRes(R.string.net_error) + "2" + t?.message)
+        t?.printStackTrace()
     }
     return this
 }

@@ -18,6 +18,7 @@ import com.google.gson.Gson
 import com.heyanle.closure.net.model.CaptchaInfo
 import com.heyanle.closure.theme.MyApplicationTheme
 import com.heyanle.closure.utils.GsonUtil
+import com.heyanle.closure.utils.ReleaseDialog
 import org.json.JSONObject
 
 
@@ -38,6 +39,7 @@ class MainActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
         gt3 = GT3GeetestUtils(this)
         setContent {
+
             CompositionLocalProvider(LocalAct provides this) {
                 MyApplicationTheme {
                     // A surface container using the 'background' color from the theme
@@ -46,6 +48,7 @@ class MainActivity: ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         Nav()
+                        ReleaseDialog()
                     }
                 }
             }

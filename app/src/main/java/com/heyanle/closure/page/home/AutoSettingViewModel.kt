@@ -79,11 +79,12 @@ class AutoSettingViewModel: ViewModel() {
         gameConfig.observeForever(observer)
     }
 
-    suspend fun refresh(){
+    suspend fun refresh(
+        account: String = MainController.current.value?.account?:"",
+        platform: Long = MainController.current.value?.platform?:-1L,
+    ){
         val token = MainController.token.value?:""
         val current = MainController.current.value
-        val account = current?.account?:""
-        val platform = current?.platform?:-1L
         isLoading.value = true
         isError.value = false
         Net.game.getConfig(token, platform, account).awaitResponseOK()

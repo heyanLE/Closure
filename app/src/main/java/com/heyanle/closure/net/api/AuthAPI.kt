@@ -23,9 +23,14 @@ interface AuthAPI {
     fun register(@Body login: LoginReq): Call<Response<WebsiteUser>>
 
     @GET("Auth/{email}/{password}")
-    fun login(@Path("email") email: String,
-              @Path("password") password: String
+    fun login(@Path("email", encoded = false) email: String,
+              @Path("password", encoded = false) password: String
     ): Call<Response<WebsiteUser>>
+
+    @GET("Auth")
+    fun auth(
+        @Header("Authorization") token: String,
+    ):Call<Response<WebsiteUser>>
 
     @GET("Auth/QQBind")
     fun bindQQ(

@@ -36,11 +36,11 @@ suspend fun OkHttpClient.get(url: String): OkhttpNormalResult<String>{
 
             override fun onResponse(call: Call, response: Response) {
                 if(!response.isSuccessful){
-                    continuation.resume(OkhttpNormalResult(isNetError = true, errMsg = stringRes(R.string.net_error)))
+                    continuation.resume(OkhttpNormalResult(isNetError = true, errMsg = stringRes(R.string.net_error) + "1"))
                 }else{
                     val resp = response.body?.string()
                     if(resp == null){
-                        continuation.resume(OkhttpNormalResult(isNetError = true, errMsg = stringRes(R.string.net_error)))
+                        continuation.resume(OkhttpNormalResult(isNetError = true, errMsg = stringRes(R.string.net_error) + "2"))
                     }else{
                         continuation.resume(OkhttpNormalResult(resp=resp))
                     }

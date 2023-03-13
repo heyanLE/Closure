@@ -8,6 +8,7 @@ import com.heyanle.closure.net.model.WebsiteUser
 import com.heyanle.closure.utils.awaitResponseOK
 import com.heyanle.closure.utils.onFailed
 import com.heyanle.closure.utils.onSuccessful
+import com.heyanle.closure.utils.toast
 import retrofit2.awaitResponse
 import java.net.URLEncoder
 
@@ -29,9 +30,9 @@ class LoginViewModel: ViewModel() {
 
     suspend fun login(callback: (WebsiteUser)->Unit){
         progressDialog.value = true
-
+        "eamil: ${email.value}".toast()
+        password.value.toast()
         val passStr =  URLEncoder.encode(password.value, "utf-8")
-
         val res = Net.auth.login(email.value, passStr) .awaitResponseOK()
         res.onSuccessful {
             it?.let { data ->
@@ -39,6 +40,7 @@ class LoginViewModel: ViewModel() {
                 callback(data)
             }
         }.onFailed { _, msg ->
+
             showError(msg)
         }
     }

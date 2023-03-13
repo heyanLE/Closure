@@ -5,7 +5,7 @@ package com.heyanle.closure.net.model
  * https://github.com/heyanLE
  */
 data class WebsiteUser(
-    var bindQQ: Int,
+    var bindQQ: Long,
     var email: String,
     var isAdmin: Boolean,
     var password: String,

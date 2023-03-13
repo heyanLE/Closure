@@ -2,10 +2,12 @@ package com.heyanle.closure.net
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import com.heyanle.closure.BuildConfig
 import com.heyanle.closure.net.api.AuthAPI
 import com.heyanle.closure.net.api.CommonAPI
 import com.heyanle.closure.net.api.GameAPI
 import com.heyanle.closure.net.model.Announcement
+import com.heyanle.closure.page.MainController
 import com.heyanle.closure.utils.awaitResponseOK
 import com.heyanle.closure.utils.get
 import com.heyanle.closure.utils.onFailed
@@ -21,6 +23,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -113,25 +116,48 @@ object Net {
         lastJob = scope.launch {
             announcement.value = AnnouncementState.Loading
             common.getAnnouncement().awaitResponseOK().onSuccessful {
-                announcement.value = AnnouncementState.Announcement(it?:Announcement())
+
+                scope.launch {
+                    if(MainController.token.value?.isNotEmpty() == true){
+                        auth.auth(MainController.token.value?:"").awaitResponseOK().onSuccessful {
+                            if(it != null){
+                                MainController.token.value = it.token
+                            }
+                        }
+                        announcement.value = AnnouncementState.Announcement(it?:Announcement())
+                    }else{
+                        announcement.value = AnnouncementState.Announcement(it?:Announcement())
+                    }
+                }
             }.onFailed { b, s ->
                 s.toast()
                 announcement.value = AnnouncementState.Announcement(Announcement())
             }
+
+
         }
 
 
     }
 
-    val okHttpClient = OkHttpClient.Builder().callTimeout(10, TimeUnit.SECONDS).build()
+    val okHttpClient = OkHttpClient.Builder().callTimeout(10, TimeUnit.SECONDS).apply {
+        if(BuildConfig.DEBUG){
+            val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.HEADERS
+            }
+            addNetworkInterceptor(httpLoggingInterceptor)
+        }
+    }.build()
 
     private val retrofit: Retrofit by lazy {
         val baseUrl = (baseUrl.value as? BaseUrlState.Url) ?: throw IllegalStateException()
-        Retrofit.Builder()
+        val builder = Retrofit.Builder()
             .baseUrl(baseUrl.baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
-            .build()
+
+
+        builder.build()
     }
 
     val auth: AuthAPI by lazy {

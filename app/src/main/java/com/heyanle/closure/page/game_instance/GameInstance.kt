@@ -36,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
@@ -91,6 +92,10 @@ fun Instance() {
     val vm = viewModel<GameInstanceViewModel>()
     val status by MainController.instance.observeAsState(MainController.StatusData.None())
     val curStatus = status
+
+    LaunchedEffect(key1 = Unit){
+        vm.loadGameInstances()
+    }
 
     ProgressDialog(show = vm.loadingDialogEnable)
     DeleteDialog(show = vm.deleteDialogEnable) {
@@ -301,6 +306,8 @@ fun GameInstanceCard(
 
     AutoSettingDialog(
         enable = vm.enableAutoSettingDialog.value,
+        account = resp.config.account,
+        platform = resp.config.platform,
         onDismissRequest = { vm.enableAutoSettingDialog.value = false },
         onSave = {
             scope.launch {
