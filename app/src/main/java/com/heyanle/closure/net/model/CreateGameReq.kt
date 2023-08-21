@@ -7,10 +7,10 @@ package com.heyanle.closure.net.model
 data class CreateGameReq(
     val account: String,
     val password: String,
-    val platform: Int,
+    val platform: Long,
 )
 
 data class GameReq(
     val account: String,
-    val platform: Int,
+    val platform: Long,
 )

@@ -4,21 +4,29 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import com.geetest.sdk.GT3ConfigBean
 import com.geetest.sdk.GT3ErrorBean
 import com.geetest.sdk.GT3GeetestUtils
 import com.geetest.sdk.GT3Listener
-import com.google.gson.Gson
+import com.heyanle.closure.appcenter.ReleaseDialog
+import com.heyanle.closure.base.theme.ClosureTheme
+import com.heyanle.closure.compose.common.MoeSnackBar
 import com.heyanle.closure.net.model.CaptchaInfo
-import com.heyanle.closure.theme.MyApplicationTheme
-import com.heyanle.closure.utils.GsonUtil
-import com.heyanle.closure.utils.ReleaseDialog
+import com.heyanle.closure.utils.toJson
+import com.heyanle.closure.compose.Nav
+import com.heyanle.closure.utils.MediaUtils
 import org.json.JSONObject
 
 
@@ -38,18 +46,31 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         gt3 = GT3GeetestUtils(this)
+        MediaUtils.setIsDecorFitsSystemWindows(this, false)
         setContent {
 
             CompositionLocalProvider(LocalAct provides this) {
-                MyApplicationTheme {
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
+                ClosureTheme {
+                    val focusManager = LocalFocusManager.current
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = { focusManager.clearFocus() })
                     ) {
-                        Nav()
-                        ReleaseDialog()
+                        Surface(
+                            color= MaterialTheme.colorScheme.background,
+                            contentColor = MaterialTheme.colorScheme.onBackground
+                        ) {
+                            Nav()
+                            MoeSnackBar(Modifier.statusBarsPadding())
+                        }
+
+
                     }
+                    ReleaseDialog()
                 }
             }
 
@@ -111,7 +132,7 @@ class MainActivity: ComponentActivity() {
                 gt3.dismissGeetestDialog()
             }
         }
-        gt3ConfigBean.api1Json = JSONObject(GsonUtil.gson.toJson(captchaInfo))
+        gt3ConfigBean.api1Json = JSONObject(captchaInfo.toJson())
         gt3.init(gt3ConfigBean)
         // 开启验证
         gt3.startCustomFlow()

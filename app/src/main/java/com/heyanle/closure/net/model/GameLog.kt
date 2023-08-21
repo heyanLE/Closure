@@ -10,7 +10,7 @@ import java.util.Locale
  * Created by HeYanLe on 2022/12/23 15:33.
  * https://github.com/heyanLE
  */
-class GameLogItem(
+data class GameLogItem(
     var ts: Double,
     var info: String,
 ){

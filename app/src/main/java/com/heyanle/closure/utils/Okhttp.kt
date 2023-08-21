@@ -1,6 +1,7 @@
 package com.heyanle.closure.utils
 
 import com.heyanle.closure.R
+import com.heyanle.closure.base.DataResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable.cancel
 import kotlinx.coroutines.suspendCancellableCoroutine

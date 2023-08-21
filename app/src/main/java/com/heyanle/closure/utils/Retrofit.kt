@@ -1,6 +1,7 @@
 package com.heyanle.closure.utils
 
 import com.heyanle.closure.R
+import com.heyanle.closure.base.DataResult
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,7 +16,7 @@ import kotlin.coroutines.resume
  * https://github.com/heyanLE
  */
 
-class RetrofitResult <T> (
+class RetrofitResult<T>(
     val response: Response<T>? = null,
     val t: Throwable? = null
 )
@@ -39,11 +40,26 @@ suspend fun <T> Call<T>.awaitResponseOK(): RetrofitResult<T> {
 }
 
 
-inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onSuccessful (block: (T?)->Unit): RetrofitResult<com.heyanle.closure.net.model.Response<T>>{
+inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onSuccessful(block: (T) -> Unit): RetrofitResult<com.heyanle.closure.net.model.Response<T>> {
     response?.apply {
-        if(isSuccessful){
+        if (isSuccessful) {
             body()?.let {
-                if(it.code != 0){
+                if (it.code != 0) {
+                    it.data?.let(block)
+                }
+
+            }
+        }
+    }
+
+    return this
+}
+
+inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onSuccessfulNullable(block: (T?) -> Unit): RetrofitResult<com.heyanle.closure.net.model.Response<T>> {
+    response?.apply {
+        if (isSuccessful) {
+            body()?.let {
+                if (it.code != 0) {
                     block(it.data)
                 }
 
@@ -54,20 +70,36 @@ inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onSucce
     return this
 }
 
-inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onFailed (block: (Boolean, String)->Unit): RetrofitResult<com.heyanle.closure.net.model.Response<T>>{
+inline fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.onFailed(block: (Boolean, String) -> Unit): RetrofitResult<com.heyanle.closure.net.model.Response<T>> {
     response?.apply {
         val res = body()
-        if(!isSuccessful || res == null){
+        if (!isSuccessful || res == null) {
             block(true, stringRes(R.string.net_error) + "1")
-        }else{
-            if(res.code == 0){
+        } else {
+            if (res.code == 0) {
                 block(false, res.message)
             }
         }
     }
-    if(response == null){
+    if (response == null) {
         block(true, stringRes(R.string.net_error) + "2" + t?.message)
         t?.printStackTrace()
     }
     return this
+}
+
+fun <T> RetrofitResult<com.heyanle.closure.net.model.Response<T>>.toDataResult(): DataResult<T> {
+    val resp = response
+    val body = response?.body()
+    if (resp == null) {
+        return DataResult.error(stringRes(R.string.net_error) + "1")
+    }
+    if (!resp.isSuccessful || body == null) {
+        return DataResult.error(stringRes(R.string.net_error) + "2" + t?.message)
+    }
+    val data = body.data
+    if (body.code == 0 || data == null) {
+        return DataResult.error(body.message)
+    }
+    return DataResult.ok(data)
 }

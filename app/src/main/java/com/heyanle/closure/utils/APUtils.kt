@@ -1,9 +1,8 @@
 package com.heyanle.closure.utils
 
+import android.icu.text.SimpleDateFormat
 import android.util.Log
-import androidx.annotation.StringRes
 import com.heyanle.closure.R
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
@@ -19,7 +18,7 @@ object APUtils {
 
     // 时间单位 毫秒
     fun getAPMaxTime(now: Long, max: Long, startTime: Long, maxApString: String = stringRes(R.string.ap_max_time)): String{
-        Log.d("APUtils", "$now $max $startTime")
+        //Log.d("APUtils", "$now $max $startTime")
         val y = (max-now) * AP_UP_TIME
         val time = startTime + y
         if(time <= System.currentTimeMillis() || now >= max){

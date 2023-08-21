@@ -6,5 +6,5 @@ package com.heyanle.closure.net.model
  */
 data class GameLoginReq (
     var account: String,
-    var platform: Int,
+    var platform: Long,
 )

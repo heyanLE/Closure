@@ -11,6 +11,7 @@
 
     <string name="loading">加载中</string>
 
+    <string name="instance_empty">没有实例数据</string>
 
     <string name="login">登录</string>
 
@@ -26,6 +27,9 @@
 
     <string name="token_error">Token 过期，请重新登陆</string>
 
+    <string name="loading_anno">正在加载公告！</string>
+
+    <string name="not_allow_use">可露希尔正在维护中！！</string>
     <string name="account">账号</string>
     <string name="status">当前状态</string>
     <string name="map">托管地图</string>
@@ -69,10 +73,15 @@
 
     <string name="instance_manager">实例管理</string>
 
+    <string name="appearance_setting">外观设置</string>
+
+    <string name="about">关于</string>
+
     <string name="load_error">加载错误</string>
 
     <string name="more">更多</string>
 
+    <string name="exit_account">退出账号</string>
     <string name="change_account">切换账号</string>
 
     <string name="much_stage">多地图</string>
@@ -119,6 +128,8 @@
 
     <string name="click_to_ocr">点击请求平台刷新仓库（勿滥用）</string>
 
+    <string name="ocr_cd">请勿频繁请求仓库刷新</string>
+
     <string name="ocr_completely">请求刷新仓库成功，预计五分钟，请手动刷新</string>
 
     <string name="last_update_time">最后一次更新时间</string>
@@ -160,5 +171,25 @@
     <string name="diamond">源石</string>
     <string name="diamond_shd">合成玉</string>
     <string name="gold">龙门币</string>
+
+    <string name="dark_mode">夜间模式</string>
+    <string name="dark_on">开启</string>
+    <string name="dark_off">关闭</string>
+    <string name="dark_auto">跟随系统</string>
+
+    <string name="github">Github</string>
+    <string name="theme">主题</string>
+    <string name="version">当前版本</string>
+    <string name="check_update">检查更新</string>
+
+    <string name="click_to_explore">点击浏览</string>
+    <string name="theme_default">默认</string>
+    <string name="theme_greenapple">青苹果</string>
+    <string name="theme_midnightdusk">午夜幽暗</string>
+    <string name="theme_strawberry">草莓巧克力</string>
+    <string name="theme_tako">薰衣草</string>
+    <string name="theme_tealturqoise">浪潮</string>
+
+    <string name="info_moesnackbar_swipe">右划关闭 →</string>
 
 </resources>

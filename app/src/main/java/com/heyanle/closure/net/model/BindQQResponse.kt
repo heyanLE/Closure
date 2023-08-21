@@ -1,7 +1,6 @@
 package com.heyanle.closure.net.model
 
 import com.google.gson.JsonObject
-import com.heyanle.closure.utils.GsonUtil
 
 /**
  * Created by HeYanLe on 2023/3/11 22:30.
