@@ -354,7 +354,7 @@ fun AutoSettingDialog(
                                         ) {
                                             items(AutoSettingViewModel.accelerateSlotSelected) {
                                                 val color =
-                                                    if (it == vm.accelerateSlotCN.value) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+                                                    if (it == vm.accelerateSlotCN.value) MaterialTheme.colorScheme.secondary else if(LocalThemeState.current.isDark()){MaterialTheme.colorScheme.background} else MaterialTheme.colorScheme.secondaryContainer
                                                 Box(modifier = Modifier
                                                     .size(48.dp)
                                                     .background(color)
