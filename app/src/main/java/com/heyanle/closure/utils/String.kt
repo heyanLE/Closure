@@ -1,22 +1,45 @@
 package com.heyanle.closure.utils
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import com.heyanle.closure.APP
-import com.heyanle.closure.compose.common.moeSnackBar
+import com.heyanle.closure.ui.common.moeSnackBar
+import org.koin.java.KoinJavaComponent.getKoin
+import org.koin.java.KoinJavaComponent.inject
 
 /**
  * Created by HeYanLe on 2022/12/23 17:53.
  * https://github.com/heyanLE
  */
 
+private val regCharSet = setOf<Char>(
+    '*', '.', '?', '+', '$', '^', '[', ']', '(', ')', '{', '}', '|', '\\', '/'
+)
+fun String.getMatchReg(): Regex {
+    return runCatching {
+        buildString {
+            append("(.*)(")
+            append(this@getMatchReg.toCharArray().toList().filter { it != ' ' }.joinToString(")(.*)(") {
+                if (regCharSet.contains(it)) {
+                    "\${it}"
+                } else it + ""
+
+            })
+            append(")(.*)")
+        }.toRegex(RegexOption.IGNORE_CASE)
+    }.getOrElse {
+        // 出错了就什么都不给你匹配
+        "".toRegex(RegexOption.IGNORE_CASE)
+    }
+}
+
 fun stringRes(resId: Int, vararg formatArgs: Any): String {
-    return APP.getString(resId, formatArgs)
+    return koin.get<Application>().getString(resId, *formatArgs)
 }
 
 fun String.openUrl() = runCatching {
-    APP.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this)).apply {
+    koin.get<Application>().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this)).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     })
 }.onFailure { "${it.loge().javaClass.simpleName}(${it.localizedMessage})".moeSnackBar() }

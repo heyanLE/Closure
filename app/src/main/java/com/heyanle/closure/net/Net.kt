@@ -1,63 +1,49 @@
 package com.heyanle.closure.net
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import com.heyanle.closure.BuildConfig
-import com.heyanle.closure.net.api.AuthAPI
-import com.heyanle.closure.net.api.CommonAPI
-import com.heyanle.closure.net.api.GameAPI
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
+import com.heyanle.closure.utils.jsonTo
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.statement.HttpResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
-import kotlin.system.measureTimeMillis
 
 /**
- * Created by HeYanLe on 2022/12/23 14:44.
- * https://github.com/heyanLE
+ * Created by heyanlin on 2023/12/31.
  */
-class Net {
+class Net(
+    private val scope: CoroutineScope,
+    private val httpClient: HttpClient
+) {
 
-    val okHttpClient = OkHttpClient.Builder().callTimeout(10, TimeUnit.SECONDS).apply {
-        if(BuildConfig.DEBUG){
-            val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.HEADERS
+    companion object {
+        const val CODE_JSON_ERROR = Int.MIN_VALUE
+    }
+
+    val rootUrl = "https://passport.arknights.host/api/v1"
+
+    fun <R> send(
+        block: suspend HttpClient.() -> HttpResponse,
+    ): Deferred<NetResponse<R>> {
+        return scope.async {
+            return@async try {
+                block.invoke(httpClient)
+                    .body<String>().jsonTo<NetResponse<R>>() ?:  NetResponse.netError<R>(
+                    CODE_JSON_ERROR, "json parse error")
+            } catch (ex: RedirectResponseException) {
+                // 3xx - responses
+                NetResponse.netError<R>(ex.response.status.value, ex.response.status.description, ex)
+            } catch (ex: ClientRequestException) {
+                // 4xx - responses
+                NetResponse.netError<R>(ex.response.status.value, ex.response.status.description, ex)
+            } catch (ex: ServerResponseException) {
+                // 5xx - response
+                NetResponse.netError<R>(ex.response.status.value, ex.response.status.description, ex)
             }
-            addNetworkInterceptor(httpLoggingInterceptor)
         }
-    }.build()
-
-    private val retrofit: Retrofit by lazy {
-        val baseUrl = "https://devapi.arknights.host"
-        val builder = Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-        builder.build()
     }
-
-    val auth: AuthAPI by lazy {
-        retrofit.create(AuthAPI::class.java)
-    }
-
-    val game: GameAPI by lazy {
-        retrofit.create(GameAPI::class.java)
-    }
-
-    val common: CommonAPI by lazy {
-        retrofit.create(CommonAPI::class.java)
-    }
-
-
 
 }
