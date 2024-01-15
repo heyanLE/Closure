@@ -1,4 +1,4 @@
-package com.heyanle.closure.auth
+package com.heyanle.closure.closure.auth
 
 import org.koin.dsl.module
 

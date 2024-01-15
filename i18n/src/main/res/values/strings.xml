@@ -15,6 +15,8 @@
 
     <string name="login">登录</string>
 
+    <string name="feature_error">业务错误</string>
+
     <string name="register">注册</string>
 
     <string name="login_complete">登陆成功</string>

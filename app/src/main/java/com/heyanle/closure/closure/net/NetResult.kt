@@ -1,6 +1,7 @@
-package com.heyanle.closure.net
+package com.heyanle.closure.closure.net
 
 import com.heyanle.closure.utils.stringRes
+import com.heyanle.i18n.R
 
 /**
  * Created by HeYanLe on 2023/8/13 16:36.
@@ -8,26 +9,36 @@ import com.heyanle.closure.utils.stringRes
  */
 
 data class NetResponse<R>(
+    val isSuss: Boolean,
     var code: Int,
     var data: R? = null,
-    var message: String,
-    var isNetError: Boolean = false, // 是否是网络问题
+    var message: String?,
     var throwable: Throwable? = null,
 ) {
 
     companion object {
+
+        fun <T> netOk(code: Int, message: String?, date: T ): NetResponse<T> {
+            return NetResponse(
+                true,
+                code,
+                date,
+                message,
+            )
+        }
+
         fun <T> netError(code: Int, message: String? = null, throwable: Throwable? = null): NetResponse<T> {
             return NetResponse(
+                false,
                 code = code,
-                message = message ?: stringRes(com.heyanle.i18n.R.string.net_error),
-                isNetError = true,
+                message = message + stringRes(R.string.net_error),
                 throwable = throwable
             )
         }
     }
 
     inline fun okNullable(block: (NetResponse<R>) -> Unit): NetResponse<R> {
-        if (code == 1) {
+        if (isSuss) {
             block(this)
         }
         return this
@@ -35,14 +46,14 @@ data class NetResponse<R>(
 
     inline fun okWithData(block: (R) -> Unit): NetResponse<R> {
         val data = data
-        if (code == 1 && data != null) {
+        if (isSuss && data != null) {
             block(data)
         }
         return this
     }
 
     inline fun error(block: (NetResponse<R>) -> Unit): NetResponse<R> {
-        if (code != 1) {
+        if (!isSuss) {
             block(this)
         }
         return this

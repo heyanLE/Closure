@@ -4,8 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
-import com.heyanle.closure.auth.authModule
-import com.heyanle.closure.net.netModule
+import com.heyanle.closure.closure.auth.authModule
+import com.heyanle.closure.closure.net.netModule
 import com.heyanle.closure.preferences.preferenceModule
 import com.heyanle.closure.utils.ssl.CropUtil
 import com.heyanle.easy_crasher.CrashHandler
