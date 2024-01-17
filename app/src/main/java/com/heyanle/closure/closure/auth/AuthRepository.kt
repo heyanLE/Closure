@@ -7,6 +7,7 @@ import com.heyanle.closure.closure.auth.model.RegisterBody
 import com.heyanle.closure.closure.auth.model.RegisterResp
 import com.heyanle.closure.closure.net.Net
 import com.heyanle.closure.closure.net.NetResponse
+import io.ktor.client.request.accept
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
@@ -28,6 +29,7 @@ class AuthRepository(
             post {
                 url("${net.authUrl}/register")
                 contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
                 setBody(registerBody)
             }
         }
@@ -42,6 +44,7 @@ class AuthRepository(
             post {
                 url("${net.authUrl}/login")
                 contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
                 setBody(loginBody)
             }
         }

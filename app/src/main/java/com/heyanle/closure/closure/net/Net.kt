@@ -28,6 +28,7 @@ class Net(
     val authUrl = "https://passport.arknights.host/api/v1"
     val arkQuotaUrl = " https://registry.closure.setonink.com/api"
     val ticketUrl = "https://ticket.arknights.host/tickets"
+    val gameUrl = "https://api.ltsc.vip"
 
 
     inline fun <reified R> send(
@@ -39,15 +40,15 @@ class Net(
                 val body = resp.body<String>()
                 // 返回 String 类型的不用装载
                 if (R::class.java == String::class.java) {
-                    NetResponse.netOk(resp.status.value, resp.status.description, body as R)
+                    NetResponse.netOk(resp.status.value, resp.status.description, body as R, body)
                 } else {
                     val r = body.jsonTo<R>()
                     if (r == null) {
                         NetResponse.netError<R>(
-                            CODE_JSON_ERROR, "json parse error"
+                            CODE_JSON_ERROR, body, "json parse error"
                         )
                     } else {
-                        NetResponse.netOk(resp.status.value, resp.status.description, r)
+                        NetResponse.netOk(resp.status.value, resp.status.description, r, body)
                     }
                 }
             } catch (ex: RedirectResponseException) {
@@ -55,6 +56,7 @@ class Net(
                 NetResponse.netError<R>(
                     ex.response.status.value,
                     ex.response.status.description,
+                    ex.response.body(),
                     ex
                 )
             } catch (ex: ClientRequestException) {
@@ -62,6 +64,7 @@ class Net(
                 NetResponse.netError<R>(
                     ex.response.status.value,
                     ex.response.status.description,
+                    ex.response.body(),
                     ex
                 )
             } catch (ex: ServerResponseException) {
@@ -69,6 +72,7 @@ class Net(
                 NetResponse.netError<R>(
                     ex.response.status.value,
                     ex.response.status.description,
+                    ex.response.body(),
                     ex
                 )
             }

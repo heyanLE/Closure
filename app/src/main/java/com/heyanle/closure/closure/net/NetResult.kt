@@ -1,5 +1,6 @@
 package com.heyanle.closure.closure.net
 
+import com.heyanle.closure.closure.quota.module.CreateGameBody
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.i18n.R
 
@@ -13,26 +14,30 @@ data class NetResponse<R>(
     var code: Int,
     var data: R? = null,
     var message: String?,
+    // body 原文，存一份让业务可以解析
+    var respBody: String ="",
     var throwable: Throwable? = null,
 ) {
 
     companion object {
 
-        fun <T> netOk(code: Int, message: String?, date: T ): NetResponse<T> {
+        fun <T> netOk(code: Int, message: String?, date: T ,respBody: String): NetResponse<T> {
             return NetResponse(
                 true,
                 code,
                 date,
                 message,
+                respBody
             )
         }
 
-        fun <T> netError(code: Int, message: String? = null, throwable: Throwable? = null): NetResponse<T> {
+        fun <T> netError(code: Int, message: String? = null, body: String, throwable: Throwable? = null): NetResponse<T> {
             return NetResponse(
                 false,
                 code = code,
                 message = message + stringRes(R.string.net_error),
-                throwable = throwable
+                throwable = throwable,
+                respBody = body
             )
         }
     }
