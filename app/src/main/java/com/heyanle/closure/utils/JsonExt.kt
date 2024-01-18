@@ -16,11 +16,8 @@ inline fun <reified T> String.jsonTo(): T? {
     return runCatching {
         adapter.fromJson(this)
     }.getOrElse {
-        if (BuildConfig.DEBUG) {
-            throw it
-        } else {
-            null
-        }
+        it.printStackTrace()
+        null
     }
 }
 

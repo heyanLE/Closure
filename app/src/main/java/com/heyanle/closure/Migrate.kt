@@ -16,6 +16,6 @@ object Migrate {
     private val scope = MainScope()
 
     fun update(context: Context) {
-
+        _isMigrating.value = false
     }
 }

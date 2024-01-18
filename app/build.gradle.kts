@@ -9,6 +9,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
+        targetSdk = 34
         applicationId = "com.heyanle.closure"
         minSdk = 21
 

@@ -9,10 +9,10 @@ import org.koin.dsl.module
  */
 val preferenceModule = module {
     single {
-        AndroidPreferenceStore(it.get())
+        AndroidPreferenceStore(get())
     }
     single {
-        MMKVPreferenceStore(it.get())
+        MMKVPreferenceStore(get())
     }
 
 }

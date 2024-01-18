@@ -1,27 +1,24 @@
 package com.heyanle.closure
 
-import android.app.Activity
 import android.app.Application
-import android.util.Log
-import android.widget.Toast
-import com.heyanle.closure.closure.auth.authModule
-import com.heyanle.closure.closure.net.netModule
+import com.heyanle.closure.closure.closureModule
 import com.heyanle.closure.preferences.preferenceModule
+import com.heyanle.closure.setting.settingModule
+import com.heyanle.closure.theme.themeModule
+import com.heyanle.closure.utils.MoshiArrayListJsonAdapter
 import com.heyanle.closure.utils.ssl.CropUtil
 import com.heyanle.easy_crasher.CrashHandler
 import com.heyanle.easybangumi4.utils.exo_ssl.TrustAllHostnameVerifier
 import com.heyanle.okkv2.MMKVStore
 import com.heyanle.okkv2.core.Okkv
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.analytics.Analytics
-import com.microsoft.appcenter.crashes.Crashes
-import com.microsoft.appcenter.distribute.Distribute
-import com.microsoft.appcenter.distribute.DistributeListener
-import com.microsoft.appcenter.distribute.ReleaseDetails
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import org.koin.dsl.bind
+import org.koin.dsl.module
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -68,10 +65,22 @@ object Scheduler {
             androidContext(application)
 
             modules(
-                netModule,
                 preferenceModule,
-                authModule,
+                closureModule,
+                settingModule,
+                themeModule,
+                module {
+                    single {
+                        application
+                    }.bind<Application>()
 
+                    single {
+                        Moshi.Builder()
+                            .add(MoshiArrayListJsonAdapter.FACTORY)
+                            .addLast(KotlinJsonAdapterFactory())
+                            .build()
+                    }.bind<Moshi>()
+                }
             )
         }
     }

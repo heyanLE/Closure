@@ -30,14 +30,21 @@ import org.koin.core.module._scopedInstanceFactory
  */
 class AuthController(
     private val context: Context,
-    private val androidPreference: AndroidPreferenceStore,
+    private val preferenceStore: AndroidPreferenceStore,
     private val authRepository: AuthRepository,
 ) {
 
     private val scope = CoroutineProvider.mainScope
 
-    private val tokenPref = androidPreference.getString("auth-token", "")
-    val token = tokenPref.stateIn(CoroutineProvider.mainScope)
+    private val usernamePref = preferenceStore.getString("username", "")
+    val username = usernamePref.stateIn(scope)
+
+    private val passwordPref = preferenceStore.getString("password", "")
+    val password = passwordPref.stateIn(scope)
+
+    private val tokenPref = preferenceStore.getString("token", "")
+    val token = tokenPref.stateIn(scope)
+
 
     // 0 -> idle 1 -> logging 2 -> registering
     private val _status = MutableStateFlow(0)
@@ -45,6 +52,10 @@ class AuthController(
 
     private val webView: WebView by lazy {
         WebView(context)
+    }
+
+    init {
+
     }
 
     fun login(email: String, password: String) {
