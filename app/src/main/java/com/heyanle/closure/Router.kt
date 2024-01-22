@@ -16,10 +16,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.heyanle.closure.closure.auth.AuthController
+import com.heyanle.closure.closure.ClosurePresenter
 import com.heyanle.closure.theme.NormalSystemBarColor
 import com.heyanle.closure.ui.login.Login
-import com.heyanle.closure.utils.koin
 import java.lang.ref.WeakReference
 
 /**
@@ -32,6 +31,10 @@ val LocalToken = staticCompositionLocalOf<String> {
     error("Token not provide")
 }
 
+val LocalClosurePresenter = staticCompositionLocalOf<ClosurePresenter> {
+    error("closure not provide")
+}
+
 var navControllerRef: WeakReference<NavHostController>? = null
 
 const val HOME = "HOME"
@@ -41,39 +44,22 @@ const val DEFAULT = HOME
 
 @Composable
 fun Nav(){
+    val nav = rememberNavController()
+    ClosureHost(
+        navController = nav,
+        startDestination = DEFAULT,
+        login = {
+            Login(it)
+        },
+        contentBuilder = { controller, state ->
+            
+            val presenter = controller.getPresenter(state.username)
+            composable(HOME){
 
-    val authController: AuthController by koin.inject()
-    val token = authController.token.collectAsState()
-    if (token.value.isEmpty()) {
-        // 登录态阻断
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            NormalSystemBarColor()
-            Login()
-        }
-
-    } else {
-        val nav = rememberNavController()
-        LaunchedEffect(key1 = nav) {
-            navControllerRef = WeakReference(nav)
-        }
-        CompositionLocalProvider(
-            LocalNavController provides nav,
-            LocalToken provides token.value
-        ) {
-            NavHost(nav, DEFAULT,
-                modifier = Modifier.fillMaxSize(),
-                enterTransition = { slideInHorizontally(tween()) { it } },
-                exitTransition = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
-                popEnterTransition = { slideInHorizontally(tween()) { -it } },
-                popExitTransition = { slideOutHorizontally(tween()) { it } }
-            ) {
-                composable(HOME){
-
-                }
             }
         }
-    }
+    )
+
+
 
 }

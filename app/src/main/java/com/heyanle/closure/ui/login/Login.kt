@@ -47,11 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyanle.closure.R
-import com.heyanle.closure.closure.auth.AuthController
-import com.heyanle.closure.ui.common.MoeDialog
+import com.heyanle.closure.closure.ClosureController
 import com.heyanle.closure.ui.common.ProgressDialog
 import com.heyanle.closure.ui.common.moeSnackBar
-import com.heyanle.closure.utils.koin
 import com.heyanle.closure.utils.openUrl
 import com.heyanle.closure.utils.stringRes
 
@@ -59,7 +57,9 @@ import com.heyanle.closure.utils.stringRes
  * Created by heyanlin on 2023/12/31.
  */
 @Composable
-fun Login() {
+fun Login(
+    closureController: ClosureController,
+) {
     val loginViewModel = viewModel<LoginViewModel>()
     val status = loginViewModel.authState.collectAsState()
 
