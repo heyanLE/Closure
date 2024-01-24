@@ -1,23 +1,27 @@
 package com.heyanle.closure.closure
 
-import com.heyanle.closure.R
 import com.heyanle.closure.closure.auth.AuthRepository
-import com.heyanle.closure.closure.auth.model.LoginBody
 import com.heyanle.closure.closure.game.GameRepository
 import com.heyanle.closure.closure.game.model.GetGameInfo
 import com.heyanle.closure.closure.game.model.WebGame
 import com.heyanle.closure.closure.quota.QuotaRepository
 import com.heyanle.closure.closure.quota.module.Account
 import com.heyanle.closure.ui.common.moeSnackBar
-import com.heyanle.closure.utils.CoroutineProvider
 import com.heyanle.closure.utils.hekv.HeKV
 import com.heyanle.closure.utils.jsonTo
 import com.heyanle.closure.utils.stringRes
+import com.heyanle.closure.utils.toJson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 /**
  * 针对某个 username 管理所有数据，数据位置 rootFolder/username
@@ -34,12 +38,15 @@ class ClosurePresenter(
     private val quotaRepository: QuotaRepository,
 ) {
 
-    private val scope = CoroutineProvider.mainScope
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val hekv = HeKV(rootFolderPath, username)
 
-    private val account = MutableStateFlow<LoadableData<Account>>(getCacheData("account"))
-    private val webGameList =
+    private val _account = MutableStateFlow<LoadableData<Account>>(getCacheData("account"))
+    val account = _account.asStateFlow()
+
+    private val _webGameList =
         MutableStateFlow<LoadableData<List<WebGame>>>(getCacheData("web_game_list"))
+    val webGameList = _webGameList.asStateFlow()
 
 
     // 根据 实例 account 缓存对应 stateFlow
@@ -47,11 +54,151 @@ class ClosurePresenter(
     private val readWriteLock = ReentrantReadWriteLock()
 
 
-    fun refreshAccount() {}
+    fun refreshAccount() {
+        scope.launch {
+            val token = closureController.tokenIfNull(username)
+            if(token == null){
+                stringRes(com.heyanle.i18n.R.string.waiting_for_login)
+                return@launch
+            }
+            _account.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+            val accountResp = quotaRepository.awaitAccount(token)
+            accountResp.okWithData { acc ->
+                save()
+                _account.update {
+                    it.copy(
+                        isLoading = false,
+                        isError = false,
+                        fromCache = false,
+                        data = acc,
+                    )
+                }
+            }.error { resp ->
+                resp.snackWhenError()
+                _account.update {
+                    it.copy(
+                        isLoading = false,
+                        isError = true,
+                        fromCache = false,
+                        errorMsg = resp.message,
+                        throwable = resp.throwable
+                    )
+                }
+            }
+        }
 
-    fun refreshWebGameList() {}
+    }
 
-    fun refreshGetGameInfoFlow(gameAccount: String) {}
+    fun refreshWebGameList() {
+        scope.launch {
+            val token = closureController.tokenIfNull(username)
+            if(token == null){
+                stringRes(com.heyanle.i18n.R.string.waiting_for_login)
+                return@launch
+            }
+            _webGameList.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+            val webGameListResp = gameRepository.awaitGetWebGame(token)
+            webGameListResp.okWithData { netRes ->
+                netRes.okWithData { list ->
+                    save()
+                    _webGameList.update {
+                        it.copy(
+                            isLoading = false,
+                            isError = false,
+                            fromCache = false,
+                            data = list
+                        )
+                    }
+                }.error { resp ->
+                    "${stringRes(com.heyanle.i18n.R.string.feature_error)} ${resp.code}:${resp.message}".moeSnackBar()
+                    _webGameList.update {
+                        it.copy(
+                            isLoading = false,
+                            isError = true,
+                            fromCache = false,
+                            errorMsg = resp.message,
+                            throwable = null
+                        )
+                    }
+                }
+
+            }.error { resp ->
+                resp.snackWhenError()
+                resp.throwable?.printStackTrace()
+                _webGameList.update {
+                    it.copy(
+                        isLoading = false,
+                        isError = true,
+                        fromCache = false,
+                        errorMsg = resp.message,
+                        throwable = resp.throwable
+                    )
+                }
+            }
+        }
+    }
+
+    fun refreshGetGameInfoFlow(gameAccount: String) {
+        scope.launch {
+            val token = closureController.tokenIfNull(username)
+            if(token == null){
+                stringRes(com.heyanle.i18n.R.string.waiting_for_login)
+                return@launch
+            }
+            val flow = getGetGameInfoFlow(gameAccount)
+            flow.update {
+                it.copy(
+                    isLoading = true
+                )
+            }
+            val getGameResp = gameRepository.awaitGetGameInfo(gameAccount, token)
+            getGameResp.okWithData {
+                it.okWithData { info ->
+                    save()
+                    flow.update {
+                        it.copy(
+                            isLoading = false,
+                            isError = false,
+                            fromCache = false,
+                            data = info
+                        )
+                    }
+                }.error { resp ->
+                    "${stringRes(com.heyanle.i18n.R.string.feature_error)} ${resp.code}:${resp.message}".moeSnackBar()
+                    flow.update {
+                        it.copy(
+                            isLoading = false,
+                            isError = true,
+                            fromCache = false,
+                            errorMsg = resp.message,
+                            throwable = null
+                        )
+                    }
+                }
+            }.error {  resp ->
+                resp.snackWhenError()
+                resp.throwable?.printStackTrace()
+                _webGameList.update {
+                    it.copy(
+                        isLoading = false,
+                        isError = true,
+                        fromCache = false,
+                        errorMsg = resp.message,
+                        throwable = resp.throwable
+                    )
+                }
+            }
+        }
+
+    }
 
     fun getGetGameInfoFlow(gameAccount: String): MutableStateFlow<LoadableData<GetGameInfo>> {
         val rl = readWriteLock.readLock()
@@ -81,11 +228,76 @@ class ClosurePresenter(
         }
     }
 
-    init {
-
-        // 持久化数据
+    val initJob = scope.launch {
+        val localAccount = hekv.get("account", "").jsonTo<Account>()
+        val localWebGameList = hekv.get("webGameList", "[]").jsonTo<List<WebGame>>()
+        val localGetGameMap = HashMap<String, GetGameInfo>()
+        localWebGameList?.forEach {
+            val info = hekv.get("getGameInfo_${it.status.account}", "").jsonTo<GetGameInfo>()
+            if(info != null){
+                localGetGameMap[it.status.account] = info
+            }
+        }
+        if(localAccount != null){
+            _account.update {
+                it.copy(
+                    isLoading = false,
+                    isError = false,
+                    fromCache = true,
+                    data = localAccount
+                )
+            }
+        }
+        if(!localWebGameList.isNullOrEmpty()){
+            _webGameList.update {
+                it.copy(
+                    isLoading = false,
+                    isError = false,
+                    fromCache = true,
+                    data = localWebGameList
+                )
+            }
+        }
+        if(localGetGameMap.isNotEmpty()){
+            readWriteLock.write {
+                localGetGameMap.clear()
+                localGetGameMap.asIterable().forEach {
+                    val loadable = LoadableData<GetGameInfo>(
+                        isLoading = false,
+                        isError = false,
+                        fromCache = true,
+                        data = it.value
+                    )
+                    val flow = MutableStateFlow(loadable)
+                    getGameMap[it.key] = flow
+                }
+            }
+        }
     }
 
+    private suspend fun save(){
+        initJob.join()
+        val account = _account.first().data
+        val webGameList = _webGameList.first().data
+        val getGameInfoList = ArrayList<GetGameInfo>()
+        readWriteLock.read {
+            getGameMap.asIterable().forEach {
+                val loaded = it.value.first()
+                if(loaded.data != null){
+                    getGameInfoList.add(loaded.data)
+                }
+            }
+        }
+        if(account != null){
+            hekv.put("account", account.toJson())
+        }
+        if(webGameList != null){
+            hekv.put("webGameList", webGameList.toJson())
+        }
+        getGameInfoList.forEach {
+            hekv.put("getGameInfo_${it.config.account}", it.toJson())
+        }
+    }
     private fun innerNewGetGameFlow(gameAccount: String): MutableStateFlow<LoadableData<GetGameInfo>> {
         return MutableStateFlow(getCacheData("GetGameInfo_${gameAccount}"))
     }

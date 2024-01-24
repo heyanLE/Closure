@@ -28,7 +28,6 @@ import com.heyanle.closure.ui.common.MoeDialog
 import com.heyanle.closure.ui.common.MoeSnackBar
 import com.heyanle.closure.utils.MediaUtils
 import com.heyanle.okkv2.core.okkv
-import org.koin.android.ext.android.get
 
 /**
  * Created by heyanlin on 2023/12/31.
@@ -54,7 +53,7 @@ class MainActivity: ComponentActivity() {
                             interactionSource = remember { MutableInteractionSource() },
                             onClick = { focusManager.clearFocus() })
                 ) {
-                    Nav()
+                    Host()
                     MoeSnackBar(Modifier.statusBarsPadding())
                     MoeDialog()
                 }

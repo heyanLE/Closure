@@ -1,9 +1,15 @@
 package com.heyanle.closure.closure.net
 
+import androidx.compose.ui.res.stringResource
 import com.heyanle.closure.utils.jsonTo
+import com.heyanle.closure.utils.stringRes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ConnectTimeoutException
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.statement.HttpResponse
@@ -23,6 +29,7 @@ class Net(
 
     companion object {
         const val CODE_JSON_ERROR = Int.MIN_VALUE
+        const val CODE_TIMEOUT = Int.MIN_VALUE + 1
     }
 
     val authUrl = "https://passport.arknights.host/api/v1"
@@ -45,7 +52,7 @@ class Net(
                     val r = body.jsonTo<R>()
                     if (r == null) {
                         NetResponse.netError<R>(
-                            CODE_JSON_ERROR, body, "json parse error"
+                            CODE_JSON_ERROR, stringRes(com.heyanle.i18n.R.string.moshi_error), body,
                         )
                     } else {
                         NetResponse.netOk(resp.status.value, resp.status.description, r, body)
@@ -74,6 +81,18 @@ class Net(
                     ex.response.status.description,
                     ex.response.body(),
                     ex
+                )
+            } catch (ex: HttpRequestTimeoutException) {
+                NetResponse.netError<R>(
+                    CODE_TIMEOUT, stringRes(com.heyanle.i18n.R.string.net_timeout), "", ex, true
+                )
+            } catch (ex: ConnectTimeoutException) {
+                NetResponse.netError<R>(
+                    CODE_TIMEOUT, stringRes(com.heyanle.i18n.R.string.net_timeout), "", ex, true
+                )
+            } catch (ex: SocketTimeoutException) {
+                NetResponse.netError<R>(
+                    CODE_TIMEOUT, stringRes(com.heyanle.i18n.R.string.net_timeout), "", ex, true
                 )
             }
         }

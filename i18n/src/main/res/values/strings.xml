@@ -9,6 +9,8 @@
 
     <string name="email_password_empty">用户名或密码为空</string>
 
+    <string name="waiting_for_login">请等待登录后在进行操作</string>
+
     <string name="loading">加载中</string>
 
     <string name="instance_empty">没有实例数据</string>
@@ -18,6 +20,9 @@
     <string name="feature_error">业务错误</string>
 
     <string name="register">注册</string>
+
+    <string name="logging">登录中</string>
+    <string name="registering">注册中</string>
 
     <string name="login_complete">登陆成功</string>
 
@@ -32,6 +37,10 @@
     <string name="error">哎呀，出错啦！</string>
 
     <string name="net_error">网络错误</string>
+
+    <string name="net_timeout">请求超时</string>
+
+    <string name="moshi_error">Moshi 解析错误</string>
 
     <string name="token_error">Token 过期，请重新登陆</string>
 

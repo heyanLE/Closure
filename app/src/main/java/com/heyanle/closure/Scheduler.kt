@@ -1,24 +1,20 @@
 package com.heyanle.closure
 
 import android.app.Application
-import com.heyanle.closure.closure.closureModule
-import com.heyanle.closure.preferences.preferenceModule
-import com.heyanle.closure.setting.settingModule
-import com.heyanle.closure.theme.themeModule
+import com.heyanle.closure.closure.ClosureModule
+import com.heyanle.closure.preferences.PreferenceModule
+import com.heyanle.closure.setting.SettingModule
+import com.heyanle.closure.theme.ThemeModule
 import com.heyanle.closure.utils.MoshiArrayListJsonAdapter
 import com.heyanle.closure.utils.ssl.CropUtil
 import com.heyanle.easy_crasher.CrashHandler
 import com.heyanle.easybangumi4.utils.exo_ssl.TrustAllHostnameVerifier
+import com.heyanle.injekt.api.addSingletonFactory
+import com.heyanle.injekt.core.Injekt
 import com.heyanle.okkv2.MMKVStore
 import com.heyanle.okkv2.core.Okkv
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
-import org.koin.core.logger.Level
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -47,7 +43,7 @@ object Scheduler {
 
         initTrustAllHost()
 
-        initKoin(application)
+        initInjekt(application)
     }
 
 
@@ -58,31 +54,22 @@ object Scheduler {
         Migrate.update(activity)
     }
 
-
-    private fun initKoin(application: Application){
-        startKoin {
-            androidLogger(Level.INFO)
-            androidContext(application)
-
-            modules(
-                preferenceModule,
-                closureModule,
-                settingModule,
-                themeModule,
-                module {
-                    single {
-                        application
-                    }.bind<Application>()
-
-                    single {
-                        Moshi.Builder()
-                            .add(MoshiArrayListJsonAdapter.FACTORY)
-                            .addLast(KotlinJsonAdapterFactory())
-                            .build()
-                    }.bind<Moshi>()
-                }
-            )
+    private fun initInjekt(application: Application){
+        Injekt.addSingletonFactory {
+            application
         }
+
+        Injekt.addSingletonFactory {
+            Moshi.Builder()
+                .add(MoshiArrayListJsonAdapter.FACTORY)
+                .addLast(KotlinJsonAdapterFactory())
+                .build()
+        }
+
+        PreferenceModule(application).registerWith(Injekt)
+        ClosureModule(application).registerWith(Injekt)
+        SettingModule(application).registerWith(Injekt)
+        ThemeModule(application).registerWith(Injekt)
     }
 
 

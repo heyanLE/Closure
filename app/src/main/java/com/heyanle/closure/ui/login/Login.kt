@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,12 +47,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.heyanle.closure.LocalClosureStatePresenter
 import com.heyanle.closure.R
 import com.heyanle.closure.closure.ClosureController
 import com.heyanle.closure.ui.common.ProgressDialog
 import com.heyanle.closure.ui.common.moeSnackBar
 import com.heyanle.closure.utils.openUrl
 import com.heyanle.closure.utils.stringRes
+import kotlinx.coroutines.launch
 
 /**
  * Created by heyanlin on 2023/12/31.
@@ -61,23 +64,61 @@ fun Login(
     closureController: ClosureController,
 ) {
     val loginViewModel = viewModel<LoginViewModel>()
-    val status = loginViewModel.authState.collectAsState()
+    val sta = LocalClosureStatePresenter.current
+    val scope = rememberCoroutineScope()
 
-    LoginPage(loginViewModel = loginViewModel)
+    var username by loginViewModel.username
+    var password by loginViewModel.password
+    var isPasswordShow by loginViewModel.isPasswordShow
 
-    if (status.value == 1 || status.value == 2) {
-        ProgressDialog()
+    LoginPage(
+        username = username,
+        password = password,
+        showPassword = isPasswordShow,
+        onUsernameChange = {
+            username = it
+        },
+        onPasswordChange = {
+            password = it
+        },
+        onShowPasswordChange = {
+            isPasswordShow = it
+        },
+        onLogin = { loginViewModel.login() },
+        onRegister = { loginViewModel.register() },
+        onJumpToClosure = {
+
+        }
+    )
+
+    LoginPage(loginViewModel = loginViewModel, onLogin = {
+        scope.launch {
+            closureController.login(
+                loginViewModel.username.value,
+                loginViewModel.password.value,
+                true
+            )
+        }
+    })
+
+    if (sta.isLogging) {
+        ProgressDialog(stringResource(id = com.heyanle.i18n.R.string.logging))
+    } else if (sta.isRegistering) {
+        ProgressDialog(stringResource(id = com.heyanle.i18n.R.string.registering))
     }
+
+
+
 
     RegisterDialog(
         show = loginViewModel.showRegisterDialog,
-        email = loginViewModel.username.value,
-        password = loginViewModel.password.value,
+        email = username,
+        password = password,
         onCancel = {
             loginViewModel.showRegisterDialog.value = false
         },
         onConfirm = {
-            loginViewModel.register(loginViewModel.username.value, loginViewModel.password.value)
+            loginViewModel.realRegister()
         }
     )
 
@@ -86,9 +127,16 @@ fun Login(
 
 @Composable
 fun LoginPage(
-    loginViewModel: LoginViewModel,
+    username: String,
+    password: String,
+    showPassword: Boolean,
+    onUsernameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onShowPasswordChange: (Boolean) -> Unit,
+    onLogin: () -> Unit,
+    onRegister: () -> Unit,
+    onJumpToClosure: () -> Unit,
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -119,24 +167,17 @@ fun LoginPage(
                 modifier = Modifier
                     .padding(start = 5.dp)
                     .clickable {
-                        kotlin
-                            .runCatching {
-                                "https://arknights.host/".openUrl()
-                            }
-                            .onFailure {
-                                it.moeSnackBar()
-                                it.printStackTrace()
-                            }
-
-                    })
+                        onJumpToClosure()
+                    }
+            )
         }
 
 
         // 用户名
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = loginViewModel.username.value,
-            onValueChange = { loginViewModel.username.value = it },
+            value = username,
+            onValueChange = { onUsernameChange(it) },
             placeholder = { Text(text = stringResource(id = com.heyanle.i18n.R.string.input_email)) },
             leadingIcon = {
                 Icon(
@@ -159,13 +200,11 @@ fun LoginPage(
             )
         )
 
-        var showPassword by loginViewModel.isPasswordShow
-
         // 密码
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = loginViewModel.password.value,
-            onValueChange = { loginViewModel.password.value = it },
+            value = password,
+            onValueChange = { onPasswordChange(it) },
             placeholder = { Text(text = stringResource(id = com.heyanle.i18n.R.string.input_password)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -178,7 +217,7 @@ fun LoginPage(
             },
             trailingIcon = {
                 Crossfade(targetState = showPassword, label = "") {
-                    IconButton(onClick = { showPassword = !showPassword }) {
+                    IconButton(onClick = { onShowPasswordChange(!it) }) {
                         Icon(
                             if (it) Icons.Filled.Visibility
                             else Icons.Filled.VisibilityOff,
@@ -206,7 +245,11 @@ fun LoginPage(
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(),
                 onClick = {
-                    loginViewModel.login(loginViewModel.username.value, loginViewModel.password.value)
+                    if (username.isEmpty() || password.isEmpty()) {
+                        stringRes(com.heyanle.i18n.R.string.email_password_empty).moeSnackBar()
+                    } else {
+                        onLogin()
+                    }
                 }) {
                 Text(text = stringResource(id = com.heyanle.i18n.R.string.login))
             }
@@ -220,11 +263,10 @@ fun LoginPage(
                     contentColor = MaterialTheme.colorScheme.onBackground
                 ),
                 onClick = {
-                    if (loginViewModel.username.value.isEmpty() || loginViewModel.password.value.isEmpty()) {
+                    if (username.isEmpty() || password.isEmpty()) {
                         stringRes(com.heyanle.i18n.R.string.email_password_empty).moeSnackBar()
                     } else {
-                        loginViewModel.showRegisterDialog.value = true
-                        //onRegister(loginViewModel.username.value, loginViewModel.password.value)
+                        onRegister()
                     }
                 }) {
                 Text(text = stringResource(id = com.heyanle.i18n.R.string.register))
@@ -232,9 +274,15 @@ fun LoginPage(
         }
 
 
-
-
     }
+}
+
+@Composable
+fun LoginPage(
+    loginViewModel: LoginViewModel,
+    onLogin: () -> Unit,
+) {
+
 
 }
 

@@ -10,7 +10,7 @@ import com.heyanle.closure.ui.common.moeSnackBar
 import com.heyanle.closure.utils.CoroutineProvider
 import com.heyanle.closure.utils.evaluateJavascript
 import com.heyanle.closure.utils.hekv.HeKV
-import com.heyanle.closure.utils.koin
+import com.heyanle.injekt.core.Injekt
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.closure.utils.waitPageFinished
 import io.ktor.http.parameters
@@ -18,12 +18,13 @@ import io.ktor.http.parametersOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.core.parameter.parameterArrayOf
-import org.koin.core.parameter.parametersOf
-import java.util.concurrent.locks.ReentrantReadWriteLock
 
 /**
  * 登录态管理
@@ -42,8 +43,6 @@ class ClosureController(
 ) {
 
     private val scope = CoroutineProvider.mainScope
-    private val presenterMap = hashMapOf<String, ClosurePresenter>()
-    private val readWriteLock = ReentrantReadWriteLock()
 
     private val usernamePref = androidPreferenceStore.getString("username", "")
     private val passwordPref = androidPreferenceStore.getString("password", "")
@@ -59,6 +58,17 @@ class ClosureController(
     private val _state = MutableStateFlow<ClosureState>(ClosureState())
     val state = _state.asStateFlow()
 
+    suspend fun awaitToken(username: String): String {
+        return state.filter { !it.isRegistering && !it.isLogging && it.token.isNotEmpty() && it.username == username }.map { it.token }.first()
+    }
+
+    fun tokenIfNull(username: String): String? {
+        val sta = state.value
+        if(sta.isRegistering || sta.isLogging || sta.username != username){
+            return null
+        }
+        return sta.token
+    }
 
     init {
         scope.launch {
@@ -115,8 +125,8 @@ class ClosureController(
                 }
             }
             .error { resp ->
-                "${stringRes(com.heyanle.i18n.R.string.net_error)} ${resp.code}:${resp.message ?: resp.throwable?.message ?: ""}".moeSnackBar()
-                resp.throwable?.printStackTrace()
+                resp.snackWhenError()
+               resp.throwable?.printStackTrace()
                 _state.update {
                     it.copy(
                         isLogging = false,
@@ -162,7 +172,7 @@ class ClosureController(
                 }
             }
         }.error { resp ->
-            "${stringRes(com.heyanle.i18n.R.string.net_error)} ${resp.code}:${resp.message ?: resp.throwable?.message ?: ""}".moeSnackBar()
+            resp.snackWhenError()
             resp.throwable?.printStackTrace()
             _state.update {
                 it.copy(
@@ -173,34 +183,6 @@ class ClosureController(
                 )
             }
 
-        }
-    }
-
-    fun getPresenter(username: String): ClosurePresenter {
-        val rl = readWriteLock.readLock()
-        val wl = readWriteLock.writeLock()
-        try {
-            rl.lock()
-            if (presenterMap.containsKey(username)) {
-                val cur = presenterMap[username]
-                if (cur != null) {
-                    rl.unlock()
-                    return cur
-                }
-            }
-            wl.lock()
-            rl.unlock()
-            val closurePresenter: ClosurePresenter = koin.get { parameterArrayOf(username, rootFolder) }
-            presenterMap[username] = closurePresenter
-            wl.unlock()
-            return closurePresenter
-        } finally {
-            runCatching {
-                rl.unlock()
-            }
-            runCatching {
-                wl.unlock()
-            }
         }
     }
 

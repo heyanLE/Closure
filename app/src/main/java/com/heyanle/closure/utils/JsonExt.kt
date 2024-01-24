@@ -1,6 +1,7 @@
 package com.heyanle.closure.utils
 
 import com.heyanle.closure.BuildConfig
+import com.heyanle.injekt.core.Injekt
 import com.squareup.moshi.Moshi
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.typeOf
@@ -11,7 +12,7 @@ import kotlin.reflect.typeOf
  */
 
 inline fun <reified T> String.jsonTo(): T? {
-    val moshi: Moshi by koin.inject()
+    val moshi: Moshi by Injekt.injectLazy()
     val adapter = moshi.adapter<T>(typeOf<T>().javaType)
     return runCatching {
         adapter.fromJson(this)
@@ -23,7 +24,7 @@ inline fun <reified T> String.jsonTo(): T? {
 
 
 inline fun <reified T> T.toJson(): String {
-    val moshi: Moshi by koin.inject()
+    val moshi: Moshi by Injekt.injectLazy()
     val adapter = moshi.adapter<T>(typeOf<T>().javaType)
     return adapter.toJson(this)
 }

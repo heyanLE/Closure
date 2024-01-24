@@ -8,6 +8,6 @@ import android.widget.Toast
  * https://github.com/heyanLE
  */
 fun <T> T.toast(len: Int = Toast.LENGTH_SHORT): T = apply {
-    val app: Application by koin.inject()
+    val app: Application by Injekt.injectLazy()
     Toast.makeText(app, toString(), len).show()
 }

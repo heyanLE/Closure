@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.heyanle.closure.setting.SettingPreferences
-import com.heyanle.closure.utils.koin
+import com.heyanle.injekt.core.Injekt
 import com.heyanle.closure.utils.loge
 
 /**
@@ -28,7 +28,7 @@ fun NormalSystemBarColor(
     getStatusBarDark: (Boolean) -> Boolean = { !it },
     getNavigationBarDark: (Boolean) -> Boolean = { !it },
 ) {
-    val themeController: EasyThemeController by koin.inject()
+    val themeController: EasyThemeController by Injekt.injectLazy()
     val themeState by themeController.themeFlow.collectAsState()
     val isDark = when (themeState.darkMode) {
         SettingPreferences.DarkMode.Dark -> true
@@ -51,7 +51,7 @@ fun NormalSystemBarColor(
 fun EasyTheme(
     content: @Composable () -> Unit
 ) {
-    val themeController: EasyThemeController by koin.inject()
+    val themeController: EasyThemeController by Injekt.injectLazy()
     val themeState by themeController.themeFlow.collectAsState()
     themeState.loge("EasyTheme")
 

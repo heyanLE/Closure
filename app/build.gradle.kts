@@ -85,8 +85,8 @@ dependencies {
 
     implementation(libs.compose.reorderable)
 
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
+//    implementation(libs.koin.core)
+//    implementation(libs.koin.android)
 
     implementation(libs.ktor.json)
     implementation(libs.ktor.core)
@@ -98,4 +98,5 @@ dependencies {
 
     implementation(project(":crasher"))
     implementation(project(":i18n"))
+    implementation(project(":injekt"))
 }

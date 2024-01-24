@@ -39,7 +39,7 @@ dependencyResolutionManagement {
 rootProject.name = "Closure"
 //include(":app-old")
 //include(":app_old")
-//include(":injekt")
+include(":injekt")
 include(":app")
 include(":i18n")
 include(":crasher")

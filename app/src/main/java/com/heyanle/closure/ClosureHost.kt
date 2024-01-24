@@ -7,13 +7,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
@@ -23,9 +24,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.heyanle.closure.closure.ClosureController
-import com.heyanle.closure.closure.ClosurePresenter
-import com.heyanle.closure.utils.koin
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,9 +33,14 @@ import kotlinx.coroutines.launch
 
 const val LOGIN = "LOGIN"
 
+val LocalClosureStatePresenter = compositionLocalOf<ClosureController.ClosureState> {
+    error("closure state not provide")
+}
+
 @Composable
 fun ClosureHost(
     navController: NavHostController,
+    closureController: ClosureController,
     startDestination: String,
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.Center,
@@ -45,17 +48,18 @@ fun ClosureHost(
     exitTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
     popEnterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) = { slideInHorizontally(tween()) { -it } },
     popExitTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) = { slideOutHorizontally(tween()) { it } },
-    login: @Composable (ClosureController)->Unit,
-    contentBuilder: NavGraphBuilder.(ClosureController, ClosureController.ClosureState) -> Unit,
+    login: @Composable ()->Unit,
+    contentBuilder: NavGraphBuilder.() -> Unit,
 ){
-    val closureController: ClosureController by koin.inject()
     val state by closureController.state.collectAsState()
     val sta = state
 
     LaunchedEffect(key1 = Unit){
         launch {
             snapshotFlow {
-                if(sta.isShowPage || sta.username.isEmpty()){
+                sta.isShowPage to sta.username
+            }.collectLatest {
+                if(it.first || sta.username.isEmpty()){
                     navController.navigate(LOGIN){
                         popUpTo(navController.graph.findStartDestination().id){
                             inclusive = true
@@ -68,26 +72,33 @@ fun ClosureHost(
                         }
                     }
                 }
-            }.collect()
+            }
         }
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-        modifier = modifier,
-        contentAlignment = contentAlignment,
-        enterTransition = enterTransition,
-        exitTransition = exitTransition,
-        popEnterTransition = popEnterTransition,
-        popExitTransition = popExitTransition,
-    ){
-        composable(LOGIN){
-            login(closureController)
+    CompositionLocalProvider(
+        LocalClosureStatePresenter provides sta
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = modifier,
+            contentAlignment = contentAlignment,
+            enterTransition = enterTransition,
+            exitTransition = exitTransition,
+            popEnterTransition = popEnterTransition,
+            popExitTransition = popExitTransition,
+        ){
+            composable(LOGIN){
+                login()
+            }
+            contentBuilder()
         }
-
-        contentBuilder(closureController, sta)
     }
+
+
+
+
 
 
 }

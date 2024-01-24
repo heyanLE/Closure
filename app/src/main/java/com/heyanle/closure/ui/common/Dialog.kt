@@ -15,9 +15,11 @@ import com.heyanle.closure.R
 
 
 @Composable
-fun ProgressDialog(){
+fun ProgressDialog(
+    msg: String = stringResource(id = com.heyanle.i18n.R.string.loading)
+){
     AlertDialog(
-        title = { Text(stringResource(id = com.heyanle.i18n.R.string.loading)) },
+        title = { Text(msg) },
         icon = { LoadingImage() },
         onDismissRequest = {},
         confirmButton = {})

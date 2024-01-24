@@ -1,6 +1,7 @@
 package com.heyanle.closure.closure.net
 
 import com.heyanle.closure.closure.quota.module.CreateGameBody
+import com.heyanle.closure.ui.common.moeSnackBar
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.i18n.R
 
@@ -17,6 +18,7 @@ data class NetResponse<R>(
     // body 原文，存一份让业务可以解析
     var respBody: String ="",
     var throwable: Throwable? = null,
+    var isTimeout: Boolean = false,
 ) {
 
     companion object {
@@ -31,7 +33,7 @@ data class NetResponse<R>(
             )
         }
 
-        fun <T> netError(code: Int, message: String? = null, body: String, throwable: Throwable? = null): NetResponse<T> {
+        fun <T> netError(code: Int, message: String? = null, body: String, throwable: Throwable? = null, isTimeout: Boolean = false): NetResponse<T> {
             return NetResponse(
                 false,
                 code = code,
@@ -63,5 +65,14 @@ data class NetResponse<R>(
         }
         return this
     }
+
+    fun snackWhenError(){
+        if(!isSuss){
+            "${stringRes(com.heyanle.i18n.R.string.net_error)} ${message} ${code} ${throwable?.message}"
+                .moeSnackBar()
+        }
+    }
 }
+
+
 
