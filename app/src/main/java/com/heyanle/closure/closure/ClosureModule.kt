@@ -17,9 +17,6 @@ import com.squareup.moshi.Moshi
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import org.koin.core.qualifier.named
-import org.koin.dsl.module
-
 /**
  * Created by heyanlin on 2024/1/15 14:44.
  */

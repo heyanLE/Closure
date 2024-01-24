@@ -2,6 +2,7 @@ package com.heyanle.closure.utils
 
 import android.app.Application
 import android.widget.Toast
+import com.heyanle.injekt.core.Injekt
 
 /**
  * Created by HeYanLe on 2022/12/23 17:50.

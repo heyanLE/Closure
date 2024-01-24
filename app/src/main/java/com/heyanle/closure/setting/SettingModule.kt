@@ -8,8 +8,6 @@ import com.heyanle.injekt.api.InjektModule
 import com.heyanle.injekt.api.InjektScope
 import com.heyanle.injekt.api.addSingletonFactory
 import com.heyanle.injekt.api.get
-import org.koin.dsl.binds
-import org.koin.dsl.module
 
 
 /**
