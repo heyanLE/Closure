@@ -2209,6 +2209,344 @@
       "30054"
     ]
   },
+  "main_13-01": {
+    "name": "眼前的伤",
+    "code": "13-2",
+    "ap": 21,
+    "items": [
+      "2003"
+    ]
+  },
+  "tough_13-01": {
+    "name": "眼前的伤",
+    "code": "13-2",
+    "ap": 21,
+    "items": [
+      "2003"
+    ]
+  },
+  "main_13-02": {
+    "name": "不得暂歇",
+    "code": "13-3",
+    "ap": 21,
+    "items": [
+      "30013",
+      "30014"
+    ]
+  },
+  "tough_13-02": {
+    "name": "不得暂歇",
+    "code": "13-3",
+    "ap": 21,
+    "items": [
+      "30013",
+      "30014"
+    ]
+  },
+  "main_13-03": {
+    "name": "佣兵一日",
+    "code": "13-4",
+    "ap": 21,
+    "items": [
+      "30053",
+      "30054"
+    ]
+  },
+  "tough_13-03": {
+    "name": "佣兵一日",
+    "code": "13-4",
+    "ap": 21,
+    "items": [
+      "30053",
+      "30054"
+    ]
+  },
+  "main_13-04": {
+    "name": "苦厄盘桓",
+    "code": "13-5",
+    "ap": 24,
+    "items": [
+      "31073",
+      "31074"
+    ]
+  },
+  "tough_13-04": {
+    "name": "苦厄盘桓",
+    "code": "13-5",
+    "ap": 24,
+    "items": [
+      "31073",
+      "31074"
+    ]
+  },
+  "main_13-05": {
+    "name": "典范之名",
+    "code": "13-6",
+    "ap": 21,
+    "items": [
+      "31023",
+      "31024"
+    ]
+  },
+  "tough_13-05": {
+    "name": "典范之名",
+    "code": "13-6",
+    "ap": 21,
+    "items": [
+      "31023",
+      "31024"
+    ]
+  },
+  "main_13-06": {
+    "name": "唤血祭坛",
+    "code": "13-7",
+    "ap": 21,
+    "items": [
+      "31033",
+      "31034"
+    ]
+  },
+  "tough_13-06": {
+    "name": "唤血祭坛",
+    "code": "13-7",
+    "ap": 21,
+    "items": [
+      "31033",
+      "31034"
+    ]
+  },
+  "main_13-07": {
+    "name": "不虞之会",
+    "code": "13-8",
+    "ap": 21,
+    "items": [
+      "4001"
+    ]
+  },
+  "tough_13-07": {
+    "name": "不虞之会",
+    "code": "13-8",
+    "ap": 21,
+    "items": [
+      "4001"
+    ]
+  },
+  "main_13-08": {
+    "name": "幻境迁流",
+    "code": "13-10",
+    "ap": 21,
+    "items": [
+      "30063",
+      "30064"
+    ]
+  },
+  "tough_13-08": {
+    "name": "幻境迁流",
+    "code": "13-10",
+    "ap": 21,
+    "items": [
+      "30063",
+      "30064"
+    ]
+  },
+  "main_13-09": {
+    "name": "小镇翳云",
+    "code": "13-11",
+    "ap": 24,
+    "items": [
+      "30083",
+      "30084"
+    ]
+  },
+  "tough_13-09": {
+    "name": "小镇翳云",
+    "code": "13-11",
+    "ap": 24,
+    "items": [
+      "30083",
+      "30084"
+    ]
+  },
+  "main_13-10": {
+    "name": "破碎温室",
+    "code": "13-12",
+    "ap": 21,
+    "items": [
+      "30033",
+      "30034"
+    ]
+  },
+  "tough_13-10": {
+    "name": "破碎温室",
+    "code": "13-12",
+    "ap": 21,
+    "items": [
+      "30033",
+      "30034"
+    ]
+  },
+  "main_13-11": {
+    "name": "骸骨之中",
+    "code": "13-13",
+    "ap": 21,
+    "items": [
+      "31063",
+      "31064"
+    ]
+  },
+  "tough_13-11": {
+    "name": "骸骨之中",
+    "code": "13-13",
+    "ap": 21,
+    "items": [
+      "31063",
+      "31064"
+    ]
+  },
+  "main_13-12": {
+    "name": "猩红烟火",
+    "code": "13-14",
+    "ap": 21,
+    "items": [
+      "31043",
+      "31044"
+    ]
+  },
+  "tough_13-12": {
+    "name": "猩红烟火",
+    "code": "13-14",
+    "ap": 21,
+    "items": [
+      "31043",
+      "31044"
+    ]
+  },
+  "main_13-13": {
+    "name": "短暂齐聚",
+    "code": "13-15",
+    "ap": 24,
+    "items": [
+      "31083",
+      "31084"
+    ]
+  },
+  "tough_13-13": {
+    "name": "短暂齐聚",
+    "code": "13-15",
+    "ap": 24,
+    "items": [
+      "31083",
+      "31084"
+    ]
+  },
+  "main_13-14": {
+    "name": "“我们”",
+    "code": "13-16",
+    "ap": 21,
+    "items": [
+      "30043",
+      "30044"
+    ]
+  },
+  "tough_13-14": {
+    "name": "“我们”",
+    "code": "13-16",
+    "ap": 21,
+    "items": [
+      "30043",
+      "30044"
+    ]
+  },
+  "main_13-15": {
+    "name": "谁来倾诉",
+    "code": "13-17",
+    "ap": 21,
+    "items": [
+      "30023",
+      "30024"
+    ]
+  },
+  "tough_13-15": {
+    "name": "谁来倾诉",
+    "code": "13-17",
+    "ap": 21,
+    "items": [
+      "30023",
+      "30024"
+    ]
+  },
+  "main_13-16": {
+    "name": "挺起胸膛",
+    "code": "13-18",
+    "ap": 24,
+    "items": [
+      "31023",
+      "31024"
+    ]
+  },
+  "tough_13-16": {
+    "name": "挺起胸膛",
+    "code": "13-18",
+    "ap": 24,
+    "items": [
+      "31023",
+      "31024"
+    ]
+  },
+  "main_13-17": {
+    "name": "骸骨走廊",
+    "code": "13-19",
+    "ap": 21,
+    "items": [
+      "30073",
+      "30074"
+    ]
+  },
+  "tough_13-17": {
+    "name": "骸骨走廊",
+    "code": "13-19",
+    "ap": 21,
+    "items": [
+      "30073",
+      "30074"
+    ]
+  },
+  "main_13-18": {
+    "name": "血潮翻涌",
+    "code": "13-20",
+    "ap": 21,
+    "items": [
+      "30083",
+      "30084"
+    ]
+  },
+  "tough_13-18": {
+    "name": "血潮翻涌",
+    "code": "13-20",
+    "ap": 21,
+    "items": [
+      "30083",
+      "30084"
+    ]
+  },
+  "main_13-19": {
+    "name": "殷红君主",
+    "code": "13-21",
+    "ap": 24,
+    "items": [
+      "30093",
+      "30094"
+    ]
+  },
+  "tough_13-19": {
+    "name": "殷红君主",
+    "code": "13-21",
+    "ap": 24,
+    "items": [
+      "30093",
+      "30094"
+    ]
+  },
   "sub_09-1-1": {
     "name": "废墟坚守",
     "code": "S9-1",
@@ -2534,6 +2872,283 @@
     "items": [
       "3222",
       "3282"
+    ]
+  },
+  "act30side_01": {
+    "name": "注意事项",
+    "code": "RS-1",
+    "ap": 9,
+    "items": [
+      "act30side_token_box",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act30side_02": {
+    "name": "同车异图",
+    "code": "RS-2",
+    "ap": 9,
+    "items": [
+      "act30side_token_box",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act30side_03": {
+    "name": "临时停车",
+    "code": "RS-3",
+    "ap": 9,
+    "items": [
+      "act30side_token_box",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act30side_04": {
+    "name": "重回正轨",
+    "code": "RS-4",
+    "ap": 12,
+    "items": [
+      "act30side_token_box",
+      "30032",
+      "30062"
+    ]
+  },
+  "act30side_05": {
+    "name": "逃票？",
+    "code": "RS-5",
+    "ap": 12,
+    "items": [
+      "act30side_token_box",
+      "30012",
+      "30052"
+    ]
+  },
+  "act30side_06": {
+    "name": "补票！",
+    "code": "RS-6",
+    "ap": 21,
+    "items": [
+      "act30side_token_box",
+      "30033"
+    ]
+  },
+  "act30side_07": {
+    "name": "制动失灵",
+    "code": "RS-7",
+    "ap": 21,
+    "items": [
+      "act30side_token_box",
+      "30083"
+    ]
+  },
+  "act30side_08": {
+    "name": "极限时速",
+    "code": "RS-8",
+    "ap": 21,
+    "items": [
+      "act30side_token_box",
+      "31033"
+    ]
+  },
+  "act29side_01": {
+    "name": "清唱“晴空之歌”",
+    "code": "ZT-1",
+    "ap": 9,
+    "items": [
+      "act29side_token_erin",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act29side_02": {
+    "name": "序曲“哨兵”",
+    "code": "ZT-2",
+    "ap": 9,
+    "items": [
+      "act29side_token_erin",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act29side_03": {
+    "name": "练习曲“奇遇”",
+    "code": "ZT-3",
+    "ap": 9,
+    "items": [
+      "act29side_token_erin",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act29side_04": {
+    "name": "狂想曲“望想”",
+    "code": "ZT-4",
+    "ap": 15,
+    "items": [
+      "act29side_token_erin",
+      "30012",
+      "30042"
+    ]
+  },
+  "act29side_05": {
+    "name": "奏鸣曲“秋日”",
+    "code": "ZT-5",
+    "ap": 15,
+    "items": [
+      "act29side_token_erin",
+      "30052",
+      "30032"
+    ]
+  },
+  "act29side_06": {
+    "name": "华尔兹“假面”",
+    "code": "ZT-6",
+    "ap": 15,
+    "items": [
+      "act29side_token_erin",
+      "30062",
+      "30022"
+    ]
+  },
+  "act29side_07": {
+    "name": "协奏曲“复活”",
+    "code": "ZT-7",
+    "ap": 21,
+    "items": [
+      "act29side_token_erin",
+      "30043"
+    ]
+  },
+  "act29side_08": {
+    "name": "夜歌“未见的高塔”",
+    "code": "ZT-8",
+    "ap": 21,
+    "items": [
+      "act29side_token_erin",
+      "30063"
+    ]
+  },
+  "act29side_09": {
+    "name": "幻想曲“赠答”",
+    "code": "ZT-9",
+    "ap": 21,
+    "items": [
+      "act29side_token_erin",
+      "30073"
+    ]
+  },
+  "act28side_01": {
+    "name": "孤独之地",
+    "code": "CV-1",
+    "ap": 9,
+    "items": [
+      "act28side_token_box",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act28side_02": {
+    "name": "双重保险",
+    "code": "CV-2",
+    "ap": 9,
+    "items": [
+      "act28side_token_box",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act28side_03": {
+    "name": "圈套",
+    "code": "CV-3",
+    "ap": 9,
+    "items": [
+      "act28side_token_box",
+      "30031",
+      "30061",
+      "30041",
+      "30051",
+      "30021",
+      "30011"
+    ]
+  },
+  "act28side_04": {
+    "name": "缺席的人",
+    "code": "CV-4",
+    "ap": 12,
+    "items": [
+      "act28side_token_box",
+      "30012",
+      "30032"
+    ]
+  },
+  "act28side_05": {
+    "name": "疑惑之影",
+    "code": "CV-5",
+    "ap": 12,
+    "items": [
+      "act28side_token_box",
+      "30042",
+      "30062"
+    ]
+  },
+  "act28side_06": {
+    "name": "猎人之夜",
+    "code": "CV-6",
+    "ap": 21,
+    "items": [
+      "act28side_token_box",
+      "30023"
+    ]
+  },
+  "act28side_07": {
+    "name": "白热",
+    "code": "CV-7",
+    "ap": 21,
+    "items": [
+      "act28side_token_box",
+      "30093"
+    ]
+  },
+  "act28side_08": {
+    "name": "告别往昔",
+    "code": "CV-8",
+    "ap": 21,
+    "items": [
+      "act28side_token_box",
+      "31063"
     ]
   },
   "act27side_01": {
@@ -3302,7 +3917,7 @@
     "code": "IS-1",
     "ap": 9,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30031",
       "30061",
       "30041",
@@ -3316,7 +3931,7 @@
     "code": "IS-2",
     "ap": 9,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30031",
       "30061",
       "30041",
@@ -3330,7 +3945,7 @@
     "code": "IS-3",
     "ap": 9,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30031",
       "30061",
       "30041",
@@ -3344,7 +3959,7 @@
     "code": "IS-4",
     "ap": 12,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30012",
       "30042"
     ]
@@ -3354,7 +3969,7 @@
     "code": "IS-5",
     "ap": 12,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30052",
       "30032"
     ]
@@ -3364,7 +3979,7 @@
     "code": "IS-6",
     "ap": 15,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30032",
       "30022"
     ]
@@ -3374,7 +3989,7 @@
     "code": "IS-7",
     "ap": 15,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30062",
       "30052"
     ]
@@ -3384,7 +3999,7 @@
     "code": "IS-8",
     "ap": 21,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "30013"
     ]
   },
@@ -3393,7 +4008,7 @@
     "code": "IS-9",
     "ap": 21,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "31053"
     ]
   },
@@ -3402,7 +4017,7 @@
     "code": "IS-10",
     "ap": 21,
     "items": [
-      "act21side_token_permesso",
+      "act21side_token_permesso_rep_1",
       "31023"
     ]
   },
@@ -3595,7 +4210,7 @@
     "code": "IC-1",
     "ap": 9,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30031",
       "30061",
       "30041",
@@ -3609,7 +4224,7 @@
     "code": "IC-2",
     "ap": 9,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30031",
       "30061",
       "30041",
@@ -3623,7 +4238,7 @@
     "code": "IC-3",
     "ap": 12,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30012",
       "30032"
     ]
@@ -3633,7 +4248,7 @@
     "code": "IC-4",
     "ap": 12,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30022",
       "30062"
     ]
@@ -3643,7 +4258,7 @@
     "code": "IC-5",
     "ap": 15,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30052",
       "30012"
     ]
@@ -3653,7 +4268,7 @@
     "code": "IC-6",
     "ap": 15,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30062",
       "30042"
     ]
@@ -3663,7 +4278,7 @@
     "code": "IC-7",
     "ap": 21,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30053"
     ]
   },
@@ -3672,7 +4287,7 @@
     "code": "IC-8",
     "ap": 21,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "31013"
     ]
   },
@@ -3681,7 +4296,7 @@
     "code": "IC-9",
     "ap": 21,
     "items": [
-      "act20side_token_book",
+      "act20side_token_book_rep_1",
       "30103"
     ]
   },

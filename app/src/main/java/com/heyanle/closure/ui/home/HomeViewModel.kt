@@ -1,6 +1,7 @@
 package com.heyanle.closure.ui.home
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.heyanle.closure.closure.ClosurePresenter
 import com.heyanle.closure.closure.game.GameRepository
@@ -23,4 +24,19 @@ class HomeViewModel(
     val account = closurePresenter.account
     val webGameList = closurePresenter.webGameList
 
+
 }
+
+class HomeViewModelFactory(
+    private val username: String
+) : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
+    @SuppressWarnings("unchecked")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(HomeViewModel::class.java))
+            return HomeViewModel(username) as T
+        throw RuntimeException("unknown class :" + modelClass.name)
+    }
+}
+

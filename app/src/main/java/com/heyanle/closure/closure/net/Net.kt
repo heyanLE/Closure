@@ -36,6 +36,7 @@ class Net(
     val arkQuotaUrl = " https://registry.closure.setonink.com/api"
     val ticketUrl = "https://ticket.arknights.host/tickets"
     val gameUrl = "https://api.ltsc.vip"
+    val assetsUrl = "https://closure.ltsc.vip"
 
 
     inline fun <reified R> send(

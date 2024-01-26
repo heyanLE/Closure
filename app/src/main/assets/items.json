@@ -407,6 +407,22 @@
     "name": "转质盐聚块",
     "icon": "MTL_SL_ZYK"
   },
+  "31073": {
+    "name": "褐素纤维",
+    "icon": "MTL_SL_XW"
+  },
+  "31074": {
+    "name": "固化纤维板",
+    "icon": "MTL_SL_XWB"
+  },
+  "31083": {
+    "name": "环烃聚质",
+    "icon": "MTL_SL_HT"
+  },
+  "31084": {
+    "name": "环烃预制体",
+    "icon": "MTL_SL_HTT"
+  },
   "32001": {
     "name": "芯片助剂",
     "icon": "MTL_ASC_DI"
@@ -483,6 +499,10 @@
     "name": "寻访数据契约",
     "icon": "LMTGS_COIN_4101"
   },
+  "LMTGS_COIN_4401": {
+    "name": "寻访数据契约",
+    "icon": "LMTGS_COIN_4401"
+  },
   "EPGS_COIN": {
     "name": "寻访参数模型",
     "icon": "EPGS_COIN"
@@ -494,6 +514,10 @@
   "CRISIS_SHOP_COIN": {
     "name": "合约赏金",
     "icon": "CRISIS_SHOP_COIN"
+  },
+  "CRISIS_SHOP_COIN_V2": {
+    "name": "晶体合约赏金",
+    "icon": "CRISIS_SHOP_COIN_V2"
   },
   "STORY_REVIEW_COIN": {
     "name": "事相碎片",
@@ -544,6 +568,14 @@
     "icon": "renamingCard"
   },
   "renamingCard_30_038": {
+    "name": "ID信息更新卡",
+    "icon": "renamingCard"
+  },
+  "renamingCard_0_044": {
+    "name": "ID信息更新卡",
+    "icon": "renamingCard"
+  },
+  "renamingCard_30_044": {
     "name": "ID信息更新卡",
     "icon": "renamingCard"
   },
@@ -623,6 +655,22 @@
     "name": "木瓜叶馅饼",
     "icon": "ap_supply_lt_100_2023_5"
   },
+  "ap_supply_lt_120_2023_1": {
+    "name": "“满庭光”",
+    "icon": "ap_supply_lt_120_2023_1"
+  },
+  "ap_supply_lt_120_2023_2": {
+    "name": "“良宵晴”",
+    "icon": "ap_supply_lt_120_2023_2"
+  },
+  "ap_supply_lt_120_2023_3": {
+    "name": "“飘桂香”",
+    "icon": "ap_supply_lt_120_2023_3"
+  },
+  "ap_supply_lt_120_2023_4": {
+    "name": "“藏金波”",
+    "icon": "ap_supply_lt_120_2023_4"
+  },
   "EXTERMINATION_AGENT": {
     "name": "PRTS剿灭代理卡",
     "icon": "EXTERMINATION_AGENT"
@@ -687,6 +735,10 @@
     "name": "云过天空寻访凭证",
     "icon": "LIMITED_TKT_GACHA_10_4101"
   },
+  "LIMITED_TKT_GACHA_10_4401": {
+    "name": "烛照弦鸣寻访凭证",
+    "icon": "LIMITED_TKT_GACHA_10_4401"
+  },
   "voucher_item_4pick1": {
     "name": "干员兑换券",
     "icon": "voucher_item_4pick1"
@@ -738,6 +790,10 @@
   "voucher_recruitR5_pick3801": {
     "name": "资深干员调用凭证",
     "icon": "voucher_recruitR5_g"
+  },
+  "voucher_item_pick4401": {
+    "name": "感谢庆典干员凭证",
+    "icon": "voucher_recruitR6_g"
   },
   "voucher_levelmax_6": {
     "name": "高级资深干员特训装置",
@@ -806,6 +862,18 @@
   "2023recruitment10_3": {
     "name": "γ类新年寻访凭证",
     "icon": "2023recruitment10_3"
+  },
+  "2024recruitment10_1": {
+    "name": "α类新年寻访凭证",
+    "icon": "2024recruitment10_1"
+  },
+  "2024recruitment10_2": {
+    "name": "β类新年寻访凭证",
+    "icon": "2024recruitment10_2"
+  },
+  "2024recruitment10_3": {
+    "name": "γ类新年寻访凭证",
+    "icon": "2024recruitment10_3"
   },
   "voucher_recruitR4_1": {
     "name": "公开招募★4兑换券·I",
@@ -947,6 +1015,10 @@
     "name": "罗德岛物资补给V",
     "icon": "randomMaterial_1"
   },
+  "randomMaterial_9": {
+    "name": "罗德岛物资补给VI",
+    "icon": "randomMaterial_1"
+  },
   "randomMaterial_rhine2": {
     "name": "技术调查补给",
     "icon": "randomMaterial_rhine2"
@@ -962,6 +1034,10 @@
   "randomMaterial_siesta2": {
     "name": "峯联贸易物流补给",
     "icon": "randomMaterial_siesta2"
+  },
+  "randomMaterial_leith2": {
+    "name": "查访补给",
+    "icon": "randomMaterial_leith2"
   },
   "mod_unlock_token": {
     "name": "模组数据块",
@@ -1487,6 +1563,14 @@
     "name": "休谟斯的信物",
     "icon": "p_char_491_humus"
   },
+  "p_char_4107_vrdant": {
+    "name": "维荻的信物",
+    "icon": "p_char_4107_vrdant"
+  },
+  "p_char_4100_caper": {
+    "name": "跃跃的信物",
+    "icon": "p_char_4100_caper"
+  },
   "p_char_128_plosis": {
     "name": "白面鸮的信物",
     "icon": "p_char_128_plosis"
@@ -1999,6 +2083,42 @@
     "name": "青枳的信物",
     "icon": "p_char_488_buildr"
   },
+  "p_char_4105_almond": {
+    "name": "杏仁的信物",
+    "icon": "p_char_4105_almond"
+  },
+  "p_char_4104_coldst": {
+    "name": "冰酿的信物",
+    "icon": "p_char_4104_coldst"
+  },
+  "p_char_4110_delphn": {
+    "name": "戴菲恩的信物",
+    "icon": "p_char_4110_delphn"
+  },
+  "p_char_494_vendla": {
+    "name": "刺玫的信物",
+    "icon": "p_char_494_vendla"
+  },
+  "p_char_499_kaitou": {
+    "name": "折光的信物",
+    "icon": "p_char_499_kaitou"
+  },
+  "p_char_4109_baslin": {
+    "name": "深律的信物",
+    "icon": "p_char_4109_baslin"
+  },
+  "p_char_194_leto": {
+    "name": "烈夏的信物",
+    "icon": "p_char_194_leto"
+  },
+  "p_char_4114_harold": {
+    "name": "哈洛德的信物",
+    "icon": "p_char_4114_harold"
+  },
+  "p_char_4081_warmy": {
+    "name": "温米的信物",
+    "icon": "p_char_4081_warmy"
+  },
   "p_char_103_angel": {
     "name": "能天使的信物",
     "icon": "p_char_103_angel"
@@ -2280,7 +2400,7 @@
     "icon": "p_char_4082_qiubai"
   },
   "p_char_1029_yato2": {
-    "name": "麒麟X夜刀的信物",
+    "name": "麒麟R夜刀的信物",
     "icon": "p_char_1029_yato2"
   },
   "p_char_4087_ines": {
@@ -2314,6 +2434,30 @@
   "p_char_1016_agoat2": {
     "name": "纯烬艾雅法拉的信物",
     "icon": "p_char_1016_agoat2"
+  },
+  "p_char_1034_jesca2": {
+    "name": "涤火杰西卡的信物",
+    "icon": "p_char_1034_jesca2"
+  },
+  "p_char_4088_hodrer": {
+    "name": "赫德雷的信物",
+    "icon": "p_char_4088_hodrer"
+  },
+  "p_char_4098_vvana": {
+    "name": "薇薇安娜的信物",
+    "icon": "p_char_4098_vvana"
+  },
+  "p_char_245_cello": {
+    "name": "塑心的信物",
+    "icon": "p_char_245_cello"
+  },
+  "p_char_4116_blkkgt": {
+    "name": "锏的信物",
+    "icon": "p_char_4116_blkkgt"
+  },
+  "p_char_4117_ray": {
+    "name": "莱伊的信物",
+    "icon": "p_char_4117_ray"
   },
   "class_p_char_123_fang": {
     "name": "芬的中坚信物",
@@ -2858,6 +3002,18 @@
   "voucher_full_takila": {
     "name": "龙舌兰的私人信件",
     "icon": "voucher_full_takila"
+  },
+  "voucher_full_wildmn": {
+    "name": "野鬃的私人信件",
+    "icon": "voucher_full_wildmn"
+  },
+  "voucher_full_kjera": {
+    "name": "耶拉的私人信件",
+    "icon": "voucher_full_kjera"
+  },
+  "voucher_full_kroos2": {
+    "name": "寒芒克洛丝的私人信件",
+    "icon": "voucher_full_kroos2"
   },
   "uni_set_guitar": {
     "name": "火蓝之心家具收藏包",
@@ -3455,6 +3611,10 @@
     "name": "进货通行证",
     "icon": "act21side_token_permesso"
   },
+  "act21side_token_permesso_rep_1": {
+    "name": "进货通行证",
+    "icon": "act21side_token_permesso"
+  },
   "voucher_vigil": {
     "name": "伺夜的文件夹",
     "icon": "voucher_vigil"
@@ -3472,6 +3632,10 @@
     "icon": "uni_set_prison"
   },
   "act22side_token_manuscript": {
+    "name": "手抄歌谣集",
+    "icon": "act22side_token_manuscript"
+  },
+  "act22side_token_manuscript_rep_1": {
     "name": "手抄歌谣集",
     "icon": "act22side_token_manuscript"
   },
@@ -3519,7 +3683,23 @@
     "name": "多索雷斯假日家具收藏包",
     "icon": "uni_set_westCoast"
   },
+  "uni_set_kazimierz": {
+    "name": "长夜临光家具收藏包",
+    "icon": "uni_set_kazimierz"
+  },
+  "uni_set_stage": {
+    "name": "风雪过境家具收藏包",
+    "icon": "uni_set_stage"
+  },
+  "uni_set_teaHouse": {
+    "name": "将进酒家具收藏包",
+    "icon": "uni_set_teaHouse"
+  },
   "act23side_token_spirit": {
+    "name": "新酿烈刀子",
+    "icon": "act23side_token_spirit"
+  },
+  "act23side_token_spirit_rep_1": {
     "name": "新酿烈刀子",
     "icon": "act23side_token_spirit"
   },
@@ -3655,8 +3835,104 @@
     "name": "高级材料提货券",
     "icon": "advanced_material_issue_voucher"
   },
+  "classic_fes_pick_tier_5_4101": {
+    "name": "中坚甄选5星干员",
+    "icon": "classic_fes_pick_tier_5"
+  },
+  "classic_fes_pick_tier_6_4101": {
+    "name": "中坚甄选6星干员",
+    "icon": "classic_fes_pick_tier_6"
+  },
+  "classic_fes_pick_tier_5_4401": {
+    "name": "中坚甄选5星干员",
+    "icon": "classic_fes_pick_tier_5"
+  },
+  "classic_fes_pick_tier_6_4401": {
+    "name": "中坚甄选6星干员",
+    "icon": "classic_fes_pick_tier_6"
+  },
   "act27side_token_fur": {
     "name": "毛绒绒生物的毛",
     "icon": "act27side_token_fur"
+  },
+  "act3bossrush_milestone_point": {
+    "name": "试炼经验",
+    "icon": "act1bossrush_milestone_point"
+  },
+  "act3bossrush_token_relic": {
+    "name": "数据黑盒",
+    "icon": "act1bossrush_token_relic"
+  },
+  "act3bossrush_relic_01": {
+    "name": "恢复增幅",
+    "icon": "act3bossrush_relic_01"
+  },
+  "act3bossrush_relic_02": {
+    "name": "扩大化战略",
+    "icon": "act3bossrush_relic_02"
+  },
+  "act3bossrush_relic_03": {
+    "name": "经验习得",
+    "icon": "act3bossrush_relic_03"
+  },
+  "act3bossrush_relic_04": {
+    "name": "过热运转",
+    "icon": "act3bossrush_relic_04"
+  },
+  "act20side_token_book_rep_1": {
+    "name": "《奇谈怪论》复印本",
+    "icon": "act20side_token_book"
+  },
+  "uni_set_samiRoom_1": {
+    "name": "萨米印象家具收藏包一",
+    "icon": "uni_set_samiRoom_1"
+  },
+  "uni_set_samiRoom_2": {
+    "name": "萨米印象家具收藏包二",
+    "icon": "uni_set_samiRoom_2"
+  },
+  "act28side_token_box": {
+    "name": "劣质燃料",
+    "icon": "act28side_token_box"
+  },
+  "act1mainlinebp_token_star": {
+    "name": "里程碑碎片",
+    "icon": "act1mainlinebp_token_star"
+  },
+  "act42d0_token_evaluation": {
+    "name": "试验数据集",
+    "icon": "act42d0_token_Evaluation"
+  },
+  "act29side_token_erin": {
+    "name": "调律追忆",
+    "icon": "act29side_token_erin"
+  },
+  "act29side_frag_1": {
+    "name": "乐之节符",
+    "icon": "act29side_frag_1"
+  },
+  "act29side_frag_2": {
+    "name": "怒之节符",
+    "icon": "act29side_frag_2"
+  },
+  "act29side_frag_3": {
+    "name": "哀之节符",
+    "icon": "act29side_frag_3"
+  },
+  "act29side_frag_4": {
+    "name": "惧之节符",
+    "icon": "act29side_frag_4"
+  },
+  "voucher_lessng": {
+    "name": "止颂的文件夹",
+    "icon": "voucher_lessng"
+  },
+  "act30side_token_box": {
+    "name": "驮兽盲盒",
+    "icon": "act30side_token_box"
+  },
+  "act16mini_token_sap": {
+    "name": "辣瓶树水",
+    "icon": "act16mini_token_sap"
   }
 }
