@@ -1,9 +1,11 @@
 package com.heyanle.closure.closure.assets
 
 import com.heyanle.closure.closure.net.Net
+import com.heyanle.closure.utils.CoroutineProvider
 import com.squareup.moshi.Json
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.io.File
 
 /**
@@ -36,21 +38,43 @@ class AssetsController(
         val items: List<String>
     )
 
+    private val scope = CoroutineProvider.ioScope
+
     private val itemFile = File(rootFolder, "items.json")
     private val itemBKFile = File(rootFolder, "items.json.bk")
 
-    private val stageFile = File(rootFolder, "")
+    private val stageFile = File(rootFolder, "stages.json")
+    private val stageBKFile = File(rootFolder, "stages.json.bk")
 
-    private val _itemsMap  = MutableStateFlow<Map<String, Item>>(emptyMap())
+    private val _itemsMap = MutableStateFlow<Map<String, Item>>(emptyMap())
     val itemsMap = _itemsMap.asStateFlow()
 
     private val _stagesMap = MutableStateFlow<Map<String, Stage>>(emptyMap())
     val stagesMap = _stagesMap.asStateFlow()
 
 
-    private fun loadFromAssets(){}
+    init {
+        scope.launch {
 
-    private fun loadFromNet(){}
+        }
+    }
+
+    private suspend fun initItem(): Map<String, Item> {
+        if(itemFile.exists()){
+
+        }else {
+
+        }
+    }
+
+    private suspend fun initStage() {
+
+    }
+
+
+    private fun loadFromAssets() {}
+
+    private fun loadFromNet() {}
 
 
 }
