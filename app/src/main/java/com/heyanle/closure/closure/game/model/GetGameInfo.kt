@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 /**
  * Created by heyanlin on 2024/1/17 17:05.
  */
-class GetGameInfo (
+data class GetGameInfo (
     @Json(name = "config")
     val config: GameConfig,
 

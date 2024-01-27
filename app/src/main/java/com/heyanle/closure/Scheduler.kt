@@ -1,6 +1,7 @@
 package com.heyanle.closure
 
 import android.app.Application
+import android.content.Context
 import com.heyanle.closure.closure.ClosureModule
 import com.heyanle.closure.preferences.PreferenceModule
 import com.heyanle.closure.setting.SettingModule
@@ -57,6 +58,9 @@ object Scheduler {
     private fun initInjekt(application: Application){
         Injekt.addSingletonFactory {
             application
+        }
+        Injekt.addSingletonFactory<Context> {
+            application as Context
         }
 
         Injekt.addSingletonFactory {

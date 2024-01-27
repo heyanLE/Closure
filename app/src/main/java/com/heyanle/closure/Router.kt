@@ -5,6 +5,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -21,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.heyanle.closure.closure.ClosureController
 import com.heyanle.closure.closure.ClosurePresenter
 import com.heyanle.closure.theme.NormalSystemBarColor
+import com.heyanle.closure.ui.home.Home
 import com.heyanle.closure.ui.login.Login
 import com.heyanle.injekt.core.Injekt
 import java.lang.ref.WeakReference
@@ -42,6 +45,8 @@ const val DEFAULT = HOME
 
 fun NavGraphBuilder.nav(){
     composable(HOME){
+        NormalSystemBarColor()
+        Home()
 
     }
 }
@@ -64,7 +69,15 @@ fun Host(){
             navController = nav,
             startDestination = DEFAULT,
             login = {
-                Login(closureController)
+                NormalSystemBarColor()
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.systemBarsPadding()
+                ) {
+                    Login(closureController)
+                }
+
             },
             contentBuilder = {
                 nav()

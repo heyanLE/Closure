@@ -5,8 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import com.heyanle.closure.ui.common.moeSnackBar
-import org.koin.java.KoinJavaComponent.getKoin
-import org.koin.java.KoinJavaComponent.inject
+import com.heyanle.injekt.api.get
+import com.heyanle.injekt.core.Injekt
 
 /**
  * Created by HeYanLe on 2022/12/23 17:53.
@@ -35,11 +35,11 @@ fun String.getMatchReg(): Regex {
 }
 
 fun stringRes(resId: Int, vararg formatArgs: Any): String {
-    return koin.get<Application>().getString(resId, *formatArgs)
+    return Injekt.get<Application>().getString(resId, *formatArgs)
 }
 
 fun String.openUrl() = runCatching {
-    koin.get<Application>().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this)).apply {
+    Injekt.get<Application>().startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this)).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     })
 }.onFailure { "${it.loge().javaClass.simpleName}(${it.localizedMessage})".moeSnackBar() }

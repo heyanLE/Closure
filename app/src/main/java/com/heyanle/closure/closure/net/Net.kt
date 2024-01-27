@@ -2,6 +2,7 @@ package com.heyanle.closure.closure.net
 
 import androidx.compose.ui.res.stringResource
 import com.heyanle.closure.utils.jsonTo
+import com.heyanle.closure.utils.logi
 import com.heyanle.closure.utils.stringRes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -28,6 +29,7 @@ class Net(
 ) {
 
     companion object {
+        const val TAG = "Net"
         const val CODE_JSON_ERROR = Int.MIN_VALUE
         const val CODE_TIMEOUT = Int.MIN_VALUE + 1
     }
@@ -36,7 +38,7 @@ class Net(
     val arkQuotaUrl = " https://registry.closure.setonink.com/api"
     val ticketUrl = "https://ticket.arknights.host/tickets"
     val gameUrl = "https://api.ltsc.vip"
-    val assetsUrl = "https://closure.ltsc.vip"
+    val assetsUrl = "https://www.arknights.host"
 
 
     inline fun <reified R> send(
@@ -44,8 +46,10 @@ class Net(
     ): Deferred<NetResponse<R>> {
         return scope.async {
             return@async try {
+                "send >> ${R::class}".logi(TAG)
                 val resp = block.invoke(httpClient)
                 val body = resp.body<String>()
+                "send << ${body}".logi(TAG)
                 // 返回 String 类型的不用装载
                 if (R::class.java == String::class.java) {
                     NetResponse.netOk(resp.status.value, resp.status.description, body as R, body)

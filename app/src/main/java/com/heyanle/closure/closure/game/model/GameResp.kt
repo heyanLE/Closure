@@ -14,7 +14,7 @@ data class GameResp<R>(
     val message: String? = null,
 
     @Json(name = "data")
-    val data: R,
+    val data: R?,
 ){
 
     inline fun okNullable(block: (GameResp<R>) -> Unit): GameResp<R> {

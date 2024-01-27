@@ -28,8 +28,8 @@ class GameRepository(
         return net.send {
             get {
                 url("${net.gameUrl}/game}")
-                header("Authorization", token)
-                accept(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+                //accept(ContentType.Application.Json)
             }
         }
     }
@@ -41,8 +41,8 @@ class GameRepository(
         return net.send {
             get {
                 url("${net.gameUrl}/game/${account}")
-                header("Authorization", token)
-                accept(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+                //accept(ContentType.Application.Json)
             }
         }
     }
@@ -55,8 +55,8 @@ class GameRepository(
         return net.send {
             get {
                 url("${net.gameUrl}/game/log/${account}/${offset}")
-                header("Authorization", token)
-                accept(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+                //accept(ContentType.Application.Json)
             }
         }
     }
@@ -69,8 +69,8 @@ class GameRepository(
         return net.send {
             post {
                 url("${net.gameUrl}/game/config/${account}")
-                header("Authorization", token)
-                accept(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+                //accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 setBody(updateGameInfo)
             }
