@@ -24,6 +24,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.heyanle.closure.closure.ClosureController
+import com.heyanle.closure.theme.NormalSystemBarColor
+import com.heyanle.closure.utils.loge
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -57,15 +59,17 @@ fun ClosureHost(
     LaunchedEffect(key1 = Unit){
         launch {
             snapshotFlow {
-                sta.isShowPage to sta.username
+                state.isShowPage to state.username
             }.collectLatest {
-                if(it.first || sta.username.isEmpty()){
+                state.loge("ClosureHost")
+                if(it.first || state.username.isEmpty()){
                     navController.navigate(LOGIN){
                         popUpTo(navController.graph.findStartDestination().id){
                             inclusive = true
                         }
                     }
                 }else{
+
                     navController.navigate(startDestination){
                         popUpTo(navController.graph.findStartDestination().id){
                             inclusive = true
@@ -90,6 +94,7 @@ fun ClosureHost(
             popExitTransition = popExitTransition,
         ){
             composable(LOGIN){
+                NormalSystemBarColor()
                 login()
             }
             contentBuilder()

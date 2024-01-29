@@ -79,7 +79,7 @@ data class GameStatus(
     @Json(name = "code")
     val code: Int,
 
-    @Json(name = "test")
+    @Json(name = "text")
     val text: String,
 
     @Json(name = "nick_name")
@@ -94,8 +94,8 @@ data class GameStatus(
     @Json(name = "created_at")
     val createAt: Long,
 
-    @Json(name = "is_veritify")
-    val isVertify: Boolean,
+    @Json(name = "is_verify")
+    val isVerify: Boolean,
 )
 
 data class AvatarInfo(

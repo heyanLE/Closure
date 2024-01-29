@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.ktor.android)
     implementation(libs.ktor.moshi)
     implementation(libs.ktor.negotiation)
+    implementation(libs.ktor.negotiation)
 
     implementation(libs.okkv2)
 

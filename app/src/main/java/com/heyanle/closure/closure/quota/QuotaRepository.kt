@@ -39,7 +39,7 @@ class QuotaRepository(
         return net.send {
             post {
                 url("${net.arkQuotaUrl}/slots/gameAccount?uuid=${uuid}")
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 header("x-platform", "app")
                 accept(ContentType.Application.Json)
                 header("token", captchaToken)

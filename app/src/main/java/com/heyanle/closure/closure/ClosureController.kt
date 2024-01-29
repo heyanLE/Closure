@@ -9,18 +9,14 @@ import com.heyanle.closure.preferences.android.AndroidPreferenceStore
 import com.heyanle.closure.ui.common.moeSnackBar
 import com.heyanle.closure.utils.CoroutineProvider
 import com.heyanle.closure.utils.evaluateJavascript
-import com.heyanle.closure.utils.hekv.HeKV
-import com.heyanle.injekt.core.Injekt
+import com.heyanle.closure.utils.logi
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.closure.utils.waitPageFinished
-import io.ktor.http.parameters
-import io.ktor.http.parametersOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,6 +38,10 @@ class ClosureController(
     private val authRepository: AuthRepository,
 ) {
 
+    companion object{
+        const val TAG = "ClosureController"
+    }
+
     private val scope = CoroutineProvider.mainScope
 
     private val usernamePref = androidPreferenceStore.getString("username", "")
@@ -55,7 +55,7 @@ class ClosureController(
         val token: String = "",
     )
 
-    private val _state = MutableStateFlow<ClosureState>(ClosureState())
+    private val _state = MutableStateFlow<ClosureState>(ClosureState(username = usernamePref.get()))
     val state = _state.asStateFlow()
 
     suspend fun awaitToken(username: String): String {
@@ -67,6 +67,7 @@ class ClosureController(
         if(sta.isRegistering || sta.isLogging || sta.username != username){
             return null
         }
+        sta.token.logi(TAG)
         return sta.token
     }
 
@@ -139,6 +140,7 @@ class ClosureController(
     }
 
     suspend fun login(username: String, password: String, fromPage: Boolean) {
+        Exception().printStackTrace()
         _state.update {
             it.copy(
                 isLogging = true,
@@ -151,7 +153,9 @@ class ClosureController(
             it.okWithData { resp ->
                 usernamePref.set(username)
                 passwordPref.set(password)
+
                 _state.update {
+                    username.logi(TAG)
                     it.copy(
                         isLogging = false,
                         isRegistering = false,

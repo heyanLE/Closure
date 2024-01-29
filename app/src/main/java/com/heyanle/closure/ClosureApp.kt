@@ -5,10 +5,6 @@ import android.app.Application
 import android.content.Context
 import android.os.Build
 import android.os.Process
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
-import org.koin.core.logger.Level
 
 /**
  * Created by heyanlin on 2023/12/31.

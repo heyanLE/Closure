@@ -91,6 +91,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 ffmpeg-kit = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpeg-kit" }
 
+ktor_okhttp = {module = "io.ktor:ktor-client-okhttp", version.ref = "ktor"}
 ktor_negotiation = {module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor"}
 ktor_moshi = { module = "com.hypercubetools:ktor-moshi", version.ref = "ktor-moshi" }
 ktor_json = { module = "io.ktor:ktor-client-json", version.ref = "ktor" }
