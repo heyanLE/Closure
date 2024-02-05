@@ -8,13 +8,13 @@ import com.squareup.moshi.Json
 
 data class UpdateGameInfo(
     @Json(name = "config")
-    val config: GameUpdateConfig?,
+    val config: GameUpdateConfig? = null,
 
     @Json(name = "captcha_info")
-    val captchaInfo: UpdateCaptchaInfo?,
+    val captchaInfo: UpdateCaptchaInfo? = null,
 
     @Json(name = "require_ocr")
-    val requireOcr: Boolean,
+    val requireOcr: Boolean = false,
 )
 
 data class UpdateCaptchaInfo(
@@ -59,4 +59,20 @@ data class GameUpdateConfig (
 
     @Json(name = "accelerateSlot_CN")
     val accelerateSlotCN: String,
-)
+){
+    companion object {
+        fun fromGameSetting(gameSetting: GameSetting): GameUpdateConfig {
+            return GameUpdateConfig(
+                isAutoBattle = gameSetting.isAutoBattle,
+                mapId = gameSetting.mapId,
+                battleMaps = gameSetting.battleMaps,
+                keepingAP = gameSetting.keepingAP,
+                recruitReserve = gameSetting.recruitReserve,
+                recruitIgnoreRobot = gameSetting.recruitIgnoreRobot,
+                isStopped = gameSetting.isStopped,
+                enableBuildingArrange = gameSetting.enableBuildingArrange,
+                accelerateSlotCN = gameSetting.accelerateSlotCN
+            )
+        }
+    }
+}

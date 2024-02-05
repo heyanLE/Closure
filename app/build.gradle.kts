@@ -51,6 +51,7 @@ android {
     }
 }
 
+
 dependencies {
     implementation(androidx.bundles.core)
 
@@ -97,7 +98,11 @@ dependencies {
 
     implementation(libs.okkv2)
 
+    implementation(libs.geetest.sensebot)
+
     implementation(project(":crasher"))
     implementation(project(":i18n"))
     implementation(project(":injekt"))
+
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 }

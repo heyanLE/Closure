@@ -14,10 +14,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyanle.closure.LocalClosureStatePresenter
+import com.heyanle.closure.LocalGeetestHelper
 import com.heyanle.closure.R
 import com.heyanle.closure.closure.game.model.WebGame
 import com.heyanle.closure.ui.common.ErrorPage
@@ -35,7 +38,9 @@ import com.heyanle.closure.ui.common.OkImage
 import com.heyanle.closure.ui.common.TabPage
 import com.heyanle.closure.ui.home.instance.Instance
 import com.heyanle.closure.ui.home.instance.InstanceViewModel
+import com.heyanle.closure.ui.home.instance_manage.InstanceManager
 import com.heyanle.closure.utils.logi
+import com.heyanle.closure.utils.stringRes
 import kotlinx.coroutines.launch
 
 /**
@@ -49,6 +54,8 @@ fun Home() {
         viewModel<HomeViewModel>(factory = HomeViewModelFactory(LocalClosureStatePresenter.current.username))
     val webGameList = vm.webGameList.collectAsState()
     val webG = webGameList.value
+    val geetest = LocalGeetestHelper.current
+    val scope = rememberCoroutineScope()
     Surface(
         color = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.onBackground,
@@ -70,6 +77,15 @@ fun Home() {
                 },
                 title = {
                     Text(text = vm.title.value)
+                },
+                actions = {
+                    TextButton(onClick = {
+                        scope.launch {
+                            geetest.onGT4()
+                        }
+                    }) {
+                        Text(text = "test")
+                    }
                 }
             )
 
@@ -130,12 +146,12 @@ fun ColumnScope.HomeTabContent(
             }else{
                 webGameList.getOrNull(it-1)?.let {
                     it.status.nickName.logi("HomeTabContent")
-                    Text(text = it.status.nickName)
+                    Text(text = it.status.nickName.ifEmpty { stringRes(com.heyanle.i18n.R.string.unknown_doctor) })
                 }
             }
         }) {
         if(it == 0){
-            Text(text = "test")
+            InstanceManager(homeViewModel = vm)
         }else{
             val account = webGameList[it-1].gameSetting.account
             val owner = vm.getViewModelOwner(account)

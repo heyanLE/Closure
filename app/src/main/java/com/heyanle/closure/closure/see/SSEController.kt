@@ -11,25 +11,13 @@ import com.heyanle.closure.utils.stringRes
 import com.heyanle.i18n.R
 import com.heyanle.injekt.api.get
 import com.heyanle.injekt.core.Injekt
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
-import io.ktor.client.network.sockets.ConnectTimeoutException
-import io.ktor.client.network.sockets.SocketTimeoutException
-import io.ktor.client.plugins.HttpRequestTimeoutException
-import io.ktor.client.plugins.ResponseException
-import io.ktor.client.request.accept
-import io.ktor.client.request.get
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpStatement
-import io.ktor.client.statement.bodyAsChannel
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -37,16 +25,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.internal.http2.Hpack
 import java.io.IOException
-import java.net.Socket
-import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Created by heyanle on 2024/1/27.
  * https://github.com/heyanLE
  */
-class SseController (
+class SSEController (
     private val okHttpClient: OkHttpClient,
     private val closureController: ClosureController,
 ){
@@ -55,13 +40,15 @@ class SseController (
         const val TAG = "SSEController"
     }
 
-    private val httpClient = HttpClient(Android)
     private var seeJob: Job? = null
 
     private val scope = CoroutineScope(SupervisorJob() + CoroutineProvider.SINGLE)
 
     var delay: Long = 1000
     var lastEventId: String = ""
+
+    private val _enable = MutableStateFlow(false)
+    val enable = _enable.asStateFlow()
 
 
     init {
@@ -91,6 +78,7 @@ class SseController (
                 if(!resp.isSuccessful){
                     "${resp.code} ${resp.message}".moeSnackBar()
                     stringRes(R.string.connect_error_retry_delay).moeSnackBar()
+                    throw IllegalStateException("")
                 }
                 val source = resp.body?.source() ?: throw IOException("source is null")
 

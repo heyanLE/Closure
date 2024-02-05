@@ -8,7 +8,7 @@ import com.heyanle.closure.closure.logs.ClosureLogsPresenter
 import com.heyanle.closure.closure.logs.ClosureLogsRepository
 import com.heyanle.closure.closure.net.Net
 import com.heyanle.closure.closure.quota.QuotaRepository
-import com.heyanle.closure.closure.see.SseController
+import com.heyanle.closure.closure.see.SSEController
 import com.heyanle.closure.utils.CoroutineProvider
 import com.heyanle.closure.utils.getFilePath
 import com.heyanle.injekt.api.InjektModule
@@ -39,7 +39,7 @@ class ClosureModule(
         }
 
         addSingletonFactory {
-            OkHttpClient()
+            OkHttpClient.Builder().retryOnConnectionFailure(true).build()
         }
 
         addSingletonFactory {
@@ -84,10 +84,10 @@ class ClosureModule(
         }
 
         addSingletonFactory {
-            SseController(get(), get())
+            SSEController(get(), get())
         }
 
-        get<SseController>()
+        get<SSEController>()
     }
 
 

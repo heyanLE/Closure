@@ -55,7 +55,7 @@ fun EasyTheme(
     val themeState by themeController.themeFlow.collectAsState()
     themeState.loge("EasyTheme")
 
-    val isDynamic = themeState.isDynamicColor && themeController.isSupportDynamicColor()
+    val isDynamic = false // themeState.isDynamicColor && themeController.isSupportDynamicColor()
     val isDark = when (themeState.darkMode) {
         SettingPreferences.DarkMode.Dark -> true
         SettingPreferences.DarkMode.Light -> false

@@ -62,6 +62,8 @@
     <string name="enable">开启</string>
     <string name="unable">关闭</string>
 
+    <string name="unknown_doctor">Dr.Unknown</string>
+
     <string name="please_login">请先登录</string>
 
     <string name="click_to_login">点击登录</string>

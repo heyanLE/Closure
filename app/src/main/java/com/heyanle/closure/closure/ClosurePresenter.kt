@@ -43,7 +43,6 @@ class ClosurePresenter(
     private val hekv = HeKV("${rootFolderPath}/${username}", "data")
 
 
-
     private val _account = MutableStateFlow<LoadableData<Account>>(getCacheData("account"))
     val account = _account.asStateFlow()
 
@@ -56,7 +55,7 @@ class ClosurePresenter(
     private val getGameMap = hashMapOf<String, MutableStateFlow<LoadableData<GetGameInfo>>>()
 
 
-    fun onSEEStart(){
+    fun onSEEStart() {
         scope.launch {
             _webGameList.update {
                 it.copy(
@@ -66,7 +65,7 @@ class ClosurePresenter(
         }
     }
 
-    fun onSEEOpen(){
+    fun onSEEOpen() {
         scope.launch {
             _webGameList.update {
                 it.copy(
@@ -76,13 +75,22 @@ class ClosurePresenter(
         }
     }
 
-    fun onSEEPush(webGameList: List<WebGame>){
+    fun onSEEPush(webGameList: List<WebGame>) {
         scope.launch {
             _webGameList.update {
                 it.copy(
                     isLoading = false,
                     isError = false,
-                    data = webGameList,
+                    data = webGameList.map {
+                        if (it.status.nickName.isNotEmpty()) {
+                            hekv.put("nick_name_${it.status.account}", it.status.nickName)
+                            it
+                        } else {
+                            it.copy(
+                                status = it.status.copy(nickName = hekv.get("nick_name_${it.status.account}", ""))
+                            )
+                        }
+                    },
                     fromCache = false
                 )
             }
@@ -92,7 +100,7 @@ class ClosurePresenter(
     fun refreshAccount() {
         scope.launch {
             val token = closureController.tokenIfNull(username)
-            if(token == null){
+            if (token == null) {
                 stringRes(com.heyanle.i18n.R.string.waiting_for_login)
                 return@launch
             }
@@ -131,7 +139,7 @@ class ClosurePresenter(
     fun refreshGetGameInfoFlow(gameAccount: String) {
         scope.launch {
             val token = closureController.tokenIfNull(username)
-            if(token == null){
+            if (token == null) {
                 stringRes(com.heyanle.i18n.R.string.waiting_for_login)
                 return@launch
             }
@@ -159,20 +167,18 @@ class ClosurePresenter(
                         it.copy(
                             isLoading = false,
                             isError = true,
-                            fromCache = false,
                             errorMsg = resp.message,
                             throwable = null
                         )
                     }
                 }
-            }.error {  resp ->
+            }.error { resp ->
                 resp.snackWhenError()
                 resp.throwable?.printStackTrace()
                 _webGameList.update {
                     it.copy(
                         isLoading = false,
                         isError = true,
-                        fromCache = false,
                         errorMsg = resp.message,
                         throwable = resp.throwable
                     )
@@ -183,7 +189,7 @@ class ClosurePresenter(
     }
 
     suspend fun getGetGameInfoFlow(gameAccount: String): MutableStateFlow<LoadableData<GetGameInfo>> {
-        return withContext(Dispatchers.Main){
+        return withContext(Dispatchers.Main) {
             if (getGameMap.containsKey(gameAccount)) {
                 val cur = getGameMap[gameAccount]
                 if (cur != null) {
@@ -202,11 +208,11 @@ class ClosurePresenter(
         val localGetGameMap = HashMap<String, GetGameInfo>()
         localWebGameList?.forEach {
             val info = hekv.get("getGameInfo_${it.status.account}", "").jsonTo<GetGameInfo>()
-            if(info != null){
+            if (info != null) {
                 localGetGameMap[it.status.account] = info
             }
         }
-        if(localAccount != null){
+        if (localAccount != null) {
             _account.update {
                 it.copy(
                     isLoading = false,
@@ -216,7 +222,7 @@ class ClosurePresenter(
                 )
             }
         }
-        if(!localWebGameList.isNullOrEmpty()){
+        if (!localWebGameList.isNullOrEmpty()) {
             _webGameList.update {
                 it.copy(
                     isLoading = false,
@@ -226,7 +232,7 @@ class ClosurePresenter(
                 )
             }
         }
-        if(localGetGameMap.isNotEmpty()){
+        if (localGetGameMap.isNotEmpty()) {
             scope.launch(Dispatchers.Main) {
                 localGetGameMap.clear()
                 localGetGameMap.asIterable().forEach {
@@ -244,22 +250,22 @@ class ClosurePresenter(
         }
     }
 
-    private suspend fun save(){
+    private suspend fun save() {
         initJob.join()
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             val account = _account.first().data
             val webGameList = _webGameList.first().data
             val getGameInfoList = ArrayList<GetGameInfo>()
             getGameMap.asIterable().forEach {
                 val loaded = it.value.first()
-                if(loaded.data != null){
+                if (loaded.data != null) {
                     getGameInfoList.add(loaded.data)
                 }
             }
-            if(account != null){
+            if (account != null) {
                 hekv.put("account", account.toJson())
             }
-            if(webGameList != null){
+            if (webGameList != null) {
                 hekv.put("webGameList", webGameList.toJson())
             }
             getGameInfoList.forEach {
@@ -268,6 +274,7 @@ class ClosurePresenter(
         }
 
     }
+
     private fun innerNewGetGameFlow(gameAccount: String): MutableStateFlow<LoadableData<GetGameInfo>> {
         return MutableStateFlow(getCacheData("GetGameInfo_${gameAccount}"))
     }

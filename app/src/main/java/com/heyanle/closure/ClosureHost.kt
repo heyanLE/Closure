@@ -44,35 +44,42 @@ fun ClosureHost(
     navController: NavHostController,
     closureController: ClosureController,
     startDestination: String,
-    modifier: Modifier = Modifier,
-    contentAlignment: Alignment = Alignment.Center,
-    enterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) = { slideInHorizontally(tween()) { it } },
-    exitTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
-    popEnterTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) = { slideInHorizontally(tween()) { -it } },
-    popExitTransition: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) = { slideOutHorizontally(tween()) { it } },
-    login: @Composable ()->Unit,
+
+    login: @Composable () -> Unit,
     contentBuilder: NavGraphBuilder.() -> Unit,
-){
+) {
     val state by closureController.state.collectAsState()
     val sta = state
 
-    LaunchedEffect(key1 = Unit){
+    LaunchedEffect(key1 = Unit) {
         launch {
             snapshotFlow {
                 state.isShowPage to state.username
             }.collectLatest {
                 state.loge("ClosureHost")
-                if(it.first || state.username.isEmpty()){
-                    navController.navigate(LOGIN){
-                        popUpTo(navController.graph.findStartDestination().id){
+                if (it.first || it.second.isEmpty()) {
+                    navController.navigate(LOGIN) {
+                        anim {
+                            popEnter = -1
+                            popExit = -1
+                            enter = -1
+                            exit = -1
+                        }
+                        popUpTo(navController.graph.findStartDestination().id) {
                             inclusive = true
                         }
                     }
-                }else{
-
-                    navController.navigate(startDestination){
-                        popUpTo(navController.graph.findStartDestination().id){
+                } else {
+                    navController.navigate(startDestination) {
+                        anim {
+                            popEnter = -1
+                            popExit = -1
+                            enter = -1
+                            exit = -1
+                        }
+                        popUpTo(navController.graph.findStartDestination().id) {
                             inclusive = true
+
                         }
                     }
                 }
@@ -83,27 +90,24 @@ fun ClosureHost(
     CompositionLocalProvider(
         LocalClosureStatePresenter provides sta
     ) {
+
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = modifier,
-            contentAlignment = contentAlignment,
-            enterTransition = enterTransition,
-            exitTransition = exitTransition,
-            popEnterTransition = popEnterTransition,
-            popExitTransition = popExitTransition,
-        ){
-            composable(LOGIN){
+            modifier = Modifier,
+            contentAlignment = Alignment.Center,
+            enterTransition = { slideInHorizontally(tween()) { it } },
+            exitTransition = { slideOutHorizontally(tween()) { -it } + fadeOut(tween()) },
+            popEnterTransition = { slideInHorizontally(tween()) { -it } },
+            popExitTransition = { slideOutHorizontally(tween()) { it } },
+        ) {
+            composable(LOGIN) {
                 NormalSystemBarColor()
                 login()
             }
             contentBuilder()
         }
     }
-
-
-
-
 
 
 }

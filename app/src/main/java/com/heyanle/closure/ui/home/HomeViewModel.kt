@@ -9,7 +9,10 @@ import com.heyanle.closure.R
 import com.heyanle.closure.closure.ClosureController
 import com.heyanle.closure.closure.ClosurePresenter
 import com.heyanle.closure.closure.game.GameRepository
+import com.heyanle.closure.closure.game.model.GameUpdateConfig
+import com.heyanle.closure.closure.game.model.UpdateGameInfo
 import com.heyanle.closure.closure.game.model.WebGame
+import com.heyanle.closure.geetest.GeetestHelper
 import com.heyanle.closure.utils.ViewModelOwnerMap
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.injekt.core.Injekt
@@ -23,7 +26,7 @@ class HomeViewModel(
     private val username: String
 ): ViewModel() {
 
-
+    private val closureController: ClosureController by Injekt.injectLazy()
     private val gameRepository: GameRepository by Injekt.injectLazy()
     private val closurePresenter: ClosurePresenter by Injekt.injectLazy(username)
 
@@ -34,8 +37,6 @@ class HomeViewModel(
 
     private val instanceVMMap = ViewModelOwnerMap<String>()
 
-
-
     fun getViewModelOwner(account: String) = instanceVMMap.getViewModelStoreOwner(account)
 
     override fun onCleared() {
@@ -43,6 +44,36 @@ class HomeViewModel(
         instanceVMMap.clear()
     }
 
+
+    fun onOpen(webGame: WebGame){
+        viewModelScope.launch {
+            val token = closureController.awaitToken(username) ?: return@launch
+            gameRepository.awaitUpdateGame(
+                webGame.status.account,
+                token,
+                UpdateGameInfo(
+                    GameUpdateConfig.fromGameSetting(webGame.gameSetting).copy(
+                        isStopped = true,
+                    )
+                )
+            ).okWithData {
+                //it.sna
+                it.okWithData {  }
+            }.error {
+                it.snackWhenError()
+            }
+        }
+    }
+
+    fun onPause(webGame: WebGame){}
+
+    fun onDelete(webGame: WebGame){}
+
+    fun onCaptcha(webGame: WebGame, geetestHelper: GeetestHelper){
+
+    }
+
+    fun onConfig(webGame: WebGame){}
 
 }
 

@@ -37,7 +37,7 @@ fun Instance(
     val vm = viewModel<InstanceViewModel>(factory = InstanceViewModelFactory(username, account))
     val instance = vm.instanceState.collectAsState()
     instance.value.logi("Instance")
-    if (!instance.value.webGame.isLoading && !instance.value.webGame.isError && instance.value.webGame.data != null) {
+    if (!instance.value.webGame.isLoading && instance.value.webGame.data != null) {
         InstanceContent(
             homeViewModel = homeViewModel,
             instanceViewModel = vm,
@@ -57,7 +57,7 @@ fun InstanceContent(
 
     if (state.getGameInfo.isLoading) {
         LoadingPage(modifier = Modifier.fillMaxSize())
-    } else if (state.getGameInfo.isError) {
+    } else if (state.getGameInfo.data == null) {
         ErrorPage(
             modifier = Modifier.fillMaxSize(),
             errorMsg = state.getGameInfo.errorMsg?:"",
@@ -69,7 +69,7 @@ fun InstanceContent(
                 instanceViewModel.refreshLogs()
             }
         )
-    } else if(state.getGameInfo.data != null) {
+    } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ){
@@ -84,6 +84,7 @@ fun InstanceContent(
             }
 
             // 理智
+
 
             // 操作
 
