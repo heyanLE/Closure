@@ -17,6 +17,11 @@ data class CreateGameBody(
     val password: String,
 )
 
+data class DeleteGameBody(
+    @Json(name = "account")
+    val account: String? = null,
+)
+
 data class CreateGameResp(
     @Json(name = "available")
     val available: Boolean,

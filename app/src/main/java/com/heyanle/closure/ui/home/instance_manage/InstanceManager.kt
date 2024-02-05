@@ -51,23 +51,31 @@ fun InstanceManager(
     val webListData = homeViewModel.webGameList.collectAsState()
     val w = webListData.value
 
-    if(w.isLoading){
+    if (w.data == null && w.isLoading) {
 
-    }else if(w.isError || w.data == null){
+    } else if (w.data == null) {
 
-    }else{
-        LazyColumn (
+    } else {
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
-        ){
-            items(w.data){
+        ) {
+            items(w.data) {
                 InstanceCard(
                     webGame = it,
                     onClick = {},
-                    onOpen = {},
-                    onPause = {},
-                    onDelete = {},
-                    onCaptcha = {},
+                    onOpen = {
+                        homeViewModel.onOpen(it)
+                    },
+                    onPause = {
+                        homeViewModel.onPause(it)
+                    },
+                    onDelete = {
+                        homeViewModel.onDelete(it)
+                    },
+                    onCaptcha = {
+                        homeViewModel.onCaptcha(it)
+                    },
                     onConfig = {}
                 )
             }
@@ -85,7 +93,7 @@ fun InstanceCard(
     onDelete: (WebGame) -> Unit,
     onCaptcha: (WebGame) -> Unit,
     onConfig: (WebGame) -> Unit,
-){
+) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
@@ -115,7 +123,8 @@ fun InstanceCard(
             val assets: AssetsController by Injekt.injectLazy()
             val map = assets.stageMap.collectAsState()
             webGame.gameSetting.battleMaps
-            val stage = map.value.getOrDefault(webGame.gameSetting.battleMaps.getOrNull(0) ?: "", null)
+            val stage =
+                map.value.getOrDefault(webGame.gameSetting.battleMaps.getOrNull(0) ?: "", null)
             val text = if (stage == null) {
                 webGame.gameSetting.battleMaps.getOrNull(0) ?: ""
             } else {

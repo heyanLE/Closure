@@ -5,6 +5,7 @@ import com.heyanle.closure.closure.net.NetResponse
 import com.heyanle.closure.closure.quota.module.Account
 import com.heyanle.closure.closure.quota.module.CreateGameBody
 import com.heyanle.closure.closure.quota.module.CreateGameResp
+import com.heyanle.closure.closure.quota.module.DeleteGameBody
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -51,6 +52,24 @@ class QuotaRepository(
 
     suspend fun awaitCreateGame(token: String, uuid: String, captchaToken: String, createGameBody: CreateGameBody): NetResponse<CreateGameResp> {
         return createGame(token, uuid, captchaToken, createGameBody).await()
+    }
+
+    fun deleteGame(token: String, uuid: String, captchaToken: String): Deferred<NetResponse<CreateGameResp>>  {
+        return net.send {
+            post {
+                url("${net.arkQuotaUrl}/slots/gameAccount?uuid=${uuid}")
+                header("Authorization", "Bearer $token")
+                header("x-platform", "app")
+                accept(ContentType.Application.Json)
+                header("token", captchaToken)
+                contentType(ContentType.Application.Json)
+                setBody(DeleteGameBody())
+            }
+        }
+    }
+
+    suspend fun awaitDeleteGame(token: String, uuid: String, captchaToken: String): NetResponse<CreateGameResp> {
+        return deleteGame(token, uuid, captchaToken).await()
     }
 
 }

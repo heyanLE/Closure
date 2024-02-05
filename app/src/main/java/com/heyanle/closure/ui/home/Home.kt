@@ -49,12 +49,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home() {
-
+    val geetest = LocalGeetestHelper.current
     val vm =
-        viewModel<HomeViewModel>(factory = HomeViewModelFactory(LocalClosureStatePresenter.current.username))
+        viewModel<HomeViewModel>(factory = HomeViewModelFactory(LocalClosureStatePresenter.current.username, geetest))
     val webGameList = vm.webGameList.collectAsState()
     val webG = webGameList.value
-    val geetest = LocalGeetestHelper.current
+
     val scope = rememberCoroutineScope()
     Surface(
         color = MaterialTheme.colorScheme.background,
@@ -89,13 +89,13 @@ fun Home() {
                 }
             )
 
-            if (webG.isLoading) {
+            if (webG.data == null && webG.isLoading) {
                 LoadingPage (
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
                 )
-            } else if (webG.isError || webG.data == null) {
+            } else if (webG.data == null) {
                 ErrorPage(
                     modifier = Modifier
                         .fillMaxWidth()

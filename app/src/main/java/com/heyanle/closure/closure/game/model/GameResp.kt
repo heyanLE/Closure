@@ -1,6 +1,8 @@
 package com.heyanle.closure.closure.game.model
 
 import com.heyanle.closure.closure.auth.model.AuthResp
+import com.heyanle.closure.ui.common.moeSnackBar
+import com.heyanle.closure.utils.stringRes
 import com.squareup.moshi.Json
 
 /**
@@ -37,6 +39,11 @@ data class GameResp<R>(
             block(this)
         }
         return this
+    }
+
+    fun snackWhenError(){
+        error { "${stringRes(com.heyanle.i18n.R.string.feature_error)} ${message} ${code}"
+            .moeSnackBar() }
     }
 
 }
