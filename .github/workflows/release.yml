@@ -39,6 +39,6 @@ jobs:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
       - name: Release
         run: |
-          gh release create -d ${{ github.ref_name }} ${{ steps.sign_app.outputs.signedReleaseFile }}
+          gh release create -d ${{ github.ref_name }} app/build/outputs/apk/release/app-release-unsigned-signed.apk
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
