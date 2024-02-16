@@ -26,7 +26,7 @@ jobs:
           BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
           echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
           echo Last build tool version is: $BUILD_TOOL_VERSION
-      - name: sign-apk
+      - name: sign_app
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: app/build/outputs/apk/release
@@ -39,6 +39,6 @@ jobs:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
       - name: Release
         run: |
-          gh release create -d ${{ github.ref_name }} ${{steps.sign_app.outputs.signedReleaseFile}}
+          gh release create -d ${{ github.ref_name }} ${{ steps.sign_app.outputs.signedReleaseFile }}
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
