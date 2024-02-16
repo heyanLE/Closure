@@ -1,0 +1,44 @@
+name: release
+on:
+  push:
+    tags:
+      - '**'
+  workflow_dispatch:
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.4
+        with:
+          java-version: 17
+      - name: Build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :app:assemble
+        env:
+          APPCENTER_SECRET: ${{ secrets.APPCENTER_SECRET }}
+      - name: Setup build tool version variable
+        shell: bash
+        run: |
+          BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
+          echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
+          echo Last build tool version is: $BUILD_TOOL_VERSION
+      - name: sign-apk
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PWD }}
+          keyPassword: ${{ secrets.KEY_PWD }}
+        env:
+          # override default build-tools version (29.0.3) -- optional
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
+      - name: Release
+        run: |
+          gh release create -d ${{ github.ref_name }} ${{steps.sign_app.outputs.signedReleaseFile}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}

@@ -7,6 +7,7 @@ import com.heyanle.closure.closure.game.model.UpdateGameInfo
 import com.heyanle.closure.closure.game.model.WebGame
 import com.heyanle.closure.closure.net.Net
 import com.heyanle.closure.closure.net.NetResponse
+import com.heyanle.closure.utils.logi
 import io.ktor.client.request.accept
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -90,6 +91,7 @@ class GameRepository(
                 //accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 setBody(updateGameInfo)
+                updateGameInfo.logi("GameRepository")
             }
         }
     }

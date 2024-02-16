@@ -87,7 +87,7 @@ fun Login(
         onLogin = { loginViewModel.login() },
         onRegister = { loginViewModel.register() },
         onJumpToClosure = {
-
+            "https://closure.ltsc.vip/".openUrl()
         }
     )
 

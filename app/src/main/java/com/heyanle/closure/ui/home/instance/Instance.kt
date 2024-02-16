@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
@@ -34,11 +41,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.heyanle.closure.R
 import com.heyanle.closure.closure.assets.AssetsController
 import com.heyanle.closure.closure.game.model.GetGameInfo
-import com.heyanle.closure.closure.game.model.WebGame
+import com.heyanle.closure.closure.game.model.LogItem
 import com.heyanle.closure.ui.common.ErrorPage
+import com.heyanle.closure.ui.common.FastScrollToTopFab
 import com.heyanle.closure.ui.common.LoadingPage
 import com.heyanle.closure.ui.common.OkImage
 import com.heyanle.closure.ui.home.HomeViewModel
@@ -82,6 +89,9 @@ fun InstanceContent(
     state: InstanceViewModel.InstanceState
 ) {
 
+    val listState = rememberLazyListState()
+
+    val logState = instanceViewModel.closureLogState.collectAsState()
     if (state.getGameInfo.isLoading) {
         LoadingPage(modifier = Modifier.fillMaxSize())
     } else if (state.getGameInfo.data == null) {
@@ -98,43 +108,107 @@ fun InstanceContent(
             }
         )
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Box(modifier = Modifier.fillMaxSize()){
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = listState,
+                contentPadding = PaddingValues(0.dp, 0.dp, 0.dp, 100.dp)
+            ) {
 
-            // 账号信息
-            item {
+                // 错误信息
+                if (state.getGameInfo.isError) {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.errorContainer)
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = state.getGameInfo.errorMsg
+                                    ?: state.getGameInfo.throwable?.message ?: stringResource(
+                                        id = com.heyanle.i18n.R.string.feature_error
+                                    ),
+                                color = MaterialTheme.colorScheme.error,
+                                maxLines = 1
+                            )
+                        }
+                    }
 
-                AccountCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
-                        .padding(16.dp),
-                    account = state.getGameInfo.data.config.account,
-                    platform = state.webGame.data?.status?.platform?.toLong() ?: -1L,
-                    accountColor = MaterialTheme.colorScheme.secondary,
+                    item {
+                        Spacer(modifier = Modifier.size(16.dp))
+                    }
+                }
 
-                )
+
+                // 账号信息
+                item {
+
+                    AccountCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+                            .padding(16.dp),
+                        account = state.getGameInfo.data.config.account,
+                        platform = state.webGame.data?.status?.platform?.toLong() ?: -1L,
+                        accountColor = MaterialTheme.colorScheme.secondary,
+
+                        )
+                }
+
+                item {
+                    Spacer(modifier = Modifier.size(16.dp))
+                }
+
+                // 原石 合成玉 龙门币
+
+                item {
+                    MoneyPanel(getGameInfo = state.getGameInfo.data)
+                }
+
+                item {
+                    Spacer(modifier = Modifier.size(16.dp))
+                }
+
+                // 理智
+
+                item {
+                    APLVPanel(getGameResp = state.getGameInfo.data)
+                }
+
+                item {
+                    Spacer(modifier = Modifier.size(16.dp))
+                }
+
+                // 操作
+
+                // 日志
+                item {
+                    LogHeader(showRefresh = !state.getGameInfo.isError) {
+                        instanceViewModel.refreshLogs()
+                    }
+                }
+
+                if (logState.value.isLoading) {
+                    item {
+                        LoadingPage(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+                        )
+                    }
+                }
+
+                items(logState.value.logList) {
+                    LogItem(item = it)
+                }
             }
-            
-            // 原石 合成玉 龙门币
-             
-            item { 
-                MoneyPanel(getGameInfo = state.getGameInfo.data)
-            }
-
-            // 理智
-
-            item {
-                APLVPanel(getGameResp = state.getGameInfo.data)
-            }
-
-            // 操作
-
-            // 日志
+            FastScrollToTopFab(listState = listState)
         }
+
+
     }
+
 
 }
 
@@ -163,6 +237,9 @@ fun MoneyPanel(getGameInfo: GetGameInfo) {
                 image = AssetsController.DIAMOND_ICON_URL,
                 contentDescription = stringResource(
                     id = com.heyanle.i18n.R.string.diamond
+                ),
+                header = mapOf(
+                    "Referer" to "https://arknights.host"
                 )
             )
             Text(
@@ -185,6 +262,9 @@ fun MoneyPanel(getGameInfo: GetGameInfo) {
                 image = AssetsController.DIAMOND_SHD_ICON_URL,
                 contentDescription = stringResource(
                     id = com.heyanle.i18n.R.string.diamond_shd
+                ),
+                header = mapOf(
+                    "Referer" to "https://arknights.host"
                 )
             )
             Text(
@@ -207,6 +287,9 @@ fun MoneyPanel(getGameInfo: GetGameInfo) {
                 image = AssetsController.GOLD_ICON_URL,
                 contentDescription = stringResource(
                     id = com.heyanle.i18n.R.string.gold
+                ),
+                header = mapOf(
+                    "Referer" to "https://arknights.host"
                 )
             )
             Text(
@@ -351,5 +434,72 @@ fun APLVPanel(getGameResp: GetGameInfo) {
         )
 
 
+    }
+}
+
+@Composable
+fun LogHeader(
+    showRefresh: Boolean,
+    onRefresh: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+    ) {
+        // header
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                fontWeight = FontWeight.W900,
+                color = MaterialTheme.colorScheme.secondary,
+                text = stringResource(id = com.heyanle.i18n.R.string.log),
+                modifier = Modifier.padding(12.dp)
+            )
+
+            if (showRefresh) {
+                IconButton(onClick = {
+                    onRefresh()
+                }) {
+                    Icon(
+                        Icons.Filled.Refresh,
+                        contentDescription = stringResource(id = com.heyanle.i18n.R.string.refresh)
+                    )
+                }
+            }
+
+
+        }
+    }
+}
+
+@Composable
+fun LogItem(
+    item: LogItem
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp))
+            .padding(12.dp, 0.dp, 12.dp, 16.dp)
+
+    ) {
+
+        Text(
+            fontSize = 12.sp,
+            text = "${item.getData()}\n${item.getTime()}",
+            color = item.getColor(),
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Text(
+            modifier = Modifier.weight(1f),
+            text = item.content,
+            color = item.getColor(),
+        )
     }
 }

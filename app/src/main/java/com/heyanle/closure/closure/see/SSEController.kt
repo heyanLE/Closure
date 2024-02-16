@@ -18,9 +18,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -42,24 +45,37 @@ class SSEController (
 
     private var seeJob: Job? = null
 
-    private val scope = CoroutineScope(SupervisorJob() + CoroutineProvider.SINGLE)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     var delay: Long = 1000
     var lastEventId: String = ""
 
-    private val _enable = MutableStateFlow(false)
+    private val _enable = MutableStateFlow(true)
     val enable = _enable.asStateFlow()
+
+    private var hasFirstError = false
 
 
     init {
         scope.launch(Dispatchers.Main) {
-            closureController.state.map { it.username to it.token }.distinctUntilChanged().collectLatest {
-                if(it.first.isNotEmpty() && it.second.isNotEmpty()){
+            combine(
+                closureController.state.map { it.username to it.token }.distinctUntilChanged(),
+                enable
+            ){ it, ena ->
+                if(it.first.isNotEmpty() && it.second.isNotEmpty() && ena){
+                    hasFirstError = false
                     start(it.first)
                 }
-            }
+            }.collect()
         }
     }
+
+    fun start(){
+        _enable.update {
+            true
+        }
+    }
+
 
     private fun start(username: String){
         seeJob?.cancel()
@@ -76,8 +92,10 @@ class SSEController (
 
                 val resp = call.execute()
                 if(!resp.isSuccessful){
-                    "${resp.code} ${resp.message}".moeSnackBar()
-                    stringRes(R.string.connect_error_retry_delay).moeSnackBar()
+                    if(_enable.value) {
+                        "${resp.code} ${resp.message}".moeSnackBar()
+                        stringRes(R.string.connect_error_retry_delay).moeSnackBar()
+                    }
                     throw IllegalStateException("")
                 }
                 val source = resp.body?.source() ?: throw IOException("source is null")
@@ -85,8 +103,17 @@ class SSEController (
                 var curEvent = ""
                 val sb = StringBuilder()
                 onOpen(username)
+
                 while(!call.isCanceled()){
-                    val line = source.readUtf8LineStrict().trim()
+                    val line = runCatching {
+                        source.readUtf8LineStrict().trim()
+                    }.getOrElse {
+                        if(!hasFirstError){
+                            hasFirstError = true
+                            throw IllegalStateException("")
+                        }
+                        throw it
+                    }
                     line.logi(TAG)
 
                     if(line.isEmpty()){
@@ -129,8 +156,10 @@ class SSEController (
 
             }catch (ex: IOException) {
                 ex.printStackTrace()
-                "${ex.message}".moeSnackBar()
-                stringRes(R.string.connect_stop_retry_delay).moeSnackBar()
+                //"${ex.message}".moeSnackBar()
+                if(_enable.value){
+                    stringRes(R.string.connect_stop_retry_delay).moeSnackBar()
+                }
             } catch (ex: Exception){
                 ex.printStackTrace()
             }
@@ -163,7 +192,14 @@ class SSEController (
                 }
 
             }
-            "close" -> {}
+            "close" -> {
+                seeJob?.cancel()
+                hasFirstError = false
+                stringRes(R.string.connect_unlink_because_other).moeSnackBar()
+                _enable.update {
+                    false
+                }
+            }
         }
     }
 

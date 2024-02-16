@@ -33,31 +33,31 @@ data class UpdateCaptchaInfo(
 )
 
 data class GameUpdateConfig (
-    @Json(name = "isAutoBattle")
+    @Json(name = "is_auto_battle")
     val isAutoBattle: Boolean,
 
-    @Json(name = "mapId")
+    @Json(name = "map_id")
     val mapId: String,
 
-    @Json(name = "battleMaps")
+    @Json(name = "battle_maps")
     val battleMaps: List<String>,
 
-    @Json(name = "keepingAP")
+    @Json(name = "keeping_ap")
     val keepingAP:Int,
 
-    @Json(name = "recruitReserve")
+    @Json(name = "recruit_reserve")
     val recruitReserve: Int,
 
-    @Json(name = "recruitIgnoreRobot")
+    @Json(name = "recruit_ignore_robot")
     val recruitIgnoreRobot: Boolean,
 
-    @Json(name = "isStopped")
+    @Json(name = "is_stopped")
     val isStopped: Boolean,
 
-    @Json(name = "enableBuildingArrange")
+    @Json(name = "enable_building_arrange")
     val enableBuildingArrange: Boolean,
 
-    @Json(name = "accelerateSlot_CN")
+    @Json(name = "accelerate_slot_cn")
     val accelerateSlotCN: String,
 ){
     companion object {

@@ -8,6 +8,7 @@ import com.heyanle.closure.utils.CoroutineProvider
 import com.heyanle.closure.utils.hekv.HeKV
 import com.heyanle.closure.utils.jsonTo
 import com.heyanle.closure.utils.stringRes
+import com.heyanle.closure.utils.toJson
 import com.heyanle.i18n.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -33,7 +34,13 @@ class ClosureLogsPresenter(
     private val hekv = HeKV("${rootFolderPath}/${username}", account)
     private val scope = CoroutineScope(SupervisorJob() + CoroutineProvider.SINGLE)
 
-    private val _logFlow = MutableStateFlow<List<LogItem>>(emptyList())
+    data class LogState(
+        val isLoading: Boolean = true,
+        val logList: List<LogItem> = emptyList(),
+    )
+
+
+    private val _logFlow = MutableStateFlow<LogState>(LogState())
     val logFlow = _logFlow.asStateFlow()
 
     init {
@@ -41,9 +48,9 @@ class ClosureLogsPresenter(
             val logList = arrayListOf<LogItem>()
             hekv.keys().forEach {
                 val json = hekv.get(it, "")
-                if(json.isNotEmpty()){
+                if (json.isNotEmpty()) {
                     val logItem = json.jsonTo<LogItem>()
-                    if(logItem != null){
+                    if (logItem != null) {
                         logList.add(logItem)
                     }
                 }
@@ -52,22 +59,31 @@ class ClosureLogsPresenter(
         }
     }
 
-    fun refresh(){
+    fun refresh() {
         scope.launch {
             val token = closureController.tokenIfNull(username) ?: return@launch
-            val cur = _logFlow.value.firstOrNull()?.ts ?: 0
+            _logFlow.update {
+                it.copy(isLoading = true)
+            }
+            val cur = _logFlow.value.logList.firstOrNull()?.ts ?: 0
             val logList = closureLogsRepository.awaitGetLog(account, token, cur)
             append(logList)
         }
     }
 
-    private fun append(logList: List<LogItem>){
+    private fun append(logList: List<LogItem>) {
         _logFlow.update {
-            (it + logList).distinctBy { it.id }.sortedByDescending { it.ts }
+            it.copy(
+                isLoading = false,
+                logList = (it.logList + logList).distinctBy { it.id }.sortedByDescending { it.ts }
+            )
+        }
+        scope.launch {
+            logList.forEachIndexed { index, logItem ->
+                hekv.put(logItem.toJson(), logItem.toJson())
+            }
         }
     }
-
-
 
 
 }

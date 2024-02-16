@@ -9,6 +9,7 @@ import com.heyanle.closure.closure.quota.module.Account
 import com.heyanle.closure.ui.common.moeSnackBar
 import com.heyanle.closure.utils.hekv.HeKV
 import com.heyanle.closure.utils.jsonTo
+import com.heyanle.closure.utils.logi
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.closure.utils.toJson
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +42,10 @@ class ClosurePresenter(
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val hekv = HeKV("${rootFolderPath}/${username}", "data")
+
+    init {
+        "${rootFolderPath}/${username}".logi("ClosurePresenter")
+    }
 
 
     private val _account = MutableStateFlow<LoadableData<Account>>(getCacheData("account"))
@@ -111,7 +116,6 @@ class ClosurePresenter(
             }
             val accountResp = quotaRepository.awaitAccount(token)
             accountResp.okWithData { acc ->
-                save()
                 _account.update {
                     it.copy(
                         isLoading = false,
@@ -120,6 +124,7 @@ class ClosurePresenter(
                         data = acc,
                     )
                 }
+                save()
             }.error { resp ->
                 resp.snackWhenError()
                 _account.update {
@@ -152,7 +157,6 @@ class ClosurePresenter(
             val getGameResp = gameRepository.awaitGetGameInfo(gameAccount, token)
             getGameResp.okWithData {
                 it.okWithData { info ->
-                    save()
                     flow.update {
                         it.copy(
                             isLoading = false,
@@ -161,6 +165,7 @@ class ClosurePresenter(
                             data = info
                         )
                     }
+                    save()
                 }.error { resp ->
                     //"${stringRes(com.heyanle.i18n.R.string.feature_error)} ${resp.code}:${resp.message}".moeSnackBar()
                     flow.update {
@@ -276,7 +281,7 @@ class ClosurePresenter(
     }
 
     private fun innerNewGetGameFlow(gameAccount: String): MutableStateFlow<LoadableData<GetGameInfo>> {
-        return MutableStateFlow(getCacheData("GetGameInfo_${gameAccount}"))
+        return MutableStateFlow(getCacheData("getGameInfo_${gameAccount}"))
     }
 
     private inline fun <reified T> getCacheData(key: String): LoadableData<T> {

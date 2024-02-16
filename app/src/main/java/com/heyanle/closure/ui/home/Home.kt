@@ -4,13 +4,20 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,6 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +47,7 @@ import com.heyanle.closure.ui.common.TabPage
 import com.heyanle.closure.ui.home.instance.Instance
 import com.heyanle.closure.ui.home.instance.InstanceViewModel
 import com.heyanle.closure.ui.home.instance_manage.InstanceManager
+import com.heyanle.closure.utils.easyTODO
 import com.heyanle.closure.utils.logi
 import com.heyanle.closure.utils.stringRes
 import kotlinx.coroutines.launch
@@ -49,6 +58,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home() {
+
     val geetest = LocalGeetestHelper.current
     val vm =
         viewModel<HomeViewModel>(
@@ -72,35 +82,62 @@ fun Home() {
         ) {
             TopAppBar(
                 navigationIcon = {
-                    OkImage(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape),
-                        image = R.drawable.logo,
-                        contentDescription = stringResource(id = com.heyanle.i18n.R.string.app_name)
-                    )
+                    Row {
+                        Spacer(modifier = Modifier.size(8.dp))
+                        OkImage(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape),
+                            image = R.drawable.logo,
+                            contentDescription = stringResource(id = com.heyanle.i18n.R.string.app_name)
+                        )
+                    }
+
                 },
                 title = {
                     Text(text = vm.title.value)
                 },
                 actions = {
-                    TextButton(onClick = {
-                        scope.launch {
-                            geetest.onGT4()
+                    when (val sta = vm.topAppBarState.value) {
+                        HomeViewModel.TopAppBarState.Normal -> {}
+                        HomeViewModel.TopAppBarState.InstanceManager -> {
+                            IconButton(onClick = {
+                                easyTODO()
+                            }) {
+                                Icon(
+                                    Icons.Filled.Add,
+                                    contentDescription = stringRes(com.heyanle.i18n.R.string.add_instance)
+                                )
+                            }
                         }
-                    }) {
-                        Text(text = "test")
+
+                        is HomeViewModel.TopAppBarState.Instance -> {
+                            IconButton(onClick = {
+                                vm.refresh(sta.webGame)
+                            }) {
+                                Icon(
+                                    Icons.Filled.Refresh,
+                                    contentDescription = stringRes(com.heyanle.i18n.R.string.refresh)
+                                )
+                            }
+                        }
                     }
                 }
             )
 
             if (webG.data == null && webG.isLoading) {
+                LaunchedEffect(key1 = Unit) {
+                    vm.topAppBarState.value = HomeViewModel.TopAppBarState.Normal
+                }
                 LoadingPage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
                 )
             } else if (webG.data == null) {
+                LaunchedEffect(key1 = Unit) {
+                    vm.topAppBarState.value = HomeViewModel.TopAppBarState.Normal
+                }
                 ErrorPage(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -139,6 +176,17 @@ fun ColumnScope.HomeTabContent(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState {
         webGameList.size + 1
+    }
+    LaunchedEffect(key1 = pagerState.currentPage) {
+        if (pagerState.currentPage == 0) {
+            vm.topAppBarState.value = HomeViewModel.TopAppBarState.InstanceManager
+        } else {
+            vm.topAppBarState.value = runCatching {
+                HomeViewModel.TopAppBarState.Instance(webGameList[pagerState.currentPage - 1])
+            }.getOrElse {
+                HomeViewModel.TopAppBarState.Normal
+            }
+        }
     }
     TabPage(
         Modifier.weight(1f),

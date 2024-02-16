@@ -18,6 +18,7 @@ import com.heyanle.closure.geetest.GeetestHelper
 import com.heyanle.closure.ui.common.moeSnackBar
 import com.heyanle.closure.utils.ViewModelOwnerMap
 import com.heyanle.closure.utils.stringRes
+import com.heyanle.injekt.api.get
 import com.heyanle.injekt.core.Injekt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -39,7 +40,20 @@ class HomeViewModel(
     val account = closurePresenter.account
     val webGameList = closurePresenter.webGameList
 
+    sealed class TopAppBarState {
+        data object Normal: TopAppBarState()
+
+        data object InstanceManager: TopAppBarState()
+
+        data class Instance(
+            val webGame: WebGame
+        ): TopAppBarState()
+
+    }
+
+    val topAppBarState = mutableStateOf<TopAppBarState>(TopAppBarState.Normal)
     val title = mutableStateOf(stringRes(com.heyanle.i18n.R.string.app_name))
+    val icon = mutableStateOf("")
 
     private val instanceVMMap = ViewModelOwnerMap<String>()
 
@@ -68,6 +82,7 @@ class HomeViewModel(
                     }.snackWhenError()
                 }.snackWhenError()
             }
+            closurePresenter.refreshGetGameInfoFlow(webGame.status.account)
         }
     }
 
@@ -90,25 +105,26 @@ class HomeViewModel(
             }.error {
                 it.snackWhenError()
             }
+            closurePresenter.refreshGetGameInfoFlow(webGame.status.account)
         }
     }
 
     fun onDelete(webGame: WebGame) {
-        viewModelScope.launch {
-            val token = closureController.tokenIfNull(username) ?: return@launch
-            val captchaToken = geetestHelper.onGT4()
-            if (captchaToken == null) {
-                stringRes(com.heyanle.i18n.R.string.captcha_error).moeSnackBar()
-            } else {
-                quotaRepository.awaitDeleteGame(
-                    token,
-                    webGame.status.uuid,
-                    captchaToken
-                ).okWithData {
-                    it.results.slotUserSmsVerified.message.moeSnackBar()
-                }.snackWhenError()
-            }
-        }
+//        viewModelScope.launch {
+//            val token = closureController.tokenIfNull(username) ?: return@launch
+//            val captchaToken = geetestHelper.onGT4()
+//            if (captchaToken == null) {
+//                stringRes(com.heyanle.i18n.R.string.captcha_error).moeSnackBar()
+//            } else {
+//                quotaRepository.awaitDeleteGame(
+//                    token,
+//                    webGame.status.uuid,
+//                    captchaToken
+//                ).okWithData {
+//                    it.results.slotUserSmsVerified.message.moeSnackBar()
+//                }.snackWhenError()
+//            }
+//        }
     }
 
     fun onCaptcha(webGame: WebGame) {
@@ -142,11 +158,16 @@ class HomeViewModel(
             }.error {
                 it.snackWhenError()
             }
+            closurePresenter.refreshGetGameInfoFlow(webGame.status.account)
 
         }
     }
 
     fun onConfig(webGame: WebGame) {}
+
+    fun refresh(webGame: WebGame){
+        closurePresenter.refreshGetGameInfoFlow(webGame.status.account)
+    }
 
 }
 

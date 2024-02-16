@@ -47,6 +47,7 @@ fun OkImage(
     placeholderRes: Int? = null,
     tint: Color? = null,
     alpha: Float = DefaultAlpha,
+    header: Map<String, String>? = null,
 ) {
     var need = true
     if (image == null || image == "" || (image is Int && image <= 0)) {
@@ -111,7 +112,11 @@ fun OkImage(
                             } else {
                                 placeholder(placeholderRes)
                             }
-
+                            header?.let {
+                                it.iterator().forEach {
+                                    addHeader(it.key, it.value)
+                                }
+                            }
                         }
                         .crossfade(crossFade)
                         .apply {

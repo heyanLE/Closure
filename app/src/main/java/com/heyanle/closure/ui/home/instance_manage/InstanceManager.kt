@@ -36,9 +36,11 @@ import androidx.compose.ui.unit.sp
 import com.heyanle.closure.R
 import com.heyanle.closure.closure.assets.AssetsController
 import com.heyanle.closure.closure.game.model.WebGame
+import com.heyanle.closure.closure.see.SSEController
 import com.heyanle.closure.ui.common.LoadingImage
 import com.heyanle.closure.ui.common.LoadingPage
 import com.heyanle.closure.ui.home.HomeViewModel
+import com.heyanle.closure.utils.easyTODO
 import com.heyanle.injekt.core.Injekt
 
 /**
@@ -53,13 +55,41 @@ fun InstanceManager(
     val w = webListData.value
 
     if (w.data == null && w.isLoading) {
-        LoadingPage (modifier = Modifier.fillMaxSize())
+        LoadingPage(modifier = Modifier.fillMaxSize())
     } else if (w.data == null) {
     } else {
+        val sseController by Injekt.injectLazy<SSEController>()
+        val sseEnable = sseController.enable.collectAsState()
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
+
+            if(!sseEnable.value){
+                item {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                MaterialTheme.colorScheme.errorContainer
+                            )
+                            .clickable {
+                                if (!sseEnable.value) {
+                                    sseController.start()
+                                }
+                            }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+
+                    ) {
+                        Text(text = stringResource(id = com.heyanle.i18n.R.string.connect_unlink), color = MaterialTheme.colorScheme.error)
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(text = stringResource(id = com.heyanle.i18n.R.string.click_to_relink), color = MaterialTheme.colorScheme.secondary)
+                    }
+                }
+            }
+
+
             items(w.data) {
                 InstanceCard(
                     webGame = it,
@@ -71,12 +101,15 @@ fun InstanceManager(
                         homeViewModel.onPause(it)
                     },
                     onDelete = {
-                        homeViewModel.onDelete(it)
+                        easyTODO()
+                        // homeViewModel.onDelete(it)
                     },
                     onCaptcha = {
                         homeViewModel.onCaptcha(it)
                     },
-                    onConfig = {}
+                    onConfig = {
+                        easyTODO()
+                    }
                 )
             }
         }
@@ -187,8 +220,14 @@ fun InstanceCard(
                     // LoadingIcon()
                     Spacer(modifier = Modifier.size(16.dp))
                     Column() {
-                        Text(text = stringResource(id = com.heyanle.i18n.R.string.game_logging))
-                        Text(text = stringResource(id = com.heyanle.i18n.R.string.it_take_five_minute))
+                        Text(
+                            text = stringResource(id = com.heyanle.i18n.R.string.game_logging),
+                            color = Color.White
+                        )
+                        Text(
+                            text = stringResource(id = com.heyanle.i18n.R.string.it_take_five_minute),
+                            color = Color.White
+                        )
                     }
                 }
             }
@@ -246,7 +285,7 @@ fun AccountCard(
                 )
             }",
         )
-        if(platform >= 0){
+        if (platform >= 0) {
             Box(
                 modifier = Modifier
                     .clip(

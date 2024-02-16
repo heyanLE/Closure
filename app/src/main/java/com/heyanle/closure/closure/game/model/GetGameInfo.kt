@@ -19,7 +19,7 @@ data class GetGameInfo (
     val lastFreshTs: Long,
 
     @Json(name = "screenshot")
-    val screenshot: List<ScreenshotItem>,
+    val screenshot: List<ScreenshotItem>?,
 
     @Json(name = "status")
     val status: GetGameStatus,
@@ -27,7 +27,7 @@ data class GetGameInfo (
     @Json(name = "troop")
     val troop: Any?,
 
-)
+    )
 
 data class GameConfig (
     @Json(name = "accelerate_slot")
