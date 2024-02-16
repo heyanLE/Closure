@@ -37,7 +37,7 @@ class GeetestHelper(
         .setCanceledOnTouchOutside(true)
         .build()
     private var gt4: GTCaptcha4Client = GTCaptcha4Client.getClient(activity).apply {
-        init(CAPTCHA_ID)
+        init(CAPTCHA_ID, config)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -53,12 +53,10 @@ class GeetestHelper(
         gt4 ?: null
         return withTimeoutOrNull<String?>(10000) {
             suspendCancellableCoroutine { con ->
-                gt4?.addOnSuccessListener { b, s ->
+                gt4.addOnSuccessListener { b, s ->
                     if (b) {
                         s.logi(TAG)
-                        val jsonObject = JSONObject(s)
-                        val token = jsonObject.getString("pass_token")
-                        con.resume(token) {
+                        con.resume(s) {
                             it.printStackTrace()
                         }
                     } else {
@@ -130,7 +128,7 @@ class GeetestHelper(
                     override fun onButtonClick() {
                         "onButtonClick".logi()
                         gt3ConfigBean.api1Json = jsonObject
-                        gt3?.getGeetest()
+                        gt3.getGeetest()
                     }
 
                     override fun onDialogResult(result: String?) {
@@ -139,13 +137,13 @@ class GeetestHelper(
                         con.resume(result) {
                             it.printStackTrace()
                         }
-                        gt3?.dismissGeetestDialog()
+                        gt3.dismissGeetestDialog()
                     }
                 }
                 // gt3ConfigBean.api1Json = JSONObject(captchaInfo.toJson())
-                gt3?.init(gt3ConfigBean)
+                gt3.init(gt3ConfigBean)
                 // 开启验证
-                gt3?.startCustomFlow()
+                gt3.startCustomFlow()
             }
         }
     }

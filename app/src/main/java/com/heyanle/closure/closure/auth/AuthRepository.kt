@@ -44,7 +44,7 @@ class AuthRepository(
             post {
                 url("${net.authUrl}/login")
                 contentType(ContentType.Application.Json)
-                accept(ContentType.Application.Json)
+                //accept(ContentType.Application.Json)
                 setBody(loginBody)
             }
         }

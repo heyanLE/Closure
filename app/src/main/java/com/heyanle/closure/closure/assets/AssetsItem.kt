@@ -2,6 +2,7 @@ package com.heyanle.closure.closure.assets
 
 import android.content.Context
 import com.heyanle.closure.closure.net.Net
+import com.heyanle.closure.utils.logi
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.url
@@ -64,26 +65,27 @@ class AssetsItem(
     }
 
     private suspend fun loadFromNet(){
+        netUrl.logi("AssetsItem")
         net.send<String> {
             get {
                 url(netUrl)
                 accept(ContentType.Application.Json)
             }
         }.await()
-            .okWithData {
+            .okWithData { res ->
                 _res.update {
-                    it
+                    res
                 }
 
                 tempFile.delete()
                 root.mkdirs()
                 tempFile.createNewFile()
-                tempFile.writeText(it)
+                tempFile.writeText(res)
                 file.delete()
                 tempFile.renameTo(file)
             }
             .error {
-                it.snackWhenError()
+                //it.snackWhenError()
                 it.throwable?.printStackTrace()
                 loadFromFile()
             }

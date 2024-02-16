@@ -37,6 +37,7 @@ import com.heyanle.closure.R
 import com.heyanle.closure.closure.assets.AssetsController
 import com.heyanle.closure.closure.game.model.WebGame
 import com.heyanle.closure.ui.common.LoadingImage
+import com.heyanle.closure.ui.common.LoadingPage
 import com.heyanle.closure.ui.home.HomeViewModel
 import com.heyanle.injekt.core.Injekt
 
@@ -52,9 +53,8 @@ fun InstanceManager(
     val w = webListData.value
 
     if (w.data == null && w.isLoading) {
-
+        LoadingPage (modifier = Modifier.fillMaxSize())
     } else if (w.data == null) {
-
     } else {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -246,27 +246,27 @@ fun AccountCard(
                 )
             }",
         )
-        Box(
-            modifier = Modifier
-                .clip(
-                    CircleShape
+        if(platform >= 0){
+            Box(
+                modifier = Modifier
+                    .clip(
+                        CircleShape
+                    )
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .padding(8.dp, 4.dp)
+            ) {
+                Text(
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontWeight = FontWeight.W900,
+                    text =
+                    if (platform < 2)
+                        stringResource(id = com.heyanle.i18n.R.string.official_server)
+                    else
+                        stringResource(id = com.heyanle.i18n.R.string.bilibili_server),
+                    fontSize = 12.sp,
                 )
-                .background(MaterialTheme.colorScheme.secondary)
-                .padding(8.dp, 4.dp)
-        ) {
-            Text(
-                color = MaterialTheme.colorScheme.onSecondary,
-                fontWeight = FontWeight.W900,
-                text =
-                if (platform < 2)
-                    stringResource(id = com.heyanle.i18n.R.string.official_server)
-                else
-                    stringResource(id = com.heyanle.i18n.R.string.bilibili_server),
-                fontSize = 12.sp,
-            )
+            }
         }
-
-
     }
 }
 

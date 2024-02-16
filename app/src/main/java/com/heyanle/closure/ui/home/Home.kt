@@ -51,7 +51,12 @@ import kotlinx.coroutines.launch
 fun Home() {
     val geetest = LocalGeetestHelper.current
     val vm =
-        viewModel<HomeViewModel>(factory = HomeViewModelFactory(LocalClosureStatePresenter.current.username, geetest))
+        viewModel<HomeViewModel>(
+            factory = HomeViewModelFactory(
+                LocalClosureStatePresenter.current.username,
+                geetest
+            )
+        )
     val webGameList = vm.webGameList.collectAsState()
     val webG = webGameList.value
 
@@ -90,7 +95,7 @@ fun Home() {
             )
 
             if (webG.data == null && webG.isLoading) {
-                LoadingPage (
+                LoadingPage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
@@ -110,7 +115,11 @@ fun Home() {
                     }
                 )
             } else {
-                HomeTabContent(vm = vm, username = LocalClosureStatePresenter.current.username, webGameList = webG.data)
+                HomeTabContent(
+                    vm = vm,
+                    username = LocalClosureStatePresenter.current.username,
+                    webGameList = webG.data
+                )
             }
 
         }
@@ -129,33 +138,34 @@ fun ColumnScope.HomeTabContent(
 
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState {
-        webGameList.size +1
+        webGameList.size + 1
     }
     TabPage(
         Modifier.weight(1f),
-        tabSize = webGameList.size +1,
+        tabSize = webGameList.size + 1,
         pagerState = pagerState,
         onTabSelect = {
             scope.launch {
-                pagerState.animateScrollToPage(it)
+//                it.logi("Home")
+//                pagerState.animateScrollToPage(it)
             }
         },
         tabs = { it, _ ->
-            if(it == 0){
+            if (it == 0) {
                 Text(text = stringResource(id = com.heyanle.i18n.R.string.instance_manager))
-            }else{
-                webGameList.getOrNull(it-1)?.let {
+            } else {
+                webGameList.getOrNull(it - 1)?.let {
                     it.status.nickName.logi("HomeTabContent")
                     Text(text = it.status.nickName.ifEmpty { stringRes(com.heyanle.i18n.R.string.unknown_doctor) })
                 }
             }
         }) {
-        if(it == 0){
+        if (it == 0) {
             InstanceManager(homeViewModel = vm)
-        }else{
-            val account = webGameList[it-1].gameSetting.account
+        } else {
+            val account = webGameList[it - 1].gameSetting.account
             val owner = vm.getViewModelOwner(account)
-            CompositionLocalProvider (
+            CompositionLocalProvider(
                 LocalViewModelStoreOwner provides owner
             ) {
                 Instance(homeViewModel = vm, username = username, account = account)
@@ -163,6 +173,5 @@ fun ColumnScope.HomeTabContent(
         }
 
 
-        
     }
 }

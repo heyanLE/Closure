@@ -31,6 +31,20 @@ class AssetsController(
     private val context: Context,
 ) {
 
+    companion object {
+        // 理智图标https://assets.closure.setonink.com/dst/
+        const val AP_ICON_URL = "https://assets.closure.setonink.com/dst/items/AP_GAMEPLAY.webp"
+
+        // 源石图标
+        const val DIAMOND_ICON_URL = "https://assets.closure.setonink.com/dst/items/DIAMOND.webp"
+
+        // 合成玉图标
+        const val DIAMOND_SHD_ICON_URL = "https://assets.closure.setonink.com/dst/items/DIAMOND_SHD.webp"
+
+        // 龙门币图标
+        const val GOLD_ICON_URL = "https://assets.closure.setonink.com/dst/items/GOLD.webp"
+    }
+
     data class Item(
         @Json(name = "name")
         val name: String,
@@ -41,16 +55,16 @@ class AssetsController(
 
     data class Stage(
         @Json(name = "name")
-        val name: String,
+        val name: String = "",
 
         @Json(name = "code")
-        val code: String,
+        val code: String = "",
 
         @Json(name = "ap")
-        val ap: Int,
+        val ap: Int = 0,
 
         @Json(name = "items")
-        val items: List<String>
+        val items: List<String> = listOf()
     )
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -60,7 +74,9 @@ class AssetsController(
 
 
     val itemsMap = itemAssets.res.map { it.jsonTo<Map<String, Item>>()?: emptyMap() }.stateIn(scope, SharingStarted.Lazily, emptyMap())
-    val stageMap = stageAssets.res.map { it.jsonTo<Map<String, Stage>>()?: emptyMap() }.stateIn(scope, SharingStarted.Lazily, emptyMap())
+    val stageMap = stageAssets.res.map {
+        it.jsonTo<Map<String, Stage>>()?: emptyMap()
+    }.stateIn(scope, SharingStarted.Lazily, emptyMap())
 
     init {
         itemAssets.init()

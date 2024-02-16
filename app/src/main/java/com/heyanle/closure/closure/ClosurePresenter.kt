@@ -162,7 +162,7 @@ class ClosurePresenter(
                         )
                     }
                 }.error { resp ->
-                    "${stringRes(com.heyanle.i18n.R.string.feature_error)} ${resp.code}:${resp.message}".moeSnackBar()
+                    //"${stringRes(com.heyanle.i18n.R.string.feature_error)} ${resp.code}:${resp.message}".moeSnackBar()
                     flow.update {
                         it.copy(
                             isLoading = false,
@@ -173,7 +173,7 @@ class ClosurePresenter(
                     }
                 }
             }.error { resp ->
-                resp.snackWhenError()
+                //resp.snackWhenError()
                 resp.throwable?.printStackTrace()
                 _webGameList.update {
                     it.copy(

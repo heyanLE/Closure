@@ -17,6 +17,7 @@ inline fun <reified T> String.jsonTo(): T? {
     return runCatching {
         adapter.fromJson(this)
     }.getOrElse {
+        "Json Error $this".logi("JsonExt")
         it.printStackTrace()
         null
     }

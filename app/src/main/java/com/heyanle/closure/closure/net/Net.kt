@@ -17,6 +17,7 @@ import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import java.net.SocketException
 import kotlin.reflect.typeOf
 
 /**
@@ -32,13 +33,14 @@ class Net(
         const val TAG = "Net"
         const val CODE_JSON_ERROR = Int.MIN_VALUE
         const val CODE_TIMEOUT = Int.MIN_VALUE + 1
+        const val CODE_ERROR = Int.MIN_VALUE + 2
     }
 
-    val authUrl = "https://passport.arknights.host/api/v1"
+    val authUrl = "https://passport.ltsc.vip/api/v1"
     val arkQuotaUrl = " https://registry.closure.setonink.com/api"
     val ticketUrl = "https://ticket.arknights.host/tickets"
     val gameUrl = "https://api.ltsc.vip"
-    val assetsUrl = "https://www.arknights.host"
+    val assetsUrl = "https://closure.ltsc.vip"
 
 
     inline fun <reified R> send(
@@ -99,8 +101,11 @@ class Net(
                 NetResponse.netError<R>(
                     CODE_TIMEOUT, stringRes(com.heyanle.i18n.R.string.net_timeout), "", ex, true
                 )
+            } catch (ex: SocketException) {
+                NetResponse.netError<R>(
+                    CODE_ERROR, stringRes(com.heyanle.i18n.R.string.net_error), "", ex, false
+                )
             }
         }
     }
-
 }

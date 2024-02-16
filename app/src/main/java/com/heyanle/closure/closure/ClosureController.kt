@@ -140,7 +140,6 @@ class ClosureController(
     }
 
     suspend fun login(username: String, password: String, fromPage: Boolean) {
-        Exception().printStackTrace()
         _state.update {
             it.copy(
                 isLogging = true,
