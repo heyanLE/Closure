@@ -59,13 +59,14 @@ fun InstanceManager(
     } else if (w.data == null) {
     } else {
         val sseController by Injekt.injectLazy<SSEController>()
-        val sseEnable = sseController.enable.collectAsState()
+        val sseState = sseController.sta.collectAsState()
+        val sseActive = sseState.value.isActive
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
 
-            if(!sseEnable.value){
+            if(!sseActive){
                 item {
                     Row(
                         modifier = Modifier
@@ -74,9 +75,7 @@ fun InstanceManager(
                                 MaterialTheme.colorScheme.errorContainer
                             )
                             .clickable {
-                                if (!sseEnable.value) {
-                                    sseController.start()
-                                }
+                                sseController.enable()
                             }
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
