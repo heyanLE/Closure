@@ -47,6 +47,7 @@ kotlin = "1.9.21"
 geetest = "4.4.2.1"
 [libraries]
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+okhttp3_sse = {module = "com.squareup.okhttp3:okhttp-sse", version.ref = "okhttp3"}
 okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
 okhttp3_logging_interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3" }
 
@@ -111,7 +112,7 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 geetest-sensebot = {module = "com.geetest.sensebot:sensebot", version.ref = "geetest"}
 
 [bundles]
-okhttp3 = ["okhttp3", "okhttp3_logging_interceptor"]
+okhttp3 = ["okhttp3", "okhttp3_logging_interceptor", "okhttp3_sse"]
 cling = ["cling_core", "cling_support"]
 appcenter = ["appcenter_analytics", "appcenter_crashes", "appcenter_distribute"]
 [plugins]

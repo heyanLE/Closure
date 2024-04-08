@@ -11,6 +11,7 @@ import com.heyanle.closure.closure.quota.QuotaRepository
 import com.heyanle.closure.closure.see.SSEController
 import com.heyanle.closure.utils.CoroutineProvider
 import com.heyanle.closure.utils.getFilePath
+import com.heyanle.closure.utils.logi
 import com.heyanle.injekt.api.InjektModule
 import com.heyanle.injekt.api.InjektScope
 import com.heyanle.injekt.api.addSingletonFactory
@@ -68,6 +69,7 @@ class ClosureModule(
         }
 
         addScopedPerKeyFactory<ClosurePresenter, String> {
+            it.logi("ClosureModule")
             ClosurePresenter(it, application.getFilePath("closure"), get(), get(), get(), get())
         }
 
@@ -86,6 +88,7 @@ class ClosureModule(
         addSingletonFactory {
             SSEController(get(), get())
         }
+
 
         get<SSEController>()
     }

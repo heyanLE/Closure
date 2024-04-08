@@ -217,6 +217,7 @@
 
     <string name="connect_unlink_because_other">已在其他设备访问，链接断开，可在实例管理页重新连接！</string>
     <string name="connect_unlink">当前链接已断开</string>
+    <string name="connect_loading">当前连接请求中</string>
     <string name="click_to_relink">点击重新连接</string>
 
 

@@ -313,7 +313,7 @@ fun APLVPanel(getGameResp: GetGameInfo) {
             APUtils.getNowAp(
                 getGameResp.status.ap.toLong() ?: 0,
                 getGameResp.status.maxAp.toLong() ?: 0,
-                getGameResp.status.lastApAddTime.toLong() ?: 0
+                getGameResp.time
             )
         )
     }
@@ -326,7 +326,7 @@ fun APLVPanel(getGameResp: GetGameInfo) {
                 nowAp = APUtils.getNowAp(
                     getGameResp.status.ap.toLong() ?: 0,
                     getGameResp.status.maxAp.toLong() ?: 0,
-                    getGameResp.status.lastApAddTime?.toLong() ?: 0
+                    getGameResp.time
                 )
             }
         }
@@ -429,7 +429,7 @@ fun APLVPanel(getGameResp: GetGameInfo) {
             text = APUtils.getAPMaxTime(
                 getGameResp.status.ap.toLong() ?: 0,
                 getGameResp.status.maxAp.toLong() ?: 0,
-                (getGameResp.status.lastApAddTime.toLong() ?: 0) * 1000
+                getGameResp.time,
             )
         )
 

@@ -21,7 +21,7 @@ object APUtils {
     fun getAPMaxTime(now: Long, max: Long, startTime: Long, maxApString: String = stringRes(com.heyanle.i18n.R.string.ap_has_max)): String{
         //Log.d("APUtils", "$now $max $startTime")
         val y = (max-now) * AP_UP_TIME
-        val time = startTime + y
+        val time = startTime*1000 + y
         if(time <= System.currentTimeMillis() || now >= max){
             return maxApString
         }

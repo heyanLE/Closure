@@ -27,7 +27,8 @@ data class GetGameInfo (
     @Json(name = "troop")
     val troop: Any?,
 
-    )
+    var time: Long = System.currentTimeMillis()/1000
+)
 
 data class GameConfig (
     @Json(name = "accelerate_slot")

@@ -59,28 +59,8 @@ class ClosurePresenter(
     // 根据 实例 account 缓存对应 stateFlow
     private val getGameMap = hashMapOf<String, MutableStateFlow<LoadableData<GetGameInfo>>>()
 
-
-    fun onSEEStart() {
-        scope.launch {
-            _webGameList.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
-        }
-    }
-
-    fun onSEEOpen() {
-        scope.launch {
-            _webGameList.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
-        }
-    }
-
     fun onSEEPush(webGameList: List<WebGame>) {
+        "onSEEPush $webGameList".logi("ClosurePresenter")
         scope.launch {
             _webGameList.update {
                 it.copy(
@@ -99,6 +79,7 @@ class ClosurePresenter(
                     fromCache = false
                 )
             }
+            this@ClosurePresenter.webGameList.logi("ClosurePresenter")
         }
     }
 

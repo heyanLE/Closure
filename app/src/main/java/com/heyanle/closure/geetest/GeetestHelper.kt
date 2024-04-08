@@ -26,12 +26,12 @@ class GeetestHelper(
 
     companion object {
         const val TAG = "GeetestHelper"
-        const val CAPTCHA_ID = "28c7f25a229441ae14b2a8823d0f1659"
+        const val CAPTCHA_ID = "3d50c20b712aaf5c4390a663f1912941"
     }
 
     private var gt3: GT3GeetestUtils = GT3GeetestUtils(activity)
     private val config = GTCaptcha4Config.Builder()
-        .setDebug(BuildConfig.DEBUG) // TODO 线上务必关闭
+        //.setDebug(BuildConfig.DEBUG) // TODO 线上务必关闭
         .setLanguage("zh")
         .setTimeOut(10000)
         .setCanceledOnTouchOutside(true)

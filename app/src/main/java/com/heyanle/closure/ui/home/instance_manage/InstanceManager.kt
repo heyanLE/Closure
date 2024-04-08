@@ -61,12 +61,14 @@ fun InstanceManager(
         val sseController by Injekt.injectLazy<SSEController>()
         val sseState = sseController.sta.collectAsState()
         val sseActive = sseState.value.isActive
+        val sseStarted = sseState.value.isStarted
+        val sseEnable = sseState.value.isEnable
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
 
-            if(!sseActive){
+            if(!sseActive && !sseStarted){
                 item {
                     Row(
                         modifier = Modifier
@@ -84,6 +86,25 @@ fun InstanceManager(
                         Text(text = stringResource(id = com.heyanle.i18n.R.string.connect_unlink), color = MaterialTheme.colorScheme.error)
                         Spacer(modifier = Modifier.weight(1f))
                         Text(text = stringResource(id = com.heyanle.i18n.R.string.click_to_relink), color = MaterialTheme.colorScheme.secondary)
+                    }
+                }
+            }else if(!sseActive && sseEnable){
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                MaterialTheme.colorScheme.errorContainer
+                            )
+                            .clickable {
+                                sseController.enable()
+                            }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+
+                        ) {
+                        Text(text = stringResource(id = com.heyanle.i18n.R.string.connect_loading), color = MaterialTheme.colorScheme.error)
                     }
                 }
             }

@@ -60,7 +60,7 @@ class HeKV(
     }
 
     fun put(key: String, value: String){
-        "${key}, ${value}".loge("HEKV")
+        //"${key}, ${value}".loge("HEKV")
         readWriteLock.write {
             if(value.isEmpty()){
                 map.remove(key)
@@ -162,13 +162,13 @@ class HeKV(
                 // 一行完整的数据应该是 |key|value|
                 // 被 | 分割成 4 部分，中间两部分是 key 和 value
                 val ls = line.split("|")
-                "line ${line}".loge("HeKV")
-                "lssize ${ls.size}".loge("HeKV")
+                //"line ${line}".loge("HeKV")
+                //"lssize ${ls.size}".loge("HeKV")
                 if(ls.size == 4){
                     val key = URLDecoder.decode(ls[1], "utf-8")
                     val value = URLDecoder.decode(ls[2], "utf-8")
                     map[key] = value
-                    "size4 ${key}, ${value}".loge("HeKV")
+                    //"size4 ${key}, ${value}".loge("HeKV")
                 }
             }
 

@@ -9,6 +9,10 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
+import okhttp3.sse.EventSource
+import okhttp3.sse.EventSourceListener
+import okhttp3.sse.EventSources
 import okio.BufferedSource
 import java.io.IOException
 import java.util.concurrent.Executors
@@ -20,125 +24,60 @@ import java.util.concurrent.TimeUnit
  */
 class SSEHelper(
     private val okHttpClient: OkHttpClient,
-) {
+) : EventSourceListener() {
 
 
-    var onOpening: () -> Unit = {}
     var onOpen: () -> Unit = {}
-    var onMessage: (event: String, msg: String) -> Unit = { _, _ -> }
-    var onError: (ex: IOException?) -> Unit = {}
+    var onMessage: (event: String, data: String) -> Unit = { _, _ -> }
+    var onError: (ex: Throwable?) -> Unit = {}
     var onClose: () -> Unit = {}
 
-    var timeout: Long = 3000L
-        set(value) {
-            field = value
-            lastSource?.timeout()?.timeout(value, TimeUnit.MILLISECONDS)
-        }
-
-
-    private var isStart = false
-    private val single = Executors.newSingleThreadExecutor()
+    private var eventSource: EventSource? = null
     private var lastEventId: String = ""
-    private var lastSource: BufferedSource? = null
 
     fun start(url: String) {
         innerClose()
-        isStart = true
-        single.execute {
-            try {
-                innerStart(url)
-            } catch (ex: IOException) {
-                if (isStart) {
-                    onError(ex)
-                    close()
-                }
-            }
-        }
+        innerStart(url)
     }
 
     fun close() {
-        isStart = false
         innerClose()
     }
 
-    fun release() {
-        isStart = false
-        close()
-        lastEventId = ""
-        lastSource = null
-        timeout = 3000L
-    }
-
-
     private fun innerClose(){
-        try {
-            lastSource?.close()
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-        }
-        lastSource = null
+        eventSource?.cancel()
         onClose()
     }
     @Throws(IOException::class)
     private fun innerStart(url: String) {
-        onOpening()
-        val call = okHttpClient.newCall(
-            Request.Builder().url(url)
-                .addHeader("Accept-Encoding", "")
-                .addHeader("Cache-Control", "no-cache")
-                .addHeader("Accept", "text/event-stream").apply {
-                    if (lastEventId.isNotEmpty()) {
-                        addHeader("Last-Event-ID", lastEventId)
-                    }
-                }.build()
-        )
-        val resp = call.execute()
-        if (!resp.isSuccessful) {
-            throw IOException("resp failed ${resp.code} ${resp.message}")
-        }
-        val source = resp.body?.source() ?: throw IOException("source is null")
-        source.timeout().timeout(timeout, TimeUnit.MILLISECONDS)
-        this.lastSource = source
-        var curEvent = ""
-        val sb = StringBuilder()
-        onOpen()
-        while (!call.isCanceled()) {
-            val line = source.readUtf8LineStrict()
-            line.logi(SSEController.TAG)
-            if (line.isEmpty()) {
-                lastEventId = curEvent
-                onMessage(curEvent, sb.toString())
-                curEvent = ""
-                sb.clear()
-                continue
-            }
-            val index = line.indexOf(":")
-            if (index == -1) {
-                curEvent = ""
-                sb.clear()
-                continue
-            } else if (index == 0) {
-                continue
-            } else {
-                val field = line.substring(0, index)
-                val value = line.substring(index + 1, line.length)
-                when (field) {
-                    "data" -> {
-                        sb.append(value.trim())
-                    }
-
-                    "event" -> {
-                        curEvent = value.trim()
-                    }
-
-                    "retry" -> {
-                        timeout = value.trim().toLongOrNull() ?: timeout
-                    }
+        url.logi("SSEHelper")
+        val req =  Request.Builder().url(url)
+            .addHeader("Accept-Encoding", "")
+            .addHeader("Cache-Control", "no-cache")
+            .addHeader("Accept", "text/event-stream").apply {
+                if (lastEventId.isNotEmpty()) {
+                    addHeader("Last-Event-ID", lastEventId)
                 }
-            }
-        }
+            }.build()
+        eventSource = EventSources.createFactory(okHttpClient).newEventSource(req, this)
+    }
+
+    override fun onClosed(eventSource: EventSource) {
         onClose()
     }
 
+    override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
+        lastEventId = type ?: return
+        onMessage(type, data)
+    }
 
+    override fun onFailure(eventSource: EventSource, t: Throwable?, response: Response?) {
+        onError(t)
+    }
+
+    override fun onOpen(eventSource: EventSource, response: Response) {
+        onOpen()
+    }
 }
+
+

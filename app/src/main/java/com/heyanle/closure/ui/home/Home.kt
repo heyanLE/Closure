@@ -69,6 +69,8 @@ fun Home() {
         )
     val webGameList = vm.webGameList.collectAsState()
     val webG = webGameList.value
+    webG.logi("Home")
+    vm.webGameList.logi("Home")
 
     val scope = rememberCoroutineScope()
     Surface(
@@ -129,11 +131,6 @@ fun Home() {
                 LaunchedEffect(key1 = Unit) {
                     vm.topAppBarState.value = HomeViewModel.TopAppBarState.Normal
                 }
-                LoadingPage(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                )
             } else if (webG.data == null) {
                 LaunchedEffect(key1 = Unit) {
                     vm.topAppBarState.value = HomeViewModel.TopAppBarState.Normal
@@ -148,6 +145,7 @@ fun Home() {
                         Text(text = stringResource(id = com.heyanle.i18n.R.string.click_to_retry))
                     },
                     onClick = {
+
                         //vm.refreshWebGameList()
                     }
                 )

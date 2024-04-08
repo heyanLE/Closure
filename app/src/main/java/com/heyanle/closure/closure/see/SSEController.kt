@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.ResponseBody
@@ -46,36 +47,47 @@ class SSEController(
 
 
     data class SSEState(
+        // sse 开关
         val isEnable: Boolean = true,
+
+        // 是否已经触发启动逻辑
+        val isStarted: Boolean = false,
+
+        // 是否真正启动
         val isActive: Boolean = false,
-        val username: String = "",
-        val token: String = "",
     )
+
+    @Volatile
+    private var username: String = ""
+    @Volatile
+    private var token: String = ""
 
     private val _sta = MutableStateFlow<SSEState>(SSEState())
     val sta = _sta.asStateFlow()
     private val helper = SSEHelper(okHttpClient).apply {
-        onOpening = {
-            _sta.update {
-                it.copy(isActive = true)
-            }
-        }
         onOpen = {
-
+            _sta.update {
+                it.copy(isActive = true, isStarted = true)
+            }
         }
         onClose = {
             _sta.update {
-                it.copy(isActive = false)
+                it.copy(
+                    isStarted = false,
+                    isActive = false
+                )
             }
         }
         onError = {
             it?.printStackTrace()
             _sta.update {
-                it.copy(isActive = false)
+                it.copy(isStarted = false, isActive = false)
             }
         }
         onMessage = { event, msg ->
-            handleMessage(event, msg, _sta.value.username)
+            if (username.isNotEmpty()){
+                handleMessage(event, msg, username)
+            }
         }
 
     }
@@ -83,30 +95,37 @@ class SSEController(
 
     init {
         scope.launch {
+
             combine(
                 closureController.state.map { it.username to it.token }.distinctUntilChanged(),
                 _sta,
             ) { p, state ->
-                if (state.isEnable && !state.isActive) {
+                if (state.isEnable && !state.isStarted) {
                     if (p.first.isNotEmpty() && p.second.isNotEmpty()) {
                         helper.start("https://api.ltsc.vip/sse/games?token=${p.second}")
+                        _sta.update {
+                            it.copy(isStarted = true)
+                        }
                     }
+
                 } else if (!state.isEnable && state.isActive) {
                     helper.close()
                 }
+                username = p.first
+                token = p.second
             }.collect()
         }
     }
 
     fun enable() {
         _sta.update {
-            it.copy(isEnable = true)
+            it.copy(isEnable = true, isStarted = false)
         }
     }
 
     fun disable() {
         _sta.update {
-            it.copy(isEnable = false)
+            it.copy(isEnable = false, isStarted = false)
         }
     }
 

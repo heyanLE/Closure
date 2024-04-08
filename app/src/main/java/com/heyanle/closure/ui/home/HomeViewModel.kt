@@ -17,6 +17,7 @@ import com.heyanle.closure.closure.quota.QuotaRepository
 import com.heyanle.closure.geetest.GeetestHelper
 import com.heyanle.closure.ui.common.moeSnackBar
 import com.heyanle.closure.utils.ViewModelOwnerMap
+import com.heyanle.closure.utils.logi
 import com.heyanle.closure.utils.stringRes
 import com.heyanle.injekt.api.get
 import com.heyanle.injekt.core.Injekt
@@ -69,6 +70,7 @@ class HomeViewModel(
         viewModelScope.launch {
             val token = closureController.tokenIfNull(username) ?: return@launch
             val captchaToken = geetestHelper.onGT4()
+            captchaToken.logi("HomeViewModel")
             if (captchaToken == null) {
                 stringRes(com.heyanle.i18n.R.string.captcha_error).moeSnackBar()
             } else {
