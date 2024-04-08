@@ -12,8 +12,8 @@ android {
         targetSdk = 34
         applicationId = "com.heyanle.closure"
         minSdk = 21
-        versionCode = 13
-        versionName = "3.1"
+        versionCode = 14
+        versionName = "3.2"
 
         buildConfigField(
             "String",
