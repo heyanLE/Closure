@@ -97,9 +97,6 @@ fun InstanceManager(
                             .background(
                                 MaterialTheme.colorScheme.errorContainer
                             )
-                            .clickable {
-                                sseController.enable()
-                            }
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
 

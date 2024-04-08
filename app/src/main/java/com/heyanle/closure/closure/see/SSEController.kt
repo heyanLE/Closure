@@ -118,6 +118,7 @@ class SSEController(
     }
 
     fun enable() {
+        disable()
         _sta.update {
             it.copy(isEnable = true, isStarted = false)
         }
