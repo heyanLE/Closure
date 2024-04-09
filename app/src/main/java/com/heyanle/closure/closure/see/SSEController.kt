@@ -13,9 +13,7 @@ import com.heyanle.injekt.api.get
 import com.heyanle.injekt.core.Injekt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -24,13 +22,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.ResponseBody
-import java.io.IOException
 
 /**
  * Created by heyanle on 2024/1/27.
@@ -39,98 +32,112 @@ import java.io.IOException
 class SSEController(
     private val okHttpClient: OkHttpClient,
     private val closureController: ClosureController,
-) {
+): SSEHelper.SSEListener {
 
     companion object {
         const val TAG = "SSEController"
+        const val URL = "https://api.ltsc.vip/sse/games?token={{token}}"
     }
 
 
     data class SSEState(
+        val username: String = "",
+        val token: String = "",
+
         // sse 开关
         val isEnable: Boolean = true,
 
-        // 是否已经触发启动逻辑
-        val isStarted: Boolean = false,
+        // 连接中
+        val isLoading: Boolean = false,
 
         // 是否真正启动
         val isActive: Boolean = false,
-    )
-
-    @Volatile
-    private var username: String = ""
-    @Volatile
-    private var token: String = ""
-
-    private val _sta = MutableStateFlow<SSEState>(SSEState())
-    val sta = _sta.asStateFlow()
-    private val helper = SSEHelper(okHttpClient).apply {
-        onOpen = {
-            _sta.update {
-                it.copy(isActive = true, isStarted = true)
-            }
+    ){
+        companion object {
+            val init = SSEState()
         }
-        onClose = {
-            _sta.update {
-                it.copy(
-                    isStarted = false,
-                    isActive = false
-                )
-            }
-        }
-        onError = {
-            it?.printStackTrace()
-            _sta.update {
-                it.copy(isStarted = false, isActive = false)
-            }
-        }
-        onMessage = { event, msg ->
-            if (username.isNotEmpty()){
-                handleMessage(event, msg, username)
-            }
-        }
-
     }
+
+    private val _sta = MutableStateFlow<SSEState>(SSEState.init)
+    val sta = _sta.asStateFlow()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val singleScope = CoroutineScope(SupervisorJob() + CoroutineProvider.SINGLE)
+    private var helper: SSEHelper? = null
 
     init {
         scope.launch {
-
-            combine(
-                closureController.state.map { it.username to it.token }.distinctUntilChanged(),
-                _sta,
-            ) { p, state ->
-                if (state.isEnable && !state.isStarted) {
-                    if (p.first.isNotEmpty() && p.second.isNotEmpty()) {
-                        helper.start("https://api.ltsc.vip/sse/games?token=${p.second}")
-                        _sta.update {
-                            it.copy(isStarted = true)
+            closureController.state.map { it.username to it.token }.distinctUntilChanged().collectLatest { pair ->
+                if (pair.first.isNotEmpty() && pair.second.isNotEmpty()){
+                    singleScope.launch {
+                        val cur = sta.value
+                        if (cur == SSEState.init || cur.username != pair.first || cur.token != pair.second){
+                            _sta.update {
+                                it.copy(username = pair.first, token = pair.second)
+                            }
+                            relink()
                         }
                     }
-
-                } else if (!state.isEnable && state.isActive) {
-                    helper.close()
+                }else{
+                    helper?.release()
+                    helper = null
                 }
-                username = p.first
-                token = p.second
-            }.collect()
+
+            }
         }
     }
 
-    fun enable() {
-        disable()
+    fun relink() {
+        singleScope.launch {
+            val cur = sta.value
+            if (cur.isEnable){
+                innerConnect()
+            }
+        }
+    }
+
+    private fun innerConnect() {
+        helper?.release()
         _sta.update {
-            it.copy(isEnable = true, isStarted = false)
+            it.copy(isLoading = true)
         }
-    }
-
-    fun disable() {
-        _sta.update {
-            it.copy(isEnable = false, isStarted = false)
-        }
+        helper = SSEHelper(okHttpClient, URL.replace("{{token}}", sta.value.token), this)
+        helper?.start()
     }
 
 
+
+    override fun onOpen() {
+        singleScope.launch {
+            _sta.update {
+                it.copy(isActive = true, isLoading = false)
+            }
+        }
+    }
+
+    override fun onMessage(event: String, data: String) {
+        singleScope.launch {
+            handleMessage(event, data, sta.value.username)
+        }
+
+    }
+
+    override fun onError(ex: Throwable?) {
+        ex?.printStackTrace()
+        ex?.message?.moeSnackBar()
+        singleScope.launch {
+            _sta.update {
+                it.copy(isLoading = false, isActive = false)
+            }
+        }
+    }
+
+    override fun onClose() {
+        singleScope.launch {
+            _sta.update {
+                it.copy(isActive = false, isLoading = false)
+            }
+        }
+    }
 
     private fun handleMessage(event: String, data: String, username: String) {
         "handleMessage ${event} ${data} ${username}".logi(TAG)
@@ -145,8 +152,11 @@ class SSEController(
             }
 
             "close" -> {
-                disable()
-                helper.close()
+                _sta.update {
+                    it.copy(isEnable = false)
+                }
+                helper?.release()
+                helper = null
                 stringRes(R.string.connect_unlink_because_other).moeSnackBar()
             }
         }

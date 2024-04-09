@@ -33,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.heyanle.closure.R
 import com.heyanle.closure.closure.assets.AssetsController
 import com.heyanle.closure.closure.game.model.WebGame
 import com.heyanle.closure.closure.see.SSEController
@@ -61,34 +60,14 @@ fun InstanceManager(
         val sseController by Injekt.injectLazy<SSEController>()
         val sseState = sseController.sta.collectAsState()
         val sseActive = sseState.value.isActive
-        val sseStarted = sseState.value.isStarted
         val sseEnable = sseState.value.isEnable
+        val sseLoading = sseState.value.isLoading
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
 
-            if(!sseActive && !sseStarted){
-                item {
-                    Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(
-                                MaterialTheme.colorScheme.errorContainer
-                            )
-                            .clickable {
-                                sseController.enable()
-                            }
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-
-                    ) {
-                        Text(text = stringResource(id = com.heyanle.i18n.R.string.connect_unlink), color = MaterialTheme.colorScheme.error)
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(text = stringResource(id = com.heyanle.i18n.R.string.click_to_relink), color = MaterialTheme.colorScheme.secondary)
-                    }
-                }
-            }else if(!sseActive && sseEnable){
+            if (sseLoading) {
                 item {
                     Row(
                         modifier = Modifier
@@ -101,7 +80,58 @@ fun InstanceManager(
                         verticalAlignment = Alignment.CenterVertically,
 
                         ) {
-                        Text(text = stringResource(id = com.heyanle.i18n.R.string.connect_loading), color = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = stringResource(id = com.heyanle.i18n.R.string.connect_loading),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            } else if (!sseActive) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                MaterialTheme.colorScheme.errorContainer
+                            )
+                            .clickable {
+                                sseController.relink()
+                            }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+
+                        ) {
+                        Text(
+                            text = stringResource(id = com.heyanle.i18n.R.string.connect_unlink),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = stringResource(id = com.heyanle.i18n.R.string.click_to_relink),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            } else {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                MaterialTheme.colorScheme.secondary
+                            )
+                            .clickable {
+                                sseController.relink()
+                            }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+
+                        ) {
+                        Text(
+                            text = stringResource(id = com.heyanle.i18n.R.string.connect_link),
+                            color = MaterialTheme.colorScheme.onSecondary
+                        )
                     }
                 }
             }

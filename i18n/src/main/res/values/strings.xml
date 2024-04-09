@@ -216,7 +216,8 @@
     <string name="connect_stop_retry_delay">服务器长连接断开，将在 5s 后重试</string>
 
     <string name="connect_unlink_because_other">已在其他设备访问，链接断开，可在实例管理页重新连接！</string>
-    <string name="connect_unlink">当前链接已断开</string>
+    <string name="connect_link">与后台连接正常</string>
+    <string name="connect_unlink">当前连接已断开</string>
     <string name="connect_loading">当前连接请求中</string>
     <string name="click_to_relink">点击重新连接</string>
 

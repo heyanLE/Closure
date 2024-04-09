@@ -24,30 +24,30 @@ import java.util.concurrent.TimeUnit
  */
 class SSEHelper(
     private val okHttpClient: OkHttpClient,
+    private val url: String,
+    private var listener: SSEListener?,
 ) : EventSourceListener() {
 
+    interface SSEListener {
+        fun onOpen()
+        fun onMessage(event: String, data: String)
+        fun onError(ex: Throwable?)
+        fun onClose()
+    }
 
-    var onOpen: () -> Unit = {}
-    var onMessage: (event: String, data: String) -> Unit = { _, _ -> }
-    var onError: (ex: Throwable?) -> Unit = {}
-    var onClose: () -> Unit = {}
 
     private var eventSource: EventSource? = null
     private var lastEventId: String = ""
 
-    fun start(url: String) {
-        innerClose()
+    fun start() {
         innerStart(url)
     }
 
-    fun close() {
-        innerClose()
+    fun release() {
+        listener = null
+        eventSource?.cancel()
     }
 
-    private fun innerClose(){
-        eventSource?.cancel()
-        onClose()
-    }
     @Throws(IOException::class)
     private fun innerStart(url: String) {
         url.logi("SSEHelper")
@@ -63,21 +63,22 @@ class SSEHelper(
     }
 
     override fun onClosed(eventSource: EventSource) {
-        onClose()
+        listener?.onClose()
     }
 
     override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
         lastEventId = type ?: return
-        onMessage(type, data)
+        listener?.onMessage(type, data)
     }
 
     override fun onFailure(eventSource: EventSource, t: Throwable?, response: Response?) {
-        onError(t)
+        listener?.onError(t)
     }
 
     override fun onOpen(eventSource: EventSource, response: Response) {
-        onOpen()
+        listener?.onOpen()
     }
+
 }
 
 
